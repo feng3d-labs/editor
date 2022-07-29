@@ -22,7 +22,10 @@
     "deploy": "npm run build:prod && npm run docs && node scripts/deploy.js",
     "release": "npm run build:prod && npm publish",
     "server": "node server/index.js",
-    "refreshTemplate": "node scripts/refreshTemplate.js"
+    "refreshTemplate": "node scripts/refreshTemplate.js",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "repository": {
     "type": "git",
@@ -53,9 +56,8 @@
   "dependencies": {
     "@feng3d/cannon": "0.5.1",
     "@feng3d/cannon-plugin": "0.5.0",
-    "electron": "^19.0.10",
     "feng3d": "0.5.0",
-    "websocket": "^1.0.34"
+    "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.6.1",
@@ -82,6 +84,39 @@
     "typedoc": "0.21.4",
     "typedoc-plugin-sourcefile-url": "1.0.6",
     "typescript": "4.3.5",
-    "fs-extra": "^10.1.0"
+    "fs-extra": "^10.1.0",
+    "@electron-forge/cli": "^6.0.0-beta.65",
+    "@electron-forge/maker-deb": "^6.0.0-beta.65",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.65",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.65",
+    "@electron-forge/maker-zip": "^6.0.0-beta.65",
+    "electron": "19.0.10"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "feng3d-editor"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   }
 }
