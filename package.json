@@ -10,7 +10,7 @@
   "author": "feng",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
+    "start": "npm run build && electron .",
     "clean": "rimraf \"{lib,dist}\"",
     "build": "npm run clean && rollup -c",
     "build:prod": "npm run clean && cross-env NODE_ENV=production rollup -c",
