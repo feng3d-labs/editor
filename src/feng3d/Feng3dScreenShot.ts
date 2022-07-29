@@ -41,7 +41,7 @@ export class Feng3dScreenShot
         //
         const light = serialization.setValue(new GameObject(), {
             name: 'DirectionalLight',
-            components: [{ __class__: 'feng3d.Transform', rx: 50, ry: -30 }, { __class__: 'feng3d.DirectionalLight' }]
+            components: [{ __class__: 'Transform', rx: 50, ry: -30 }, { __class__: 'DirectionalLight' }]
         });
         scene.gameObject.addChild(light);
 
@@ -223,8 +223,8 @@ export class Feng3dScreenShot
         this.camera.transform.position = localLookPos;
     }
 
-    private materialObject = serialization.setValue(new GameObject(), { components: [{ __class__: 'feng3d.MeshRenderer' }] });
-    private geometryObject = serialization.setValue(new GameObject(), { components: [{ __class__: 'feng3d.MeshRenderer' }, { __class__: 'feng3d.WireframeComponent' }] });
+    private materialObject = serialization.setValue(new GameObject(), { components: [{ __class__: 'MeshRenderer' }] });
+    private geometryObject = serialization.setValue(new GameObject(), { components: [{ __class__: 'MeshRenderer' }, { __class__: 'WireframeComponent' }] });
 
     private _drawGameObject(gameObject: GameObject)
     {

@@ -72,9 +72,9 @@ export class SpotLightIcon extends EditorScript
         const lightpoints = this._lightpoints = serialization.setValue(new GameObject(), {
             name: 'points', mouseEnabled: false, hideFlags: HideFlags.Hide, components: [
                 {
-                    __class__: 'feng3d.MeshRenderer',
-                    material: { __class__: 'feng3d.Material', shaderName: 'point', uniforms: { u_PointSize: 5 }, renderParams: { enableBlend: true, renderMode: RenderMode.POINTS } },
-                    geometry: { __class__: 'feng3d.PointGeometry' },
+                    __class__: 'MeshRenderer',
+                    material: { __class__: 'Material', shaderName: 'point', uniforms: { u_PointSize: 5 }, renderParams: { enableBlend: true, renderMode: RenderMode.POINTS } },
+                    geometry: { __class__: 'PointGeometry' },
                 },
             ]
         });

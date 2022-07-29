@@ -54,14 +54,14 @@ export class PointLightIcon extends EditorScript
         const lightLines = this._lightLines = serialization.setValue(new GameObject(), {
             name: 'Lines', mouseEnabled: false, hideFlags: HideFlags.Hide,
             components: [{
-                __class__: 'feng3d.MeshRenderer', material: {
-                    __class__: 'feng3d.Material',
+                __class__: 'MeshRenderer', material: {
+                    __class__: 'Material',
                     shaderName: 'segment',
                     uniforms: {
-                        u_segmentColor: { __class__: 'feng3d.Color4', r: 1, g: 1, b: 1, a: 0.5 },
+                        u_segmentColor: { __class__: 'Color4', r: 1, g: 1, b: 1, a: 0.5 },
                     }, renderParams: { renderMode: RenderMode.LINES, enableBlend: true }
                 },
-                geometry: { __class__: 'feng3d.SegmentGeometry' },
+                geometry: { __class__: 'SegmentGeometry' },
             }]
         });
         this._segmentGeometry = <any>lightLines.getComponent(Renderable).geometry;
@@ -70,19 +70,19 @@ export class PointLightIcon extends EditorScript
         const lightpoints = this._lightpoints = serialization.setValue(new GameObject(), {
             name: 'points', mouseEnabled: false, hideFlags: HideFlags.Hide,
             components: [{
-                __class__: 'feng3d.MeshRenderer',
+                __class__: 'MeshRenderer',
                 geometry: {
-                    __class__: 'feng3d.PointGeometry',
+                    __class__: 'PointGeometry',
                     points: [
-                        { position: { __class__: 'feng3d.Vector3', x: 1 }, color: { __class__: 'feng3d.Color4', r: 1 } },
-                        { position: { __class__: 'feng3d.Vector3', x: -1 }, color: { __class__: 'feng3d.Color4', r: 1 } },
-                        { position: { __class__: 'feng3d.Vector3', y: 1 }, color: { __class__: 'feng3d.Color4', g: 1 } },
-                        { position: { __class__: 'feng3d.Vector3', y: -1 }, color: { __class__: 'feng3d.Color4', g: 1 } },
-                        { position: { __class__: 'feng3d.Vector3', z: 1 }, color: { __class__: 'feng3d.Color4', b: 1 } },
-                        { position: { __class__: 'feng3d.Vector3', z: -1 }, color: { __class__: 'feng3d.Color4', b: 1 } }],
+                        { position: { __class__: 'Vector3', x: 1 }, color: { __class__: 'Color4', r: 1 } },
+                        { position: { __class__: 'Vector3', x: -1 }, color: { __class__: 'Color4', r: 1 } },
+                        { position: { __class__: 'Vector3', y: 1 }, color: { __class__: 'Color4', g: 1 } },
+                        { position: { __class__: 'Vector3', y: -1 }, color: { __class__: 'Color4', g: 1 } },
+                        { position: { __class__: 'Vector3', z: 1 }, color: { __class__: 'Color4', b: 1 } },
+                        { position: { __class__: 'Vector3', z: -1 }, color: { __class__: 'Color4', b: 1 } }],
                 },
                 material: {
-                    __class__: 'feng3d.Material', shaderName: 'point', uniforms: { u_PointSize: 5 }, renderParams: { renderMode: RenderMode.POINTS, enableBlend: true },
+                    __class__: 'Material', shaderName: 'point', uniforms: { u_PointSize: 5 }, renderParams: { renderMode: RenderMode.POINTS, enableBlend: true },
                 },
             }],
         });
