@@ -2,7 +2,7 @@
   "name": "@feng3d/editor",
   "version": "0.5.1",
   "description": "feng3d引擎编辑器\r 编辑器UI基于[egret](https://www.egret.com/)开发。",
-  "main": "lib/index.js",
+  "main": "main.js",
   "module": "lib/index.es.js",
   "bundle": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +10,7 @@
   "author": "feng",
   "license": "MIT",
   "scripts": {
-    "start": "npm run watch",
+    "start": "electron .",
     "clean": "rimraf \"{lib,dist}\"",
     "build": "npm run clean && rollup -c",
     "build:prod": "npm run clean && cross-env NODE_ENV=production rollup -c",
@@ -51,9 +51,10 @@
     "run.js"
   ],
   "dependencies": {
-    "feng3d": "0.5.0",
     "@feng3d/cannon": "0.5.1",
     "@feng3d/cannon-plugin": "0.5.0",
+    "electron": "^19.0.10",
+    "feng3d": "0.5.0",
     "websocket": "^1.0.34"
   },
   "devDependencies": {

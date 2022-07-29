@@ -65,8 +65,8 @@ async function main()
     const basePath = path.relative(__dirname, '');
     const input = path.join(basePath, 'src/index.ts');
 
+    const main = 'lib/index.js';
     const {
-        main,
         module,
         bundle,
         bundleInput,
