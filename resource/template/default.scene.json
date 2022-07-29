@@ -10,12 +10,12 @@
 					"z": -10
 				},
 				{
-					"__class__": "feng3d.Camera"
+					"__class__": "Camera"
 				},
 				{
-					"__class__": "feng3d.AudioListener"
+					"__class__": "AudioListener"
 				}],
-			"__class__": "feng3d.GameObject"
+			"__class__": "GameObject"
 		},
 		{
 			"name": "DirectionalLight",
@@ -27,9 +27,9 @@
 				},
 				{
 					"shadowType": 1,
-					"__class__": "feng3d.DirectionalLight"
+					"__class__": "DirectionalLight"
 				}],
-			"__class__": "feng3d.GameObject"
+			"__class__": "GameObject"
 		},
 		{
 			"name": "Plane",
@@ -41,17 +41,17 @@
 						"assetId": "Plane",
 						"width": 10,
 						"height": 10,
-						"__class__": "feng3d.PlaneGeometry"
+						"__class__": "PlaneGeometry"
 					},
-					"__class__": "feng3d.MeshRenderer"
+					"__class__": "MeshRenderer"
 				},
 				{
-					"__class__": "feng3d.PlaneCollider"
+					"__class__": "PlaneCollider"
 				},
 				{
-					"__class__": "feng3d.Rigidbody"
+					"__class__": "Rigidbody"
 				}],
-			"__class__": "feng3d.GameObject"
+			"__class__": "GameObject"
 		},
 		{
 			"name": "Sphere",
@@ -64,18 +64,18 @@
 					"geometry": {
 						"hideFlags": 8,
 						"assetId": "Sphere",
-						"__class__": "feng3d.SphereGeometry"
+						"__class__": "SphereGeometry"
 					},
-					"__class__": "feng3d.MeshRenderer"
+					"__class__": "MeshRenderer"
 				},
 				{
-					"__class__": "feng3d.SphereCollider"
+					"__class__": "SphereCollider"
 				},
 				{
 					"mass": 1,
-					"__class__": "feng3d.Rigidbody"
+					"__class__": "Rigidbody"
 				}],
-			"__class__": "feng3d.GameObject"
+			"__class__": "GameObject"
 		}],
 	"components": [
 		{
@@ -92,10 +92,10 @@
 				"g": 0.4,
 				"b": 0.4
 			},
-			"__class__": "feng3d.Scene"
+			"__class__": "Scene"
 		},
 		{
-			"__class__": "feng3d.PhysicsWorld"
+			"__class__": "PhysicsWorld"
 		}],
-	"__class__": "feng3d.GameObject"
+	"__class__": "GameObject"
 }

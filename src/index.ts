@@ -1,5 +1,4 @@
 export * from './net/client';
-export * from './polyfill/feng3d/ClassUtils';
 export * from './polyfill/feng3d/ShortCut';
 export * from './polyfill/feng3d/EventDispatcher';
 export * from './polyfill/egret/MouseEvent';
