@@ -10,26 +10,10 @@ feng3d引擎编辑器
 ## 在线版本
     http://feng3d.com/editor/index.html
 
-## 本地版本
-    https://github.com/feng3d-labs/editor/releases
-
-## 使用npm安装
-```
-npm install feng3d-editor
-```
-### 运行项目
-
-在 launch.json 中添加一下配置，选择 Electron Main 执行。
-```
-{
-    "type": "node",
-    "request": "launch",
-    "name": "Electron Main",
-    "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-    "program": "${workspaceFolder}/node_modules/feng3d-editor/main.js"
-}
-```
-![](resource/readme.png)
+### 发布执行程序
+1. 下载该项目源码。
+2. 使用`npm i`安装依赖。注：`pnpm i`安装将导致发布失败。
+3. 执行`npm run make`生成执行程序的安装文件。
 
 ## 交流
 QQ群：519732759
