@@ -26,7 +26,6 @@ export class OAVGameObjectName extends OAVBase
 
         this.nameInput.addEventListener(egret.FocusEvent.FOCUS_IN, this.ontxtfocusin, this);
         this.nameInput.addEventListener(egret.FocusEvent.FOCUS_OUT, this.ontxtfocusout, this);
-        this.nameInput.addEventListener(egret.Event.CHANGE, this.onTextChange, this);
     }
 
     dispose()
@@ -36,7 +35,6 @@ export class OAVGameObjectName extends OAVBase
 
         this.nameInput.removeEventListener(egret.FocusEvent.FOCUS_IN, this.ontxtfocusin, this);
         this.nameInput.removeEventListener(egret.FocusEvent.FOCUS_OUT, this.ontxtfocusout, this);
-        this.nameInput.removeEventListener(egret.Event.CHANGE, this.onTextChange, this);
     }
 
     updateView()
@@ -56,22 +54,12 @@ export class OAVGameObjectName extends OAVBase
         this.space.mouseEnabled = !this.space.mouseEnabled;
     }
 
-    private _textfocusintxt: boolean;
     private ontxtfocusin()
     {
-        this._textfocusintxt = true;
     }
 
     private ontxtfocusout()
     {
-        this._textfocusintxt = false;
-    }
-
-    private onTextChange()
-    {
-        if (this._textfocusintxt)
-        {
-            this.space.name = this.nameInput.text;
-        }
+        this.space.name = this.nameInput.text;
     }
 }
