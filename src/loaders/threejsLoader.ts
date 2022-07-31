@@ -11,7 +11,7 @@ export class ThreejsLoader
         {
             load(data, (gameobject) =>
             {
-                gameobject.name = pathUtils.getName(url);
+                gameobject.name = pathUtils.nameWithOutExt(url);
                 globalEmitter.emit('asset.parsed', gameobject);
             });
         });

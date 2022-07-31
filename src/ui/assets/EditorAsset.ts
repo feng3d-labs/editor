@@ -1,4 +1,4 @@
-import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, CubeGeometry, CylinderGeometry, dataTransform, FileAsset, FolderAsset, GameObject, GameObjectAsset, GeometryAsset, globalEmitter, gPartial, IEvent, ImageUtil, JSAsset, JsonAsset, Material, MaterialAsset, pathUtils, PlaneGeometry, regExps, Scene, ScriptAsset, SegmentGeometry, ShaderAsset, SphereGeometry, TextAsset, Texture2D, TextureAsset, TextureCube, TextureCubeAsset, TorusGeometry, watch } from 'feng3d';
+import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, CubeGeometry, CylinderGeometry, dataTransform, FileAsset, FolderAsset, GameObject, GameObjectAsset, GeometryAsset, globalEmitter, gPartial, IEvent, ImageUtil, JSAsset, JsonAsset, Material, MaterialAsset, path, PlaneGeometry, regExps, Scene, ScriptAsset, SegmentGeometry, ShaderAsset, SphereGeometry, TextAsset, Texture2D, TextureAsset, TextureCube, TextureCubeAsset, TorusGeometry, watch } from 'feng3d';
 import { editorRS } from '../../assets/EditorRS';
 import { nativeAPI } from '../../assets/NativeRequire';
 import { EditorData } from '../../global/EditorData';
@@ -385,7 +385,7 @@ export class EditorAsset
                     label: 'Export Package...', click: () =>
                     {
                         assetNode.export();
-                    }, enable: !assetNode.isDirectory,
+                    },
                 },
             ];
 
@@ -522,7 +522,7 @@ export class EditorAsset
         if (assetNode.asset instanceof FileAsset)
         {
             const filePath = assetNode.asset.assetPath;
-            const extensions = pathUtils.extname(filePath);
+            const extensions = path.extname(filePath);
             // eslint-disable-next-line no-empty
             switch (extensions)
             {

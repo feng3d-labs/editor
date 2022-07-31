@@ -1,4 +1,4 @@
-import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, globalEmitter, MaterialAsset, pathUtils, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
+import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, globalEmitter, MaterialAsset, path as fengpath, pathUtils, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
 import { editorRS } from '../../assets/EditorRS';
 import { Feng3dScreenShot } from '../../feng3d/Feng3dScreenShot';
 import { TreeNode, TreeNodeMap } from '../components/TreeNode';
@@ -310,34 +310,39 @@ export class AssetNode<T extends AssetNodeEventMap = AssetNodeEventMap> extends 
     {
         const zip = new JSZip();
 
-        let path = this.asset.assetPath;
-        if (!pathUtils.isDirectory(path))
-        { path = pathUtils.dirname(path); }
-
         const filename = this.label;
-        editorRS.fs.getAllPathsInFolder(path, (_err, filepaths) =>
+        const path = this.asset.assetPath;
+        if (this.isDirectory)
         {
-            readfiles();
-            function readfiles()
+            editorRS.fs.getAllPathsInFolder(path, (_err, filepaths) =>
             {
-                if (filepaths.length > 0)
+                readfiles(filepaths);
+            });
+        }
+        else
+        {
+            readfiles([path]);
+        }
+
+        function readfiles(filepaths: string[])
+        {
+            if (filepaths.length > 0)
+            {
+                const filepath = filepaths.shift();
+                editorRS.fs.readArrayBuffer(filepath, (_err, data: ArrayBuffer) =>
                 {
-                    const filepath = filepaths.shift();
-                    editorRS.fs.readArrayBuffer(filepath, (_err, data: ArrayBuffer) =>
-                    {
-                        // 处理文件夹
-                        data && zip.file(filepath, data);
-                        readfiles();
-                    });
-                }
-                else
-                {
-                    zip.generateAsync({ type: 'blob' }).then(function (content)
-                    {
-                        saveAs(content, `${filename}.zip`);
-                    });
-                }
+                    // 处理文件夹
+                    data && zip.file(filepath, data);
+                    readfiles(filepaths);
+                });
             }
-        });
+            else
+            {
+                zip.generateAsync({ type: 'blob' }).then(function (content)
+                {
+                    saveAs(content, `${filename}.zip`);
+                });
+            }
+        }
     }
 }
