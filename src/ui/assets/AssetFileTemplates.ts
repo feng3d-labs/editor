@@ -20,6 +20,7 @@ export class AssetFileTemplates
 export const assetFileTemplates = new AssetFileTemplates();
 
 const scriptTemplate = `
+@feng3d.decoratorRegisterClass()
 class NewScript extends feng3d.Script
 {
 
