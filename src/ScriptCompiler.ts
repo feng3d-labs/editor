@@ -2,6 +2,7 @@
 /// <reference path="../libs/typescriptServices.d.ts" />
 
 import { globalEmitter, IEvent, ScriptAsset, ticker } from 'feng3d';
+import { parse } from 'jsonc-parser';
 import { editorRS } from './assets/EditorRS';
 import { nativeAPI } from './assets/NativeRequire';
 import { EditorData } from './global/EditorData';
@@ -67,7 +68,7 @@ export class ScriptCompiler
         {
             console.assert(!err);
 
-            this.tsconfig = json.parse(str);
+            this.tsconfig = parse(str);
             console.log(this.tsconfig);
 
             const tslist = editorRS.getAssetsByType(ScriptAsset);
