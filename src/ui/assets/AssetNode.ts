@@ -1,4 +1,5 @@
-import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, globalEmitter, MaterialAsset, path as fengpath, pathUtils, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
+import { saveAs } from '@feng3d/filesaver';
+import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, globalEmitter, MaterialAsset, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
 import { editorRS } from '../../assets/EditorRS';
 import { Feng3dScreenShot } from '../../feng3d/Feng3dScreenShot';
 import { TreeNode, TreeNodeMap } from '../components/TreeNode';

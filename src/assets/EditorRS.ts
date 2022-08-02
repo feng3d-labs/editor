@@ -1,7 +1,8 @@
-import { ReadWriteRS, loader, task, FS, indexedDBFS, ReadWriteFS, ReadRS } from 'feng3d';
+import { saveAs } from '@feng3d/filesaver';
+import { FS, indexedDBFS, loader, ReadRS, ReadWriteFS, ReadWriteRS, task } from 'feng3d';
 import { editorcache } from '../caches/Editorcache';
 import { NativeFS } from './NativeFS';
-import { supportNative, nativeFS } from './NativeRequire';
+import { nativeFS, supportNative } from './NativeRequire';
 
 const templateurls = [
     ['resource/template/.vscode/settings.json', '.vscode/settings.json'],

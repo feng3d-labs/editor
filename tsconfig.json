@@ -26,7 +26,6 @@
         "libs/jquery.d.ts",
         //
         "libs/jszip.d.ts",
-        "libs/FileSaver.d.ts",
     ],
     "include": [
         //
