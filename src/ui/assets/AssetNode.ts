@@ -1,10 +1,13 @@
 import { saveAs } from '@feng3d/filesaver';
 import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, globalEmitter, MaterialAsset, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
+import * as JSZip1 from 'jszip';
 import { editorRS } from '../../assets/EditorRS';
 import { Feng3dScreenShot } from '../../feng3d/Feng3dScreenShot';
 import { TreeNode, TreeNodeMap } from '../components/TreeNode';
 import { DragData } from '../drag/Drag';
 import { editorAsset } from './EditorAsset';
+
+const JSZip = JSZip1['default'] as typeof JSZip1;
 
 export interface AssetNodeEventMap extends TreeNodeMap
 {

@@ -59,7 +59,8 @@
     "@feng3d/filesaver": "^0.0.1",
     "electron-squirrel-startup": "^1.0.0",
     "feng3d": "0.5.0",
-    "jsonc-parser": "^3.1.0"
+    "jsonc-parser": "^3.1.0",
+    "jszip": "^3.10.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.65",
