@@ -19,9 +19,8 @@
         //
         "libs/modules/egret/egret.d.ts",
         "libs/modules/eui/eui.d.ts",
-        "libs/modules/res/res.d.ts",
+        "libs/modules/assetsmanager/assetsmanager.d.ts",
         "libs/modules/tween/tween.d.ts",
-        "libs/exml.e.d.ts",
         "libs/jquery.d.ts",
     ],
     "include": [

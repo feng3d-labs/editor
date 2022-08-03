@@ -147,8 +147,9 @@ export const mouseEventEnvironment = () =>
         }
         mousedownObject = null;
     });
-    windowEventProxy.on('dblclick', (e) =>
+    windowEventProxy.on('dblclick', (event) =>
     {
+        const e = event.data;
         const location = webTouchHandler.getLocation(e);
         const x = location.x;
         const y = location.y;
