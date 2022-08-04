@@ -22,10 +22,8 @@ export interface NativeAPI
 {
     /**
      * 选择文件夹对话框
-     *
-     * @param callback 完成回调
      */
-    selectDirectoryDialog(callback: (event: Event, path: string) => void): void;
+    selectDirectoryDialog(): Promise<string>;
 
     /**
      * 在资源管理器中显示
@@ -39,7 +37,7 @@ export interface NativeAPI
      *
      * @param  projectPath 项目路径
      */
-    openWithVSCode(projectPath: string, callback: (err: Error) => void): void;
+    openWithVSCode(projectPath: string): Promise<void>;
 
     /**
      * 打开开发者工具
@@ -55,55 +53,48 @@ export interface NativeFSBase
     /**
      * 文件是否存在
      * @param path 文件路径
-     * @param callback 回调函数
      */
-    exists(path: string, callback: (exists: boolean) => void): void;
+    exists(path: string): Promise<boolean>;
     /**
      * 读取文件夹中文件列表
      * @param path 路径
-     * @param callback 回调函数
      */
-    readdir(path: string, callback: (err: Error, files: string[]) => void): void;
+    readdir(path: string): Promise<string[]>;
     /**
      * 新建文件夹
      *
      * @param path 文件夹路径
-     * @param callback 回调函数
      */
-    mkdir(path: string, callback: (err: Error) => void): void;
+    mkdir(path: string): Promise<void>;
     /**
      * 读取文件
      * @param path 路径
      * @param callback 读取完成回调 当err不为null时表示读取失败
      */
-    readFile(path: string, callback: (err: Error, data: ArrayBuffer) => void): void;
+    readFile(path: string): Promise<ArrayBuffer>;
     /**
      * 删除文件
      *
      * @param path 文件路径
-     * @param callback 完成回调
      */
-    deleteFile(path: string, callback: (err: Error) => void): void;
+    deleteFile(path: string): Promise<void>;
     /**
      * 删除文件夹
      *
      * @param path 文件夹路径
-     * @param callback 完成回调
      */
-    rmdir(path: string, callback: (err: Error) => void): void;
+    rmdir(path: string): Promise<void>;
     /**
      * 是否为文件夹
      *
      * @param path 文件路径
-     * @param callback 完成回调
      */
-    isDirectory(path: string, callback: (result: boolean) => void): void;
+    isDirectory(path: string): Promise<boolean>;
     /**
      * 写ArrayBuffer(新建)文件
      *
      * @param path 文件路径
      * @param data 文件数据
-     * @param callback 回调函数
      */
-    writeFile(path: string, data: ArrayBuffer, callback: (err: Error) => void): void;
+    writeFile(path: string, data: ArrayBuffer): Promise<void>;
 }

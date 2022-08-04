@@ -35,17 +35,15 @@ export class SceneRotateTool extends Component
 
     private isload = false;
 
-    private load()
+    private async load()
     {
         if (!this.view) return;
         if (this.isload) return;
         this.isload = true;
 
-        loader.loadText(EditorData.editorData.getEditorAssetPath('gameobjects/SceneRotateTool.gameobject.json'), (content) =>
-        {
-            const rotationToolModel: GameObject = serialization.deserialize(JSON.parse(content));
-            this.onLoaded(rotationToolModel);
-        });
+        const content = await loader.loadText(EditorData.editorData.getEditorAssetPath('gameobjects/SceneRotateTool.gameobject.json'));
+        const rotationToolModel: GameObject = serialization.deserialize(JSON.parse(content));
+        this.onLoaded(rotationToolModel);
     }
 
     private onLoaded(rotationToolModel: GameObject)

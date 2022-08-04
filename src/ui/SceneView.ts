@@ -97,7 +97,7 @@ export class SceneView extends eui.Component implements ModuleView
 			mrsTool.editorCamera = editorCamera;
 			this.view.editorComponent = editorScene.gameObject.addComponent(EditorComponent);
 			//
-			loader.loadText(EditorData.editorData.getEditorAssetPath('gameobjects/Trident.gameobject.json'), (content) =>
+			loader.loadText(EditorData.editorData.getEditorAssetPath('gameobjects/Trident.gameobject.json')).then((content) =>
 			{
 				const trident: GameObject = serialization.deserialize(JSON.parse(content));
 				editorScene.gameObject.addChild(trident);

@@ -34,36 +34,33 @@ export class EditorAsset
 
     /**
      * 初始化项目
-     * @param callback
      */
-    initproject(callback: () => void)
+    async initproject()
     {
-        editorRS.init(() =>
+        await editorRS.init();
+
+        this._assetIDMap = {};
+        this._assetPathMap = {};
+
+        const allAssets = editorRS.getAllAssets();
+        allAssets.map((asset) =>
         {
-            this._assetIDMap = {};
-            this._assetPathMap = {};
+            const node = new AssetNode(asset);
+            this.addAsset(node);
 
-            const allAssets = editorRS.getAllAssets();
-            allAssets.map((asset) =>
+            return node;
+        }).forEach((element) =>
+        {
+            if (element.asset.parentAsset)
             {
-                const node = new AssetNode(asset);
-                this.addAsset(node);
-
-                return node;
-            }).forEach((element) =>
-            {
-                if (element.asset.parentAsset)
-                {
-                    const parentNode = this.getAssetByID(element.asset.parentAsset.assetId);
-                    parentNode.addChild(element);
-                }
-            });
-
-            this.rootFile = this.getAssetByID(editorRS.root.assetId);
-            this.showFloder = this.rootFile;
-            this.rootFile.isOpen = true;
-            callback();
+                const parentNode = this.getAssetByID(element.asset.parentAsset.assetId);
+                parentNode.addChild(element);
+            }
         });
+
+        this.rootFile = this.getAssetByID(editorRS.root.assetId);
+        this.showFloder = this.rootFile;
+        this.rootFile.isOpen = true;
     }
 
     /**
@@ -82,22 +79,17 @@ export class EditorAsset
         this._assetPathMap[node.asset.assetPath] = node;
     }
 
-    readScene(path: string, callback: (err: Error, scene: Scene) => void)
+    async readScene(path: string)
     {
-        editorRS.fs.readObject(path, (err, obj) =>
+        const obj = await editorRS.fs.readObject(path);
+        if (!obj)
         {
-            if (err)
-            {
-                callback(err, null);
+            return null;
+        }
+        const object: GameObject = await editorRS.deserializeWithAssets(obj) as any;
+        const scene = object.getComponent(Scene);
 
-                return;
-            }
-            editorRS.deserializeWithAssets(obj, (object: GameObject) =>
-            {
-                const scene = object.getComponent(Scene);
-                callback(null, scene);
-            });
-        });
+        return scene;
     }
 
     /**
@@ -125,38 +117,23 @@ export class EditorAsset
      *
      * @param assetNode 资源
      */
-    deleteAsset(assetNode: AssetNode, callback?: (err: Error) => void)
+    async deleteAsset(assetNode: AssetNode)
     {
-        editorRS.deleteAsset(assetNode.asset, (err) =>
-        {
-            if (err)
-            {
-                callback && callback(err);
+        await editorRS.deleteAsset(assetNode.asset);
+        delete this._assetIDMap[assetNode.asset.assetId];
+        delete this._assetPathMap[assetNode.asset.assetPath];
 
-                return;
-            }
-            delete this._assetIDMap[assetNode.asset.assetId];
-            delete this._assetPathMap[assetNode.asset.assetPath];
-
-            globalEmitter.emit('asset.deletefile', { id: assetNode.asset.assetId });
-
-            callback && callback(err);
-        });
+        globalEmitter.emit('asset.deletefile', { id: assetNode.asset.assetId });
     }
 
     /**
      * 保存资源
      *
      * @param assetNode 资源
-     * @param callback 完成回调
      */
-    saveAsset(assetNode: AssetNode, callback?: () => void)
+    async saveAsset(assetNode: AssetNode)
     {
-        editorRS.writeAsset(assetNode.asset, (err) =>
-        {
-            console.assert(!err, `资源 ${assetNode.asset.assetId} 保存失败！`);
-            callback && callback();
-        });
+        await editorRS.writeAsset(assetNode.asset);
     }
 
     /**
@@ -165,35 +142,24 @@ export class EditorAsset
      * @param cls 资源类定义
      * @param fileName 文件名称
      * @param value 初始数据
-     * @param folderNode 所在文件夹，如果值为null时默认添加到根文件夹中
-     * @param callback 完成回调函数
      */
-    createAsset<T extends FileAsset>(folderPath: string, cls: new () => T, fileName?: string, value?: gPartial<T>, callback?: (err: Error, assetNode: AssetNode) => void)
+    async createAsset<T extends FileAsset>(folderPath: string, cls: new () => T, fileName?: string, value?: gPartial<T>)
     {
         const folderNode = this.getAssetByPath(folderPath);
 
         const folder = <FolderAsset>folderNode.asset;
-        editorRS.createAsset(cls, fileName, value, folder, (err, asset) =>
-        {
-            if (asset)
-            {
-                const assetNode = new AssetNode(asset);
+        const asset = await editorRS.createAsset(cls, fileName, value, folder);
+        const assetNode = new AssetNode(asset);
 
-                assetNode.isLoaded = true;
+        assetNode.isLoaded = true;
 
-                this.addAsset(assetNode);
+        this.addAsset(assetNode);
 
-                folderNode.addChild(assetNode);
+        folderNode.addChild(assetNode);
 
-                EditorData.editorData.selectObject(assetNode);
+        EditorData.editorData.selectObject(assetNode);
 
-                callback && callback(null, assetNode);
-            }
-            else
-            {
-                console.warn(err.message);
-            }
-        });
+        return assetNode;
     }
 
     /**
@@ -218,23 +184,19 @@ export class EditorAsset
                             }
                         },
                         {
-                            label: 'TS Script', click: () =>
+                            label: 'TS Script', click: async () =>
                             {
                                 const fileName = editorRS.getValidChildName(folder, 'NewScript');
-                                this.createAsset(folderPath, ScriptAsset, fileName, { textContent: assetFileTemplates.getNewScript(fileName) }, () =>
-                                {
-                                    globalEmitter.emit('script.compile');
-                                });
+                                await this.createAsset(folderPath, ScriptAsset, fileName, { textContent: assetFileTemplates.getNewScript(fileName) });
+                                globalEmitter.emit('script.compile');
                             }
                         },
                         {
-                            label: 'Shader', click: () =>
+                            label: 'Shader', click: async () =>
                             {
                                 const fileName = editorRS.getValidChildName(folder, 'NewShader');
-                                this.createAsset(folderPath, ShaderAsset, fileName, { textContent: assetFileTemplates.getNewShader(fileName) }, () =>
-                                {
-                                    globalEmitter.emit('script.compile');
-                                });
+                                await this.createAsset(folderPath, ShaderAsset, fileName, { textContent: assetFileTemplates.getNewShader(fileName) });
+                                globalEmitter.emit('script.compile');
                             }
                         },
                         {
@@ -336,12 +298,9 @@ export class EditorAsset
                         nativeAPI.showFileInExplorer(fullpath);
                     }, enable: !!nativeAPI
                 }, {
-                    label: '使用VSCode打开项目', click: () =>
+                    label: '使用VSCode打开项目', click: async () =>
                     {
-                        nativeAPI.openWithVSCode(editorRS.fs.projectname, (err) =>
-                        {
-                            if (err) throw err;
-                        });
+                        await nativeAPI.openWithVSCode(editorRS.fs.projectname);
                     }, enable: !!nativeAPI,
                 },
                 {
@@ -393,17 +352,15 @@ export class EditorAsset
         this.parserMenu(menuconfig, assetNode);
         menuconfig.push(
             {
-                label: '去除背景色', click: () =>
+                label: '去除背景色', click: async () =>
                 {
                     const image: HTMLImageElement = assetNode.asset['image'];
                     const imageUtil = new ImageUtil().fromImage(image);
                     const backColor = new Color4(222 / 255, 222 / 255, 222 / 255);
                     imageUtil.clearBackColor(backColor);
-                    dataTransform.imagedataToImage(imageUtil.imageData, 1, (img) =>
-                    {
-                        assetNode.asset['image'] = img;
-                        this.saveAsset(assetNode);
-                    });
+                    const img = await dataTransform.imagedataToImage(imageUtil.imageData, 1);
+                    assetNode.asset['image'] = img;
+                    this.saveAsset(assetNode);
                 }, enable: assetNode.asset.data instanceof Texture2D,
             },
         );
@@ -414,14 +371,12 @@ export class EditorAsset
      * 保存对象
      *
      * @param object 对象
-     * @param callback
      */
-    saveObject(object: any, callback?: (file: AssetNode) => void)
+    async saveObject(object: any)
     {
-        this.createAsset(this.showFloder.asset.assetPath, GameObjectAsset, object.name, { data: object }, (_err, assetNode) =>
-        {
-            callback && callback(assetNode);
-        });
+        const assetNode = await this.createAsset(this.showFloder.asset.assetPath, GameObjectAsset, object.name, { data: object });
+
+        return assetNode;
     }
 
     /**
@@ -441,7 +396,7 @@ export class EditorAsset
         }
         const file = files.shift();
         const reader = new FileReader();
-        reader.addEventListener('load', (event) =>
+        reader.addEventListener('load', async (event) =>
         {
             const result: ArrayBuffer = <any>event.target['result'];
             const showFloder = this.showFloder.asset.assetPath;
@@ -462,49 +417,51 @@ export class EditorAsset
             const fileName = file.name;
             if (regExps.image.test(file.name))
             {
-                dataTransform.arrayBufferToImage(result, (img) =>
-                {
-                    const texture2D = new Texture2D();
-                    texture2D['_pixels'] = img;
-                    this.createAsset(showFloder, TextureAsset, fileName, { data: <any>texture2D }, createAssetCallback);
-                });
+                const img = await dataTransform.arrayBufferToImage(result);
+                const texture2D = new Texture2D();
+                texture2D['_pixels'] = img;
+                const assetNode = await this.createAsset(showFloder, TextureAsset, fileName, { data: <any>texture2D });
+
+                createAssetCallback(null, assetNode);
             }
             else if (regExps.audio.test(file.name))
             {
-                this.createAsset(showFloder, AudioAsset, fileName, { arraybuffer: <any>result }, createAssetCallback);
+                const assetNode = await this.createAsset(showFloder, AudioAsset, fileName, { arraybuffer: <any>result });
+
+                createAssetCallback(null, assetNode);
             }
             else
             {
-                this.createAsset(showFloder, ArrayBufferAsset, fileName, { arraybuffer: <any>result }, createAssetCallback);
+                const assetNode = await this.createAsset(showFloder, ArrayBufferAsset, fileName, { arraybuffer: <any>result });
+
+                createAssetCallback(null, assetNode);
             }
         }, false);
         reader.readAsArrayBuffer(file);
     }
 
-    runProjectScript(callback?: () => void)
+    async runProjectScript()
     {
-        editorRS.fs.readString('project.js', (_err, content) =>
+        const content = await editorRS.fs.readString('project.js');
+
+        if (content !== this._preProjectJsContent)
         {
-            if (content !== this._preProjectJsContent)
+            //
+            // eslint-disable-next-line no-eval
+            const windowEval = eval.bind(window);
+            try
             {
-                //
-                // eslint-disable-next-line no-eval
-                const windowEval = eval.bind(window);
-                try
-                {
-                    // 运行project.js
-                    windowEval(content);
-                    // 刷新属性界面（界面中可能有脚本）
-                    globalEmitter.emit('inspector.update');
-                }
-                catch (error)
-                {
-                    console.warn(error);
-                }
+                // 运行project.js
+                windowEval(content);
+                // 刷新属性界面（界面中可能有脚本）
+                globalEmitter.emit('inspector.update');
             }
-            this._preProjectJsContent = content;
-            callback && callback();
-        });
+            catch (error)
+            {
+                console.warn(error);
+            }
+        }
+        this._preProjectJsContent = content;
     }
 
     /**

@@ -1,5 +1,5 @@
 import { saveAs } from '@feng3d/filesaver';
-import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, globalEmitter, MaterialAsset, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
+import { AssetType, dataTransform, FileAsset, FolderAsset, GameObjectAsset, GeometryAsset, MaterialAsset, serialize, TextureAsset, TextureCubeAsset } from 'feng3d';
 import * as JSZip1 from 'jszip';
 import { editorRS } from '../../assets/EditorRS';
 import { Feng3dScreenShot } from '../../feng3d/Feng3dScreenShot';
@@ -76,7 +76,7 @@ export class AssetNode<T extends AssetNodeEventMap = AssetNodeEventMap> extends 
             this.image = 'file_png';
         }
 
-        asset.readPreview((_err, image) =>
+        asset.readPreview().then((image) =>
         {
             if (image)
             {
@@ -91,44 +91,37 @@ export class AssetNode<T extends AssetNodeEventMap = AssetNodeEventMap> extends 
 
     /**
      * 加载
-     *
-     * @param callback 加载完成回调
      */
-    load(callback?: () => void)
+    async load()
     {
         if (this.isLoaded)
         {
-            callback && callback();
-
             return;
         }
 
         if (this.isLoading)
         {
-            callback && this.on('loaded', callback);
+            await new Promise((resolve) =>
+            {
+                this.on('loaded', resolve);
+            });
 
             return;
         }
 
         this.isLoading = true;
 
-        editorRS.readAsset(this.asset.assetId, (err, _asset) =>
-        {
-            console.assert(!err);
+        await editorRS.readAsset(this.asset.assetId);
+        this.isLoading = false;
+        this.isLoaded = true;
 
-            this.isLoading = false;
-            this.isLoaded = true;
-
-            callback && callback();
-
-            this.emit('loaded', this);
-        });
+        this.emit('loaded', this);
     }
 
     /**
      * 更新预览图
      */
-    updateImage()
+    async updateImage()
     {
         if (this.asset instanceof TextureAsset)
         {
@@ -136,55 +129,44 @@ export class AssetNode<T extends AssetNodeEventMap = AssetNodeEventMap> extends 
 
             this.image = Feng3dScreenShot.feng3dScreenShot.drawTexture(texture);
 
-            dataTransform.dataURLToImage(this.image, (image) =>
-            {
-                this.asset.writePreview(image);
-            });
+            const img = await dataTransform.dataURLToImage(this.image);
+            this.asset.writePreview(img);
         }
         else if (this.asset instanceof TextureCubeAsset)
         {
             const textureCube = this.asset.data;
-            textureCube.onLoadCompleted(() =>
+            textureCube.onLoadCompleted(async () =>
             {
                 this.image = Feng3dScreenShot.feng3dScreenShot.drawTextureCube(textureCube);
 
-                dataTransform.dataURLToImage(this.image, (image) =>
-                {
-                    this.asset.writePreview(image);
-                });
+                const img = await dataTransform.dataURLToImage(this.image);
+                this.asset.writePreview(img);
             });
         }
         else if (this.asset instanceof MaterialAsset)
         {
             const mat = this.asset;
-            mat.data.onLoadCompleted(() =>
+            mat.data.onLoadCompleted(async () =>
             {
                 this.image = Feng3dScreenShot.feng3dScreenShot.drawMaterial(mat.data).toDataURL();
-                dataTransform.dataURLToImage(this.image, (image) =>
-                {
-                    this.asset.writePreview(image);
-                });
+                const img = await dataTransform.dataURLToImage(this.image);
+                this.asset.writePreview(img);
             });
         }
         else if (this.asset instanceof GeometryAsset)
         {
             this.image = Feng3dScreenShot.feng3dScreenShot.drawGeometry(this.asset.data as any).toDataURL();
-
-            dataTransform.dataURLToImage(this.image, (image) =>
-            {
-                this.asset.writePreview(image);
-            });
+            const img = await dataTransform.dataURLToImage(this.image);
+            this.asset.writePreview(img);
         }
         else if (this.asset instanceof GameObjectAsset)
         {
             const gameObject = this.asset.data;
-            gameObject.onLoadCompleted(() =>
+            gameObject.onLoadCompleted(async () =>
             {
                 this.image = Feng3dScreenShot.feng3dScreenShot.drawGameObject(gameObject).toDataURL();
-                dataTransform.dataURLToImage(this.image, (image) =>
-                {
-                    this.asset.writePreview(image);
-                });
+                const img = await dataTransform.dataURLToImage(this.image);
+                this.asset.writePreview(img);
             });
         }
     }
@@ -291,62 +273,35 @@ export class AssetNode<T extends AssetNodeEventMap = AssetNodeEventMap> extends 
         if (!(this.asset instanceof FolderAsset)) return;
         const folder = this.asset;
 
-        dragdata.getDragData('assetNodes').forEach((v) =>
+        dragdata.getDragData('assetNodes').forEach(async (v) =>
         {
-            editorRS.moveAsset(v.asset, folder, (err) =>
-            {
-                if (!err)
-                {
-                    this.addChild(v);
-                }
-                else
-                {
-                    globalEmitter.emit('message.error', err.message);
-                }
-            });
+            await editorRS.moveAsset(v.asset, folder);
+            this.addChild(v);
         });
     }
 
     /**
      * 导出
      */
-    export()
+    async export()
     {
         const zip = new JSZip();
 
         const filename = this.label;
         const path = this.asset.assetPath;
+        let filepaths: string[] = [path];
         if (this.isDirectory)
         {
-            editorRS.fs.getAllPathsInFolder(path, (_err, filepaths) =>
-            {
-                readfiles(filepaths);
-            });
-        }
-        else
-        {
-            readfiles([path]);
+            filepaths = await editorRS.fs.getAllPathsInFolder(path);
         }
 
-        function readfiles(filepaths: string[])
+        await Promise.all(filepaths.map(async (filepath) =>
         {
-            if (filepaths.length > 0)
-            {
-                const filepath = filepaths.shift();
-                editorRS.fs.readArrayBuffer(filepath, (_err, data: ArrayBuffer) =>
-                {
-                    // 处理文件夹
-                    data && zip.file(filepath, data);
-                    readfiles(filepaths);
-                });
-            }
-            else
-            {
-                zip.generateAsync({ type: 'blob' }).then(function (content)
-                {
-                    saveAs(content, `${filename}.zip`);
-                });
-            }
-        }
+            const data = await editorRS.fs.readArrayBuffer(filepath);
+            data && zip.file(filepath, data);
+        }));
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, `${filename}.zip`);
     }
 }

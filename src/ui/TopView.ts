@@ -116,28 +116,20 @@ export class TopView extends eui.Component implements eui.UIComponent
 				EditorData.editorData.isBaryCenter = !EditorData.editorData.isBaryCenter;
 				break;
 			case this.playBtn:
-				globalEmitter.emit('inspector.saveShowData', () =>
+				globalEmitter.emit('inspector.saveShowData', async () =>
 				{
 					const obj = serialization.serialize(EditorData.editorData.gameScene.gameObject);
-					editorRS.fs.writeObject('default.scene.json', obj, (err) =>
+					await editorRS.fs.writeObject('default.scene.json', obj);
+					if (editorRS.fs.type === FSType.indexedDB)
 					{
-						if (err)
-						{
-							console.warn(err);
-
-							return;
-						}
-						if (editorRS.fs.type === FSType.indexedDB)
-						{
-							if (TopView.runwin) TopView.runwin.close();
-							TopView.runwin = window.open(`run.html?fstype=${FS.fs.type}&project=${editorcache.projectname}`);
-
-							return;
-						}
-						const path = editorRS.fs.getAbsolutePath('index.html');
 						if (TopView.runwin) TopView.runwin.close();
-						TopView.runwin = window.open(path);
-					});
+						TopView.runwin = window.open(`run.html?fstype=${FS.fs.type}&project=${editorcache.projectname}`);
+
+						return;
+					}
+					const path = editorRS.fs.getAbsolutePath('index.html');
+					if (TopView.runwin) TopView.runwin.close();
+					TopView.runwin = window.open(path);
 				});
 				break;
 			case this.qrcodeButton:

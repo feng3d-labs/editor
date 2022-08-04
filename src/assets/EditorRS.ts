@@ -1,5 +1,5 @@
 import { saveAs } from '@feng3d/filesaver';
-import { FS, indexedDBFS, loader, ReadRS, ReadWriteFS, ReadWriteRS, task } from 'feng3d';
+import { FS, indexedDBFS, loader, ReadRS, ReadWriteFS, ReadWriteRS } from 'feng3d';
 import * as JSZip1 from 'jszip';
 import { editorcache } from '../caches/Editorcache';
 import { NativeFS } from './NativeFS';
@@ -29,93 +29,37 @@ export class EditorRS extends ReadWriteRS
 {
     /**
      * 初始化项目
-     *
-     * @param callback 完成回调
      */
-    initproject(callback: (err?: Error) => void)
+    async initproject()
     {
-        this.fs.hasProject(editorcache.projectname, (has) =>
+        const has = await this.fs.hasProject(editorcache.projectname);
+
+        await this.fs.initproject(editorcache.projectname);
+        if (!has)
         {
-            this.fs.initproject(editorcache.projectname, (err: Error) =>
-            {
-                if (err)
-                {
-                    callback(err);
-
-                    return;
-                }
-                if (has)
-                {
-                    callback();
-
-                    return;
-                }
-                this.createproject(callback);
-            });
-        });
+            await this.createproject();
+        }
     }
 
     /**
      * 创建项目
      */
-    private createproject(callback: (err?: Error) => void)
+    private async createproject()
     {
-        const urls = templateurls;
-        let index = 0;
-        const loadUrls = () =>
+        for (let i = 0; i < templateurls.length; i++)
         {
-            if (index >= urls.length)
-            {
-                callback();
-
-                return;
-            }
-            loader.loadText(urls[index][0], (content) =>
-            {
-                this.fs.writeString(urls[index][1], content, (err) =>
-                {
-                    if (err) throw err;
-                    index++;
-                    loadUrls();
-                });
-            }, null, (e) =>
-            {
-                throw e;
-                index++;
-                loadUrls();
-            });
-        };
-        loadUrls();
+            const content = await loader.loadText(templateurls[i][0]);
+            await this.fs.writeString(templateurls[i][1], content);
+        }
     }
 
-    upgradeProject(callback: () => void)
+    async upgradeProject()
     {
-        const urls = templateurls;
-        let index = 0;
-        const loadUrls = () =>
+        for (let i = 0; i < templateurls.length; i++)
         {
-            if (index >= urls.length)
-            {
-                callback();
-
-                return;
-            }
-            loader.loadText(urls[index][0], (content) =>
-            {
-                this.fs.writeString(urls[index][1], content, (err) =>
-                {
-                    if (err) console.warn(err);
-                    index++;
-                    loadUrls();
-                });
-            }, null, (e) =>
-            {
-                console.warn(e);
-                index++;
-                loadUrls();
-            });
-        };
-        loadUrls();
+            const content = await loader.loadText(templateurls[i][0]);
+            await this.fs.writeString(templateurls[i][1], content);
+        }
     }
 
     /**
@@ -131,36 +75,24 @@ export class EditorRS extends ReadWriteRS
 
     /**
      * 清理项目
-     *
-     * @param callback
      */
-    clearProject(callback: () => void)
+    async clearProject()
     {
         this._idMap = {};
         this._pathMap = {};
 
-        this.fs.delete('', callback);
+        await this.fs.delete('');
     }
 
     /**
      * 导出项目为zip压缩包
      *
      * @param filename 导出后压缩包名称
-     * @param callback 完成回调
      */
-    exportProjectToJSZip(filename: string, callback?: () => void)
+    async exportProjectToJSZip(filename: string)
     {
-        this.fs.getAllPathsInFolder('', (err, filepaths) =>
-        {
-            if (err)
-            {
-                console.error(err);
-                callback && callback();
-
-                return;
-            }
-            this.exportFilesToJSZip(filename, filepaths, callback);
-        });
+        const filepaths = await this.fs.getAllPathsInFolder('');
+        await this.exportFilesToJSZip(filename, filepaths);
     }
 
     /**
@@ -168,21 +100,11 @@ export class EditorRS extends ReadWriteRS
      *
      * @param filename 导出后压缩包名称
      * @param folderpath 需要导出的文件夹路径
-     * @param callback 完成回调
      */
-    exportFolderToJSZip(filename: string, folderpath: string, callback: () => void)
+    async exportFolderToJSZip(filename: string, folderpath: string)
     {
-        this.fs.getAllPathsInFolder(folderpath, (err, filepaths) =>
-        {
-            if (err)
-            {
-                console.error(err);
-                callback && callback();
-
-                return;
-            }
-            this.exportFilesToJSZip(filename, filepaths, callback);
-        });
+        const filepaths = await this.fs.getAllPathsInFolder(folderpath);
+        await this.exportFilesToJSZip(filename, filepaths);
     }
 
     /**
@@ -190,77 +112,52 @@ export class EditorRS extends ReadWriteRS
      *
      * @param filename 导出后压缩包名称
      * @param filepaths 需要导出的文件列表
-     * @param callback 完成回调
      */
-    exportFilesToJSZip(filename: string, filepaths: string[], callback?: () => void)
+    async exportFilesToJSZip(filename: string, filepaths: string[])
     {
         const zip = new JSZip();
-        const fns = filepaths.map((p) => (callback) =>
+        await Promise.all(filepaths.map((p) => async () =>
         {
-            this.fs.isDirectory(p, (result) =>
+            const result = await this.fs.isDirectory(p);
+            if (result)
             {
-                if (result)
-                {
-                    zip.folder(p);
-                    callback();
-                }
-                else
-                {
-                    this.fs.readArrayBuffer(p, (_err, data) =>
-                    {
-                        // 处理文件夹
-                        data && zip.file(p, data);
-                        callback();
-                    });
-                }
-            });
-        });
-        task.parallel(fns)(() =>
-        {
-            zip.generateAsync({ type: 'blob' }).then(function (content)
+                zip.folder(p);
+            }
+            else
             {
-                saveAs(content, filename);
-                callback && callback();
-            });
-        });
+                const data = await this.fs.readArrayBuffer(p);
+                // 处理文件夹
+                data && zip.file(p, data);
+            }
+        }));
+
+        const content = await zip.generateAsync({ type: 'blob' });
+        saveAs(content, filename);
     }
 
     /**
      * 导入项目
      */
-    importProject(file: File, callback: () => void)
+    async importProject(file: File)
     {
         const zip = new JSZip();
-        zip.loadAsync(file).then((value) =>
+        const value = await zip.loadAsync(file);
+
+        const filepaths = Object.keys(value.files);
+        filepaths.sort();
+
+        await Promise.all(filepaths.map((p) => async () =>
         {
-            const filepaths = Object.keys(value.files);
-            filepaths.sort();
-
-            const fns = filepaths.map((p) => (callback) =>
+            if (value.files[p].dir)
             {
-                if (value.files[p].dir)
-                {
-                    this.fs.mkdir(p, (_err) =>
-                    {
-                        callback();
-                    });
-                }
-                else
-                {
-                    zip.file(p).async('arraybuffer').then((data) =>
-                    {
-                        this.fs.writeFile(p, data, (_err) =>
-                        {
-                            callback();
-                        });
-                    }, (_reason) =>
-                    {
-                    });
-                }
-            });
-
-            task.series(fns)(callback);
-        });
+                await this.fs.mkdir(p);
+            }
+            else
+            {
+                const data = await zip.file(p).async('arraybuffer');
+                await this.fs.writeFile(p, data);
+            }
+        }));
     }
 }
 

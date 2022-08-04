@@ -1,4 +1,4 @@
-import { serialization, task, View } from 'feng3d';
+import { serialization, View } from 'feng3d';
 import { editorRS } from './assets/EditorRS';
 import { editorcache } from './caches/Editorcache';
 import { EditorData } from './global/EditorData';
@@ -33,85 +33,80 @@ export class Editor extends eui.UILayer
         this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddedToStage, this);
     }
 
-    private onAddedToStage()
+    private async onAddedToStage()
     {
         editorui.stage = this.stage;
 
         //
         modules.message = new Message();
 
-        //
-        task.series([
-            this.initEgret.bind(this),
-            editorRS.initproject.bind(editorRS),
-            this.init.bind(this),
-        ])(() =>
-        {
-            console.log(`初始化完成。`);
-            // 移除无效入口类显示对象
-            this.parent && this.parent.removeChild(this);
-        });
+        await this.initEgret();
+        await editorRS.initproject();
+        await this.init();
+
+        console.log(`初始化完成。`);
+        // 移除无效入口类显示对象
+        this.parent && this.parent.removeChild(this);
     }
 
     /**
      * 初始化 Egret
-     *
-     * @param callback 完成回调
      */
-    private initEgret(callback: () => void)
+    private async initEgret()
     {
-        const mainui = new MainUI(() =>
+        await new Promise(((resolve) =>
         {
-            //
-            const tooltipLayer = new eui.UILayer();
-            tooltipLayer.touchEnabled = false;
-            this.stage.addChild(tooltipLayer);
-            editorui.tooltipLayer = tooltipLayer;
-            //
-            const popupLayer = new eui.UILayer();
-            popupLayer.touchEnabled = false;
-            this.stage.addChild(popupLayer);
-            editorui.popupLayer = popupLayer;
-            //
-            const messageLayer = new eui.UILayer();
-            messageLayer.touchEnabled = false;
-            this.stage.addChild(messageLayer);
-            editorui.messageLayer = messageLayer;
-            //
-            editorcache.projectname = editorcache.projectname || 'newproject';
+            const mainui = new MainUI(() =>
+            {
+                //
+                const tooltipLayer = new eui.UILayer();
+                tooltipLayer.touchEnabled = false;
+                this.stage.addChild(tooltipLayer);
+                editorui.tooltipLayer = tooltipLayer;
+                //
+                const popupLayer = new eui.UILayer();
+                popupLayer.touchEnabled = false;
+                this.stage.addChild(popupLayer);
+                editorui.popupLayer = popupLayer;
+                //
+                const messageLayer = new eui.UILayer();
+                messageLayer.touchEnabled = false;
+                this.stage.addChild(messageLayer);
+                editorui.messageLayer = messageLayer;
+                //
+                editorcache.projectname = editorcache.projectname || 'newproject';
 
-            editorui.stage.removeChild(mainui);
-            callback();
-        });
-        editorui.stage.addChild(mainui);
+                editorui.stage.removeChild(mainui);
+                resolve(undefined);
+            });
+            editorui.stage.addChild(mainui);
+        }));
     }
 
-    private init(callback: () => void)
+    private async init()
     {
         document.head.getElementsByTagName('title')[0].innerText = `feng3d-editor -- ${editorcache.projectname}`;
 
         editorcache.setLastProject(editorcache.projectname);
 
-        editorAsset.initproject(() =>
-        {
-            editorAsset.runProjectScript(() =>
-            {
-                editorAsset.readScene('default.scene.json', (err, scene) =>
-                {
-                    if (err)
-                        { EditorData.editorData.gameScene = View.createNewScene(); }
-                    else
-                        { EditorData.editorData.gameScene = scene; }
+        await editorAsset.initproject();
+        await editorAsset.runProjectScript();
+        const scene = await editorAsset.readScene('default.scene.json');
 
-                    //
-                    this.initMainView();
-                    // eslint-disable-next-line no-new
-                    new Editorshortcut();
-                    mouseEventEnvironment();
-                    callback();
-                });
-            });
-        });
+        if (scene)
+        {
+            EditorData.editorData.gameScene = scene;
+        }
+        else
+        {
+            EditorData.editorData.gameScene = View.createNewScene();
+        }
+
+        //
+        this.initMainView();
+        // eslint-disable-next-line no-new
+        new Editorshortcut();
+        mouseEventEnvironment();
 
         window.addEventListener('beforeunload', () =>
         {

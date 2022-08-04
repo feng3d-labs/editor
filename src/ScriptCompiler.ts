@@ -61,33 +61,28 @@ export class ScriptCompiler
      *
      * @param callback 完成回调
      */
-    private loadtslibs(callback: (tslibs: { path: string, code: string }[]) => void)
+    private async loadtslibs(callback: (tslibs: { path: string, code: string }[]) => void)
     {
         // 加载 ts 配置
-        editorRS.fs.readString('tsconfig.json', (err, str) =>
+        const str = await editorRS.fs.readString('tsconfig.json');
+
+        this.tsconfig = parse(str);
+        console.log(this.tsconfig);
+
+        const tslist = editorRS.getAssetsByType(ScriptAsset);
+        let files: string[] = this.tsconfig.files;
+        files = files.filter((v) => v.indexOf('Assets') !== 0);
+        files = files.concat(tslist.map((v) => v.assetPath));
+        //
+        const strs = await editorRS.fs.readStrings(files);
+        const tslibs = files.map((f, i) =>
         {
-            console.assert(!err);
+            const str = strs[i]; if (typeof str === 'string') return { path: f, code: str };
+            console.warn(`没有找到文件 ${f}`);
 
-            this.tsconfig = parse(str);
-            console.log(this.tsconfig);
-
-            const tslist = editorRS.getAssetsByType(ScriptAsset);
-            let files: string[] = this.tsconfig.files;
-            files = files.filter((v) => v.indexOf('Assets') !== 0);
-            files = files.concat(tslist.map((v) => v.assetPath));
-            //
-            editorRS.fs.readStrings(files, (strs) =>
-            {
-                const tslibs = files.map((f, i) =>
-                {
-                    const str = strs[i]; if (typeof str === 'string') return { path: f, code: str };
-                    console.warn(`没有找到文件 ${f}`);
-
-                    return null;
-                }).filter((v) => !!v);
-                callback(tslibs);
-            });
-        });
+            return null;
+        }).filter((v) => !!v);
+        callback(tslibs);
     }
 
     private onFileChanged(e: IEvent<string>)
