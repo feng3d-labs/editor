@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable spaced-comment */
 /// <reference path="../feng3d/dist/index.d.ts" />
 /// <reference path="dist/index.d.ts" />
 /// <reference path="libs/monaco-editor/monaco.d.ts" />
@@ -9,6 +11,15 @@
 
 window.feng3d = window.opener.feng3d;
 window.editor = window.opener.editor;
+
+let isInitMonaco = false;
+//
+let monacoEditor;
+
+const compileButton = document.getElementById('compile');
+const watchCB = document.getElementById('watch');
+const logLabel = document.getElementById('log');
+let timeoutid = 0;
 
 initMonaco(() =>
 {
@@ -24,16 +35,16 @@ initMonaco(() =>
         };
     }
 
-    feng3d.globalEmitter.on("codeeditor.openScript", (e) =>
+    feng3d.globalEmitter.on('codeeditor.openScript', (e) =>
     {
         openScript(e.data);
     });
-    openScript(editor.editorData.openScript);
+    openScript(editor.EditorData.editorData.openScript);
 });
 
 function openScript(script)
 {
-    feng3d.globalEmitter.emit("script.gettslibs", {
+    feng3d.globalEmitter.emit('script.gettslibs', {
         callback: (tslibs) =>
         {
             codeEditor(tslibs, script);
@@ -41,20 +52,20 @@ function openScript(script)
     });
 }
 
-var isInitMonaco = false;
-
-//
-var monacoEditor;
-
 /**
  * 初始化 Monaco
  */
 function initMonaco(callback)
 {
-    if (isInitMonaco) { callback(); return; }
+    if (isInitMonaco)
+    {
+        callback();
+
+        return;
+    }
 
     //
-    amdRequire.config({ paths: { 'vs': 'libs/monaco-editor/min/vs' } });
+    amdRequire.config({ paths: { vs: 'libs/monaco-editor/min/vs' } });
     amdRequire(['vs/editor/editor.main'], () =>
     {
         // 设置ts编译选项
@@ -80,30 +91,24 @@ function initMonaco(callback)
     });
 }
 
-var compileButton = document.getElementById("compile");
-var watchCB = document.getElementById("watch");
-var logLabel = document.getElementById("log");
-
 compileButton.onclick = () =>
 {
     triggerCompile();
 };
 
-var timeoutid = 0;
-
 function autoCompile()
 {
-    logLabel.textContent = "编码中。。。。";
+    logLabel.textContent = '编码中。。。。';
 
     if (timeoutid)
-        clearTimeout(timeoutid);
+    { clearTimeout(timeoutid); }
 
     timeoutid = setTimeout(() =>
     {
         if (timeoutid)
         {
             clearTimeout(timeoutid);
-            logLabel.textContent = "自动编译中。。。。";
+            logLabel.textContent = '自动编译中。。。。';
             triggerCompile();
         }
     }, 5000);
@@ -112,65 +117,63 @@ function autoCompile()
 function getModel(file)
 {
     if (file instanceof feng3d.JsonAsset)
-        return "json";
+    { return 'json'; }
     if (file instanceof feng3d.JSAsset)
-        return "javascript";
+    { return 'javascript'; }
     if (file instanceof feng3d.ScriptAsset)
-        return "typescript";
+    { return 'typescript'; }
     if (file instanceof feng3d.ShaderAsset)
-        return "typescript";
+    { return 'typescript'; }
     if (file instanceof feng3d.TextAsset)
-        return "text";
-    return "text";
+    { return 'text'; }
+
+    return 'text';
 }
 
 function codeEditor(tslibs, file)
 {
     if (!(file instanceof feng3d.TextAsset)) return;
 
-    var model = getModel(file);
-    var oldModel = monacoEditor.getModel();
-    var newModel = monaco.editor.createModel(file.textContent, model);
+    const model = getModel(file);
+    const oldModel = monacoEditor.getModel();
+    const newModel = monaco.editor.createModel(file.textContent, model);
     monacoEditor.setModel(newModel);
     if (oldModel) oldModel.dispose();
 
     // monacoEditor.setValue(code);
     if (file instanceof feng3d.ScriptAsset)
     {
-        tslibs.forEach(v =>
+        tslibs.forEach((v) =>
         {
-            if (v.path != file.assetPath) monaco.languages.typescript.typescriptDefaults.addExtraLib(v.code, v.path);
+            if (v.path !== file.assetPath) monaco.languages.typescript.typescriptDefaults.addExtraLib(v.code, v.path);
         });
-        logLabel.textContent = "初次编译中。。。。";
+        logLabel.textContent = '初次编译中。。。。';
         triggerCompile();
     }
-    monacoEditor.onDidChangeModelContent(() =>
+    monacoEditor.onDidChangeModelContent(async () =>
     {
-        logLabel.textContent = "";
+        logLabel.textContent = '';
         file.textContent = monacoEditor.getValue();
-        editor.editorRS.writeAsset(file, (err) =>
+        await editor.editorRS.writeAsset(file);
+        logLabel.textContent = '自动保存完成！';
+        if (file instanceof feng3d.ScriptAsset)
         {
-            if (err) console.warn(err);
-            logLabel.textContent = "自动保存完成！";
-            if (file instanceof feng3d.ScriptAsset)
+            if (watchCB.checked)
             {
-                if (watchCB.checked)
-                {
-                    autoCompile();
-                }
+                autoCompile();
             }
-        });
+        }
     });
-};
+}
 
 // ------------ Compilation logic
 function triggerCompile(callback)
 {
-    logLabel.textContent = "正在编译。。。。";
-    feng3d.globalEmitter.emit("script.compile", {
+    logLabel.textContent = '正在编译。。。。';
+    feng3d.globalEmitter.emit('script.compile', {
         onComplete: () =>
         {
-            logLabel.textContent = "完成编译。。。。";
+            logLabel.textContent = '完成编译。。。。';
             callback && callback();
         }
     });
