@@ -1,4 +1,4 @@
-import { Color4, ImageUtil, MinMaxCurve, MinMaxCurveMode, serialization, watch } from 'feng3d';
+import { Color4, ImageUtil, MinMaxCurve, MinMaxCurveMode, serialization, watcher } from 'feng3d';
 import { NumberTextInputBinder } from './binders/NumberTextInputBinder';
 import { menu, MenuItem } from './Menu';
 import { MinMaxCurveEditor } from './MinMaxCurveEditor';
@@ -9,7 +9,6 @@ import { popupview } from './Popupview';
  */
 export class MinMaxCurveView extends eui.Component
 {
-    @watch('_onMinMaxCurveChanged')
     minMaxCurve = new MinMaxCurve();
 
     public constantGroup: eui.Group;
@@ -25,6 +24,8 @@ export class MinMaxCurveView extends eui.Component
     {
         super();
         this.skinName = 'MinMaxCurveView';
+        //
+        watcher.watch(this as MinMaxCurveView, 'minMaxCurve', this._onMinMaxCurveChanged, this);
     }
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)

@@ -47,7 +47,9 @@ export class OAVDefault extends OAVBase
 		this.text.addEventListener(egret.Event.CHANGE, this.onTextChange, this);
 
 		if (this._attributeViewInfo.editable)
-		{ watcher.watch(this.space, this.attributeName, this.updateView, this); }
+		{
+			watcher.watch(this.space, this.attributeName, this.updateView, this);
+		}
 	}
 
 	dispose()

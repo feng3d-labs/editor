@@ -98,7 +98,9 @@ export class ComponentView extends eui.Component
 
 		this.enabledCB.addEventListener(egret.Event.CHANGE, this.onEnableCBChange, this);
 		if (this.component instanceof Behaviour)
-		{ watcher.watch(this.component, 'enabled', this.updateEnableCB, this); }
+		{
+			watcher.watch(this.component, 'enabled', this.updateEnableCB, this);
+		}
 
 		this.operationBtn.addEventListener(egret.MouseEvent.CLICK, this.onOperationBtnClick, this);
 		this.helpBtn.addEventListener(egret.MouseEvent.CLICK, this.onHelpBtnClick, this);
@@ -109,7 +111,9 @@ export class ComponentView extends eui.Component
 	{
 		this.enabledCB.removeEventListener(egret.Event.CHANGE, this.onEnableCBChange, this);
 		if (this.component instanceof Behaviour)
-		{ watcher.unwatch(this.component, 'enabled', this.updateEnableCB, this); }
+		{
+			watcher.unwatch(this.component, 'enabled', this.updateEnableCB, this);
+		}
 
 		this.operationBtn.removeEventListener(egret.MouseEvent.CLICK, this.onOperationBtnClick, this);
 		this.helpBtn.removeEventListener(egret.MouseEvent.CLICK, this.onHelpBtnClick, this);

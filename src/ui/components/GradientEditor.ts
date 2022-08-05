@@ -1,4 +1,4 @@
-import { watch, Gradient, GradientMode, ImageUtil, Color3, windowEventProxy, Vector2, Rectangle } from 'feng3d';
+import { Color3, Gradient, GradientMode, ImageUtil, Rectangle, Vector2, watcher, windowEventProxy } from 'feng3d';
 import { NumberSliderTextInputBinder } from './binders/NumberSliderTextInputBinder';
 import { NumberTextInputBinder } from './binders/NumberTextInputBinder';
 import { ColorPicker } from './ColorPicker';
@@ -8,7 +8,6 @@ export class GradientEditor extends eui.Component
 {
     static gradientEditor: GradientEditor;
 
-    @watch('_onGradientChanged')
     gradient = new Gradient();
 
     public modeCB: ComboBox;
@@ -29,6 +28,8 @@ export class GradientEditor extends eui.Component
     {
         super();
         this.skinName = 'GradientEditor';
+        //
+        watcher.watch(this as GradientEditor, 'gradient', this._onGradientChanged, this);
     }
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)

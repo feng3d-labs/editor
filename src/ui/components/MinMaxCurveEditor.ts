@@ -1,4 +1,4 @@
-import { AnimationCurve, AnimationCurveKeyframe, Color4, gPartial, ImageUtil, mathUtil, MinMaxCurve, MinMaxCurveMode, Rectangle, serialization, Vector2, watch, watcher, WrapMode } from 'feng3d';
+import { AnimationCurve, AnimationCurveKeyframe, Color4, gPartial, ImageUtil, mathUtil, MinMaxCurve, MinMaxCurveMode, Rectangle, serialization, Vector2, watcher, WrapMode } from 'feng3d';
 import { editorui } from '../../global/editorui';
 import { NumberTextInputBinder } from './binders/NumberTextInputBinder';
 import { menu } from './Menu';
@@ -7,7 +7,6 @@ export class MinMaxCurveEditor extends eui.Component
 {
     static minMaxCurveEditor: MinMaxCurveEditor;
 
-    @watch('_onMinMaxCurveChanged')
     minMaxCurve = new MinMaxCurve();
 
     public viewGroup: eui.Group;
@@ -80,6 +79,8 @@ export class MinMaxCurveEditor extends eui.Component
     {
         super();
         this.skinName = 'MinMaxCurveEditor';
+        //
+        watcher.watch(this as MinMaxCurveEditor, 'minMaxCurve', this._onMinMaxCurveChanged, this);
     }
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)

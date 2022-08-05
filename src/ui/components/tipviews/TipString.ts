@@ -1,4 +1,4 @@
-import { watch } from 'feng3d';
+import { watcher } from 'feng3d';
 
 /**
  * String 提示框
@@ -7,21 +7,22 @@ export class TipString extends eui.Component implements eui.UIComponent
 {
     public txtLab: eui.Label;
 
+    value = '';
+
     constructor()
     {
         super();
         this.skinName = 'TipString';
         this.touchChildren = this.touchEnabled = false;
+        //
+        watcher.watch(this as TipString, 'value', this.valuechanged, this);
     }
-
-    @watch('valuechanged')
-    value = '';
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)
     {
         super.$onAddToStage(stage, nestLevel);
 
-        this.txtLab.text = String(this.value);
+        this.txtLab.text = this.value;
     }
 
     $onRemoveFromStage()

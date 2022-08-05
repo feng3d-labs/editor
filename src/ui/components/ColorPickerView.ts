@@ -1,4 +1,4 @@
-import { watch, Color3, Color4, ImageUtil, Gradient, windowEventProxy, Vector2, mathUtil } from 'feng3d';
+import { Color3, Color4, Gradient, ImageUtil, mathUtil, Vector2, watcher, windowEventProxy } from 'feng3d';
 
 const colors = [0xff0000, 0xffff00, 0x00ff00, 0x00ffff, 0x0000ff, 0xff00ff, 0xff0000];
 /**
@@ -21,13 +21,14 @@ export class ColorPickerView extends eui.Component
     public txtColor: eui.TextInput;
 
     //
-    @watch('onColorChanged')
     color: Color3 | Color4 = new Color4(0.2, 0.5, 0);
 
     public constructor()
     {
         super();
         this.skinName = 'ColorPickerView';
+        //
+        watcher.watch(this as ColorPickerView, 'color', this.onColorChanged, this);
     }
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)
@@ -178,7 +179,7 @@ export class ColorPickerView extends eui.Component
         }
     }
 
-    private onColorChanged(_property, oldValue: Color4 | Color4, newValue: Color4 | Color4)
+    private onColorChanged(newValue: Color4, oldValue: Color4)
     {
         this.once(egret.Event.ENTER_FRAME, this.updateView, this);
 

@@ -1,9 +1,8 @@
-import { watch, MinMaxCurveVector3 } from 'feng3d';
+import { MinMaxCurveVector3, watcher } from 'feng3d';
 import { MinMaxCurveView } from './MinMaxCurveView';
 
 export class MinMaxCurveVector3View extends eui.Component
 {
-    @watch('_onMinMaxCurveVector3Changed')
     minMaxCurveVector3 = new MinMaxCurveVector3();
 
     public xMinMaxCurveView: MinMaxCurveView;
@@ -14,6 +13,8 @@ export class MinMaxCurveVector3View extends eui.Component
     {
         super();
         this.skinName = 'MinMaxCurveVector3View';
+        //
+        watcher.watch(this as MinMaxCurveVector3View, 'minMaxCurveVector3', this._onMinMaxCurveVector3Changed, this);
     }
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)

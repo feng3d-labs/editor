@@ -1,4 +1,4 @@
-import { Color4, Gradient, ImageUtil, MinMaxGradient, MinMaxGradientMode, serialization, watch } from 'feng3d';
+import { Color4, Gradient, ImageUtil, MinMaxGradient, MinMaxGradientMode, serialization, watcher } from 'feng3d';
 import { ColorPickerView } from './ColorPickerView';
 import { GradientEditor } from './GradientEditor';
 import { menu, MenuItem } from './Menu';
@@ -10,7 +10,6 @@ import { popupview } from './Popupview';
 export class MinMaxGradientView extends eui.Component
 {
     //
-    @watch('_onMinMaxGradientChanged')
     minMaxGradient = new MinMaxGradient();
 
     public colorGroup0: eui.Group;
@@ -26,6 +25,8 @@ export class MinMaxGradientView extends eui.Component
     {
         super();
         this.skinName = 'MinMaxGradientView';
+        //
+        watcher.watch(this as MinMaxGradientView, 'minMaxGradient', this._onMinMaxGradientChanged, this);
     }
 
     $onAddToStage(stage: egret.Stage, nestLevel: number)

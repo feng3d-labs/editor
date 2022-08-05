@@ -1,4 +1,4 @@
-import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, CubeGeometry, CylinderGeometry, dataTransform, FileAsset, FolderAsset, GameObject, GameObjectAsset, GeometryAsset, globalEmitter, gPartial, IEvent, ImageUtil, JSAsset, JsonAsset, Material, MaterialAsset, path, PlaneGeometry, regExps, Scene, ScriptAsset, SegmentGeometry, ShaderAsset, SphereGeometry, TextAsset, Texture2D, TextureAsset, TextureCube, TextureCubeAsset, TorusGeometry, watch } from 'feng3d';
+import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, CubeGeometry, CylinderGeometry, dataTransform, FileAsset, FolderAsset, GameObject, GameObjectAsset, GeometryAsset, globalEmitter, gPartial, IEvent, ImageUtil, JSAsset, JsonAsset, Material, MaterialAsset, path, PlaneGeometry, regExps, Scene, ScriptAsset, SegmentGeometry, ShaderAsset, SphereGeometry, TextAsset, Texture2D, TextureAsset, TextureCube, TextureCubeAsset, TorusGeometry, watcher } from 'feng3d';
 import { editorRS } from '../../assets/EditorRS';
 import { nativeAPI } from '../../assets/NativeRequire';
 import { EditorData } from '../../global/EditorData';
@@ -19,7 +19,6 @@ export class EditorAsset
     /**
      * 显示文件夹
      */
-    @watch('showFloderChanged')
     showFloder: AssetNode;
 
     /**
@@ -30,6 +29,8 @@ export class EditorAsset
     constructor()
     {
         globalEmitter.on('asset.parsed', this.onParsed, this);
+        //
+        watcher.watch(this as EditorAsset, 'showFloder', this.showFloderChanged, this);
     }
 
     /**

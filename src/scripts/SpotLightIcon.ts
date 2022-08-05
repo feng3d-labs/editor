@@ -1,4 +1,4 @@
-import { RegisterComponent, watch, SpotLight, Camera, GameObject, BillboardComponent, MeshRenderer, Material, TextureUniforms, Texture2D, TextureFormat, PlaneGeometry, HideFlags, SegmentUniforms, Color4, RenderMode, SegmentGeometry, serialization, Renderable, PointInfo, Segment, Vector3, mathUtil, PointGeometry, shortcut, ticker } from 'feng3d';
+import { BillboardComponent, Camera, Color4, GameObject, HideFlags, Material, mathUtil, MeshRenderer, PlaneGeometry, PointGeometry, PointInfo, RegisterComponent, Renderable, RenderMode, Segment, SegmentGeometry, SegmentUniforms, serialization, shortcut, SpotLight, Texture2D, TextureFormat, TextureUniforms, ticker, Vector3, watcher } from 'feng3d';
 import { EditorData } from '../global/EditorData';
 import { EditorScript } from './EditorScript';
 
@@ -10,12 +10,17 @@ declare global
 @RegisterComponent()
 export class SpotLightIcon extends EditorScript
 {
-    @watch('onLightChanged')
     light: SpotLight;
 
     get editorCamera() { return this._editorCamera; }
     set editorCamera(v) { this._editorCamera = v; this.initicon(); }
     private _editorCamera: Camera;
+
+    constructor()
+    {
+        super();
+        watcher.watch(this as SpotLightIcon, 'light', this.onLightChanged, this);
+    }
 
     init()
     {
@@ -88,7 +93,7 @@ export class SpotLightIcon extends EditorScript
     {
         if (!this.light) return;
 
-        (<TextureUniforms> this._textureMaterial.uniforms).u_color = this.light.color.toColor4() as any;
+        (this._textureMaterial.uniforms as TextureUniforms).u_color = this.light.color.toColor4() as any;
 
         if (EditorData.editorData.selectedGameObjects.indexOf(this.light.gameObject) !== -1)
         {
@@ -131,7 +136,7 @@ export class SpotLightIcon extends EditorScript
             this._lightLines.activeSelf = true;
             this._lightpoints.activeSelf = true;
         }
- else
+        else
         {
             this._lightLines.activeSelf = false;
             this._lightpoints.activeSelf = false;
@@ -161,7 +166,7 @@ export class SpotLightIcon extends EditorScript
     private _segmentGeometry: SegmentGeometry;
     private _pointGeometry: PointGeometry;
 
-    private onLightChanged(property: string, oldValue: SpotLight, value: SpotLight)
+    private onLightChanged(value: SpotLight, oldValue: SpotLight)
     {
         if (oldValue)
         {
