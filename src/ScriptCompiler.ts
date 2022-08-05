@@ -1,7 +1,7 @@
 // eslint-disable-next-line spaced-comment, @typescript-eslint/triple-slash-reference
 /// <reference path="../libs/typescriptServices.d.ts" />
 
-import { globalEmitter, IEvent, ScriptAsset, ticker } from 'feng3d';
+import { globalEmitter, IEvent, ScriptAsset, TextAsset, ticker } from 'feng3d';
 import { parse } from 'jsonc-parser';
 import { editorRS } from './assets/EditorRS';
 import { nativeAPI } from './assets/NativeRequire';
@@ -23,7 +23,7 @@ export class ScriptCompiler
         globalEmitter.on('fs.write', this.onFileChanged, this);
     }
 
-    private onOpenScript(e)
+    private async onOpenScript(e: IEvent<TextAsset>)
     {
         EditorData.editorData.openScript = e.data;
 
@@ -31,14 +31,8 @@ export class ScriptCompiler
         {
             // 使用本地 VSCode 打开
             const path = editorRS.fs.getAbsolutePath(EditorData.editorData.openScript.assetPath);
-            nativeAPI.openWithVSCode(editorRS.fs.projectname, (err) =>
-            {
-                if (err) throw err;
-                nativeAPI.openWithVSCode(path, (err) =>
-                {
-                    if (err) throw err;
-                });
-            });
+            await nativeAPI.openWithVSCode(editorRS.fs.projectname);
+            await nativeAPI.openWithVSCode(path);
         }
         else
         {
@@ -51,17 +45,16 @@ export class ScriptCompiler
         }
     }
 
-    private onGettsLibs(e: IEvent<{ callback: (tslibs: { path: string; code: string; }[]) => void; }>)
+    private async onGettsLibs(e: IEvent<{ callback: (tslibs: { path: string; code: string; }[]) => void; }>)
     {
-        this.loadtslibs(e.data.callback);
+        const tslibs = await this.loadtslibs();
+        e.data.callback(tslibs);
     }
 
     /**
      * 加载 tslibs
-     *
-     * @param callback 完成回调
      */
-    private async loadtslibs(callback: (tslibs: { path: string, code: string }[]) => void)
+    private async loadtslibs()
     {
         // 加载 ts 配置
         const str = await editorRS.fs.readString('tsconfig.json');
@@ -82,7 +75,8 @@ export class ScriptCompiler
 
             return null;
         }).filter((v) => !!v);
-        callback(tslibs);
+
+        return tslibs;
     }
 
     private onFileChanged(e: IEvent<string>)
@@ -94,12 +88,11 @@ export class ScriptCompiler
         }
     }
 
-    private onScriptCompile(e?: IEvent<{ onComplete?: () => void; }>)
+    private async onScriptCompile(e?: IEvent<{ onComplete?: (...args: any) => void; }>)
     {
-        this.loadtslibs((tslibs) =>
-        {
-            this.compile(tslibs, e && e.data && e.data.onComplete);
-        });
+        const tslibs = await this.loadtslibs();
+        const output = await this.compile(tslibs);
+        e && e.data && e.data.onComplete(output);
     }
 
     private getOptions()
@@ -113,29 +106,29 @@ export class ScriptCompiler
         return options;
     }
 
-    private compile(tslibs: { path: string; code: string; }[], callback?: (output: { name: string; text: string; }[]) => void)
+    private async compile(tslibs: { path: string; code: string; }[])
     {
+        let output: { name: string; text: string; }[] = null;
         try
         {
-            const output = this.transpileModule(tslibs);
+            output = this.transpileModule(tslibs);
 
             output.forEach((v) =>
             {
                 editorRS.fs.writeString(v.name, v.text);
             });
 
-            editorAsset.runProjectScript(() =>
-            {
-                globalEmitter.emit('asset.scriptChanged');
-            });
+            await editorAsset.runProjectScript();
+            globalEmitter.emit('asset.scriptChanged');
         }
         catch (e)
         {
             console.log(`Error from compilation: ${e}  ${e.stack || ''}`);
         }
-        callback && callback(null);
 
         globalEmitter.emit('message', `编译完成！`);
+
+        return output;
     }
 
     private transpileModule(tslibs: { path: string; code: string; }[])

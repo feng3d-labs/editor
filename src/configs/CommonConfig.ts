@@ -108,30 +108,20 @@ export class MenuConfig
                         }
                     },
                     {
-                        label: '打开项目', click: () =>
+                        label: '打开项目', click: async () =>
                         {
-                            editorRS.clearProject(() =>
+                            await editorRS.clearProject();
+                            const filelist: FileList = await new Promise((resolve) =>
                             {
-                                editorRS.selectFile((filelist) =>
-                                {
-                                    editorRS.importProject(filelist.item(0), () =>
-                                    {
-                                        editorAsset.initproject(() =>
-                                        {
-                                            editorAsset.runProjectScript(() =>
-                                            {
-                                                // eslint-disable-next-line max-nested-callbacks
-                                                editorAsset.readScene('default.scene.json', (_err, scene) =>
-                                                {
-                                                    EditorData.editorData.gameScene = scene;
-                                                    editorui.assetview.invalidateAssettree();
-                                                    console.log('打开项目完成!');
-                                                });
-                                            });
-                                        });
-                                    });
-                                });
+                                editorRS.selectFile(resolve);
                             });
+                            await editorRS.importProject(filelist.item(0));
+                            await editorAsset.initproject();
+                            await editorAsset.runProjectScript();
+                            const scene = await editorAsset.readScene('default.scene.json');
+                            EditorData.editorData.gameScene = scene;
+                            editorui.assetview.invalidateAssettree();
+                            console.log('打开项目完成!');
                         }
                     },
                     {
@@ -206,28 +196,22 @@ export class MenuConfig
                     },
                     {
                         label: '升级项目',
-                        click: () =>
+                        click: async () =>
                         {
-                            editorRS.upgradeProject(() =>
-                            {
-                                console.warn('升级完成！');
-                            });
+                            await editorRS.upgradeProject();
+                            console.warn('升级完成！');
                         },
                     },
                     {
                         label: '清空项目',
-                        click: () =>
+                        click: async () =>
                         {
                             editorAsset.rootFile.remove();
-                            editorAsset.initproject(() =>
-                            {
-                                editorAsset.runProjectScript(() =>
-                                {
-                                    EditorData.editorData.gameScene = View.createNewScene();
-                                    editorui.assetview.invalidateAssettree();
-                                    console.log('清空项目完成!');
-                                });
-                            });
+                            await editorAsset.initproject();
+                            await editorAsset.runProjectScript();
+                            EditorData.editorData.gameScene = View.createNewScene();
+                            editorui.assetview.invalidateAssettree();
+                            console.log('清空项目完成!');
                         },
                     },
                 ],
@@ -455,26 +439,16 @@ function openDownloadProject(projectname: string, callback?: () => void)
  * 下载项目
  * @param projectname
  */
-function downloadProject(projectname: string, callback?: () => void)
+async function downloadProject(projectname: string, callback?: () => void)
 {
     const path = `projects/${projectname}`;
-    loader.loadBinary(path, (content) =>
-    {
-        editorRS.importProject(<any>content, () =>
-        {
-            editorAsset.initproject(() =>
-            {
-                editorAsset.runProjectScript(() =>
-                {
-                    editorAsset.readScene('default.scene.json', (_err, scene) =>
-                    {
-                        EditorData.editorData.gameScene = scene;
-                        editorui.assetview.invalidateAssettree();
-                        console.log(`${projectname} 项目下载完成!`);
-                        callback && callback();
-                    });
-                });
-            });
-        });
-    });
+    const content = await loader.loadBinary(path);
+    await editorRS.importProject(<any>content);
+    await editorAsset.initproject();
+    await editorAsset.runProjectScript();
+    const scene = await editorAsset.readScene('default.scene.json');
+    EditorData.editorData.gameScene = scene;
+    editorui.assetview.invalidateAssettree();
+    console.log(`${projectname} 项目下载完成!`);
+    callback && callback();
 }

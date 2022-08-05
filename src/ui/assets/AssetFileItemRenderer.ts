@@ -39,7 +39,7 @@ export class AssetFileItemRenderer extends eui.ItemRenderer
         globalEmitter.off('editor.selectedObjectsChanged', this.selectedfilechanged, this);
     }
 
-    dataChanged()
+    async dataChanged()
     {
         super.dataChanged();
 
@@ -60,11 +60,9 @@ export class AssetFileItemRenderer extends eui.ItemRenderer
                 if (!this.data.isLoaded)
                 {
                     const data = this.data;
-                    data.load(() =>
-                    {
-                        console.assert(data.isLoaded);
-                        if (data === this.data) this.dataChanged();
-                    });
+                    await data.load();
+                    console.assert(data.isLoaded);
+                    if (data === this.data) this.dataChanged();
 
                     return;
                 }

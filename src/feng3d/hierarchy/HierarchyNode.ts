@@ -57,9 +57,9 @@ export class HierarchyNode extends TreeNode
                 hierarchy.getNode(v).openParents();
             }
         });
-        dragdata.getDragData('file_gameobject').forEach((v) =>
+        dragdata.getDragData('file_gameobject').forEach(async (v) =>
         {
-            const gameobject = hierarchy.addGameoObjectFromAsset(v, this.gameobject);
+            const gameobject = await hierarchy.addGameoObjectFromAsset(v, this.gameobject);
             hierarchy.getNode(gameobject).openParents();
         });
         dragdata.getDragData('file_script').forEach((v) =>

@@ -96,16 +96,20 @@ export class Hierarchy
         EditorData.editorData.selectObject(gameobject);
     }
 
-    addGameoObjectFromAsset(gameobjectAsset: GameObjectAsset, parent?: GameObject)
+    async addGameoObjectFromAsset(gameobjectAsset: GameObjectAsset, parent?: GameObject)
     {
-        const gameobject = gameobjectAsset.getAssetData();
+        const gameobject = await gameobjectAsset.getAssetData();
 
         console.assert(!gameobject.parent);
 
         if (parent)
-        { parent.addChild(gameobject); }
+        {
+            parent.addChild(gameobject);
+        }
         else
-        { this.rootnode.gameobject.addChild(gameobject); }
+        {
+            this.rootnode.gameobject.addChild(gameobject);
+        }
         EditorData.editorData.selectObject(gameobject);
 
         return gameobject;

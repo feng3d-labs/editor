@@ -5,16 +5,15 @@ import { loadjs } from './load';
 
 export class ThreejsLoader
 {
-    load(url: string, _completed?: (gameobject: GameObject) => void)
+    async load(url: string, _completed?: (gameobject: GameObject) => void)
     {
-        editorRS.fs.readArrayBuffer(url, (_err, data) =>
+        const data = await editorRS.fs.readArrayBuffer(url);
+        const gameobject: GameObject = await new Promise((resolve) =>
         {
-            load(data, (gameobject) =>
-            {
-                gameobject.name = pathUtils.nameWithOutExt(url);
-                globalEmitter.emit('asset.parsed', gameobject);
-            });
+            load(data, resolve);
         });
+        gameobject.name = pathUtils.nameWithOutExt(url);
+        globalEmitter.emit('asset.parsed', gameobject);
     }
 }
 
@@ -22,7 +21,7 @@ export const threejsLoader = new ThreejsLoader();
 
 const usenumberfixed = true;
 
-function load(url: string | File | ArrayBuffer, onParseComplete?: (group) => void)
+function load(url: string | File | ArrayBuffer, onParseComplete?: (group: GameObject) => void)
 {
     let skeletonComponent: SkeletonComponent;
     prepare(() =>

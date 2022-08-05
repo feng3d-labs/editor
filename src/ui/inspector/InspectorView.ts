@@ -70,10 +70,10 @@ export class InspectorView extends eui.Component implements ModuleView
 
 	private onSaveShowData(event: IEvent<() => void>)
 	{
-		this.saveShowData(event.data);
+		this.saveShowData().then(event.data);
 	}
 
-	private updateView()
+	private async updateView()
 	{
 		this.typeLab.text = ``;
 		this.backButton.visible = this._historySelectedObject.length > 1;
@@ -96,12 +96,12 @@ export class InspectorView extends eui.Component implements ModuleView
 					if (!this._viewData.isLoaded)
 					{
 						const viewData = this._viewData;
-						viewData.load(() =>
+						await viewData.load();
+						console.assert(!!viewData.asset);
+						if (viewData === this._viewData)
 						{
-							console.assert(!!viewData.asset);
-							if (viewData === this._viewData)
-							{ this.updateShowData(viewData.asset); }
-						});
+							this.updateShowData(viewData.asset);
+						}
 					}
 			}
 			else
@@ -118,7 +118,7 @@ export class InspectorView extends eui.Component implements ModuleView
 	/**
 	 * 保存显示数据
 	 */
-	private saveShowData(callback?: () => void)
+	private async saveShowData()
 	{
 		if (this._dataChanged)
 		{
@@ -127,11 +127,7 @@ export class InspectorView extends eui.Component implements ModuleView
 				const feng3dAsset = ReadRS.rs.getAssetById(this._viewData.assetId);
 				if (feng3dAsset)
 				{
-					editorRS.writeAsset(feng3dAsset, (err) =>
-					{
-						console.assert(!err, `资源 ${feng3dAsset.assetId} 保存失败！`);
-						callback && callback();
-					});
+					await editorRS.writeAsset(feng3dAsset);
 				}
 			}
 			else if (this._viewData instanceof AssetNode)
@@ -140,10 +136,6 @@ export class InspectorView extends eui.Component implements ModuleView
 			}
 
 			this._dataChanged = false;
-		}
-		else
-		{
-			callback && callback();
 		}
 	}
 

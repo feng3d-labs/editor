@@ -59,21 +59,19 @@ export class OAVCubeMap extends OAVBase
 		this.addEventListener(egret.Event.RESIZE, this.onResize, this);
 	}
 
-	private updateImage(i: number)
+	private async updateImage(i: number)
 	{
 		const image = this.images[i];
 		const textureCube: TextureCube = this.space;
-		textureCube.getTextureImage(TextureCube.ImageNames[i], (img) =>
+		const img = await textureCube.getTextureImage(TextureCube.ImageNames[i]);
+		if (img)
 		{
-			if (img)
-			{
-				image.source = dataTransform.imageToDataURL(img);
-			}
- else
-			{
-				image.source = null;
-			}
-		});
+			image.source = dataTransform.imageToDataURL(img);
+		}
+		else
+		{
+			image.source = null;
+		}
 	}
 
 	private onImageClick(e: egret.MouseEvent)
