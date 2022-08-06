@@ -1,22 +1,27 @@
-const { ipcRenderer } = require('electron')
-const { shell } = require('electron')
-const os = require('os')
-var process = require('child_process');
+const { ipcRenderer } = require('electron');
+const { shell } = require('electron');
+const os = require('os');
+const process = require('child_process');
 
 /**
  * 选择文件夹窗口
- * 
- * @param {event:Event,path:string} callback 
+ *
+ * @param {event:Event,path:string} callback
  */
-function selectDirectoryDialog(callback)
+async function selectDirectoryDialog()
 {
-    ipcRenderer.once('selected-directory', callback);
-    ipcRenderer.send('open-file-dialog');
+    const path = await new Promise((resolve) =>
+    {
+        ipcRenderer.once('selected-directory', resolve);
+        ipcRenderer.send('open-file-dialog');
+    });
+
+    return path;
 }
 
 /**
  * 在资源管理器中显示
- * 
+ *
  * @param {string} fullPath 完整路径
  */
 function showFileInExplorer(fullPath)
@@ -34,7 +39,7 @@ function openDevTools()
 
 /**
  * 使用 VSCode 打开项目（文件）
- * 
+ *
  * @param {string} projectPath 项目（文件）路径
  */
 function openWithVSCode(projectPath, callback)
@@ -43,14 +48,13 @@ function openWithVSCode(projectPath, callback)
     {
         if (error !== null)
         {
-            console.log('exec error: ' + error);
+            console.log(`exec error: ${error}`);
         }
-        console.log(stdout)
-        console.log(stderr)
+        console.log(stdout);
+        console.log(stderr);
         callback(error);
     });
 }
-
 
 exports.selectDirectoryDialog = selectDirectoryDialog;
 exports.showFileInExplorer = showFileInExplorer;

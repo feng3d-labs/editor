@@ -2,8 +2,8 @@ import { saveAs } from '@feng3d/filesaver';
 import { FS, indexedDBFS, loader, ReadRS, ReadWriteFS, ReadWriteRS } from 'feng3d';
 import * as JSZip1 from 'jszip';
 import { editorcache } from '../caches/Editorcache';
-import { NativeFS } from './NativeFS';
-import { nativeFS, supportNative } from './NativeRequire';
+import { nativeFS } from './NativeFS';
+import { supportNative } from './NativeRequire';
 
 const JSZip = JSZip1['default'] as typeof JSZip1;
 
@@ -163,7 +163,7 @@ export class EditorRS extends ReadWriteRS
 
 if (supportNative)
 {
-    FS.basefs = new NativeFS(nativeFS);
+    FS.basefs = nativeFS;
 }
 else
 {

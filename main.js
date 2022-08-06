@@ -9,6 +9,7 @@ app.on('ready', function ()
     // webPreferences:Settings of web page’s features
     const mainWindow = new BrowserWindow({
         webPreferences: {
+            contextIsolation: false,
             nodeIntegration: true,
             webSecurity: true
         },

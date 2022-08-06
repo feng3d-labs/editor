@@ -1,6 +1,11 @@
 import { dataTransform, FSType, globalEmitter, IReadWriteFS } from 'feng3d';
-import { editorcache } from '../caches/Editorcache';
-import { nativeAPI, NativeFSBase } from './NativeRequire';
+import { nativeAPI, NativeFSBase, supportNative } from './NativeRequire';
+
+/**
+ * 本地文件系统
+ */
+// eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
+export const nativeFS1: NativeFSBase = supportNative ? (require(`${__dirname}/native/NativeFSBase.js`).nativeFS) : null;
 
 /**
  * 本地文件系统
@@ -236,18 +241,20 @@ export class NativeFS implements IReadWriteFS
 
     /**
      * 初始化项目
-     * @param _projectname 项目名称
+     * @param projectname 项目名称
      */
-    async initproject(_projectname: string)
+    async initproject(projectname: string)
     {
-        const exists = await this.fs.exists(editorcache.projectname);
+        const exists = await this.fs.exists(projectname);
         if (exists)
         {
-            this.projectname = editorcache.projectname;
+            this.projectname = projectname;
 
             return;
         }
         const path = await nativeAPI.selectDirectoryDialog();
-        editorcache.projectname = this.projectname = path;
+        this.projectname = path;
     }
 }
+
+export const nativeFS = new NativeFS(nativeFS1);

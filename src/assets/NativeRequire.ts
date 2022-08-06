@@ -4,12 +4,6 @@
 export const supportNative = !(typeof __dirname === 'undefined');
 
 /**
- * 本地文件系统
- */
-// eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-export const nativeFS: NativeFSBase = supportNative ? (require(`${__dirname}/native/NativeFSBase.js`).nativeFS) : null;
-
-/**
  * 本地API
  */
 // eslint-disable-next-line global-require
