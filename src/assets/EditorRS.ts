@@ -34,7 +34,11 @@ export class EditorRS extends ReadWriteRS
     {
         const has = await this.fs.hasProject(editorcache.projectname);
 
-        await this.fs.initproject(editorcache.projectname);
+        const projectname = await this.fs.initproject(editorcache.projectname);
+        if (projectname)
+        {
+            editorcache.projectname = projectname;
+        }
         if (!has)
         {
             await this.createproject();

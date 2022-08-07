@@ -86,7 +86,9 @@ const nativeFS = {
      */
     async writeFile(filePath, data)
     {
-        return await fs.writeFile(filePath, data);
+        const buffer = Buffer.from(data);
+
+        return await fs.writeFile(filePath, buffer, 'binary');
     }
 };
 

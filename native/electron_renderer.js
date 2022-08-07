@@ -12,7 +12,10 @@ async function selectDirectoryDialog()
 {
     const path = await new Promise((resolve) =>
     {
-        ipcRenderer.once('selected-directory', resolve);
+        ipcRenderer.once('selected-directory', (_event, path) =>
+        {
+            resolve(path);
+        });
         ipcRenderer.send('open-file-dialog');
     });
 
@@ -42,17 +45,20 @@ function openDevTools()
  *
  * @param {string} projectPath 项目（文件）路径
  */
-function openWithVSCode(projectPath, callback)
+async function openWithVSCode(projectPath)
 {
-    process.exec(`code "${projectPath}"`, function (error, stdout, stderr)
+    await new Promise((resolve) =>
     {
-        if (error !== null)
+        process.exec(`code "${projectPath}"`, function (error, stdout, stderr)
         {
-            console.log(`exec error: ${error}`);
-        }
-        console.log(stdout);
-        console.log(stderr);
-        callback(error);
+            if (error !== null)
+            {
+                console.log(`exec error: ${error}`);
+            }
+            console.log(stdout);
+            console.log(stderr);
+            resolve(stderr);
+        });
     });
 }
 

@@ -254,6 +254,8 @@ export class NativeFS implements IReadWriteFS
         }
         const path = await nativeAPI.selectDirectoryDialog();
         this.projectname = path;
+
+        return path;
     }
 }
 
