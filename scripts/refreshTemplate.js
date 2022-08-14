@@ -7,11 +7,11 @@ const copyFiles = [
     ['node_modules/feng3d/dist/index.js', 'resource/template/libs/feng3d.js'],
     ['node_modules/feng3d/dist/index.d.ts', 'resource/template/libs/feng3d.d.ts'],
 
-    ['node_modules/@feng3d/cannon/dist/index.js', 'resource/template/libs/cannon.js'],
-    ['node_modules/@feng3d/cannon/dist/index.d.ts', 'resource/template/libs/cannon.d.ts'],
+    ['node_modules/@feng3d-plugins/cannon/dist/index.js', 'resource/template/libs/cannon.js'],
+    ['node_modules/@feng3d-plugins/cannon/dist/index.d.ts', 'resource/template/libs/cannon.d.ts'],
 
-    ['node_modules/@feng3d/cannon-plugin/dist/index.js', 'resource/template/libs/cannon-plugin.js'],
-    ['node_modules/@feng3d/cannon-plugin/dist/index.d.ts', 'resource/template/libs/cannon-plugin.d.ts'],
+    ['node_modules/@feng3d-plugins/cannon-plugin/dist/index.js', 'resource/template/libs/cannon-plugin.js'],
+    ['node_modules/@feng3d-plugins/cannon-plugin/dist/index.d.ts', 'resource/template/libs/cannon-plugin.d.ts'],
 ];
 
 try
