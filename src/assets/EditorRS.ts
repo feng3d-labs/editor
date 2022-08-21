@@ -1,11 +1,9 @@
 import { saveAs } from '@feng3d/filesaver';
 import { FS, indexedDBFS, loader, ReadRS, ReadWriteFS, ReadWriteRS } from 'feng3d';
-import * as JSZip1 from 'jszip';
+import JSZip from 'jszip';
 import { editorcache } from '../caches/Editorcache';
 import { nativeFS } from './NativeFS';
 import { supportNative } from './NativeRequire';
-
-const JSZip = JSZip1['default'] as typeof JSZip1;
 
 const templateurls = [
     ['resource/template/.vscode/settings.json', '.vscode/settings.json'],

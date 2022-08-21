@@ -1,7 +1,7 @@
 import { Animation, AnimationClip, Camera, CullFace, CustomGeometry, GameObject, globalEmitter, Matrix4x4, pathUtils, PerspectiveLens, PropertyClip, PropertyClipPathItemType, Quaternion, Renderable, serialization, SkeletonComponent, SkeletonJoint, SkinnedMeshRenderer, SkinSkeletonTemp, Vector3 } from 'feng3d';
 import { editorRS } from '../assets/EditorRS';
 import { EditorData } from '../global/EditorData';
-import { loadjs } from './load';
+import loadjs from 'loadjs';
 
 export class ThreejsLoader
 {
@@ -357,8 +357,8 @@ const prepare = (() =>
         { return; }
 
         preparing = true;
-        loadjs.load({
-            paths: [
+        loadjs(
+            [
                 'threejs/three.js',
                 // <!-- FBX -->
                 'threejs/libs/inflate.min.js',
@@ -384,8 +384,10 @@ const prepare = (() =>
                 'threejs/loaders/ctm/lzma.js',
                 'threejs/loaders/ctm/ctm.js',
                 'threejs/loaders/ctm/CTMLoader.js',
-            ].map((value) => EditorData.editorData.getEditorAssetPath(value)),
-            bundleId: 'threejs',
+            ].map((value) => EditorData.editorData.getEditorAssetPath(value)), 'three.js',
+            { async: false }
+        );
+        loadjs.ready('three.js', {
             success: () =>
             {
                 // eslint-disable-next-line no-extend-native
@@ -401,6 +403,9 @@ const prepare = (() =>
                 {
                     element();
                 });
+            }, error: (depsNotFound) =>
+            {
+                console.warn(`没有找到文件 ${depsNotFound}`);
             }
         });
     };
