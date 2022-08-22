@@ -126,7 +126,6 @@ export * from './scripts/DirectionLightIcon';
 export * from './scripts/PointLightIcon';
 export * from './scripts/SpotLightIcon';
 export * from './scripts/CameraIcon';
-export * from './loaders/threejsLoader';
 export * from './configs/CommonConfig';
 export * from './configs/ViewLayoutConfig';
 export * from './configs/ObjectViewConfig';

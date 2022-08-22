@@ -2,7 +2,6 @@ import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, Cu
 import { editorRS } from '../../assets/EditorRS';
 import { nativeAPI } from '../../assets/NativeRequire';
 import { EditorData } from '../../global/EditorData';
-import { threejsLoader } from '../../loaders/threejsLoader';
 import { menu, MenuItem } from '../components/Menu';
 import { assetFileTemplates } from './AssetFileTemplates';
 import { AssetNode } from './AssetNode';
@@ -488,7 +487,7 @@ export class EditorAsset
                 case '.mdl': menuconfig.push({ label: '解析', click: () => mdlLoader.load(filePath) }); break;
                 case '.obj': menuconfig.push({ label: '解析', click: () => objLoader.load(filePath) }); break;
                 case '.mtl': menuconfig.push({ label: '解析', click: () => mtlLoader.load(filePath) }); break;
-                case '.fbx': menuconfig.push({ label: '解析', click: () => threejsLoader.load(filePath) }); break;
+                // case '.fbx': menuconfig.push({ label: '解析', click: () => threejsLoader.load(filePath) }); break;
                 case '.md5mesh': menuconfig.push({ label: '解析', click: () => md5Loader.load(filePath) }); break;
                 case '.md5anim': menuconfig.push({ label: '解析', click: () => md5Loader.loadAnim(filePath) }); break;
             }
