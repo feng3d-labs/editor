@@ -1,4 +1,4 @@
-import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, CubeGeometry, CylinderGeometry, dataTransform, FileAsset, FolderAsset, GameObject, GameObjectAsset, GeometryAsset, globalEmitter, gPartial, IEvent, ImageUtil, JSAsset, JsonAsset, Material, MaterialAsset, md5Loader, mdlLoader, mtlLoader, objLoader, path, PlaneGeometry, regExps, Scene, ScriptAsset, SegmentGeometry, ShaderAsset, SphereGeometry, TextAsset, Texture2D, TextureAsset, TextureCube, TextureCubeAsset, TorusGeometry, watcher } from 'feng3d';
+import { ArrayBufferAsset, AudioAsset, CapsuleGeometry, Color4, ConeGeometry, CubeGeometry, CylinderGeometry, dataTransform, FileAsset, FolderAsset, GameObject, GameObjectAsset, GeometryAsset, globalEmitter, gPartial, IEvent, ImageUtil, JSAsset, JsonAsset, Material, MaterialAsset, path, PlaneGeometry, regExps, Scene, ScriptAsset, SegmentGeometry, ShaderAsset, SphereGeometry, TextAsset, Texture2D, TextureAsset, TextureCube, TextureCubeAsset, TorusGeometry, watcher } from 'feng3d';
 import { editorRS } from '../../assets/EditorRS';
 import { nativeAPI } from '../../assets/NativeRequire';
 import { EditorData } from '../../global/EditorData';
@@ -484,12 +484,12 @@ export class EditorAsset
             // eslint-disable-next-line no-empty
             switch (extensions)
             {
-                case '.mdl': menuconfig.push({ label: '解析', click: () => mdlLoader.load(filePath) }); break;
-                case '.obj': menuconfig.push({ label: '解析', click: () => objLoader.load(filePath) }); break;
-                case '.mtl': menuconfig.push({ label: '解析', click: () => mtlLoader.load(filePath) }); break;
+                // case '.mdl': menuconfig.push({ label: '解析', click: () => mdlLoader.load(filePath) }); break;
+                // case '.obj': menuconfig.push({ label: '解析', click: () => objLoader.load(filePath) }); break;
+                // case '.mtl': menuconfig.push({ label: '解析', click: () => mtlLoader.load(filePath) }); break;
                 // case '.fbx': menuconfig.push({ label: '解析', click: () => threejsLoader.load(filePath) }); break;
-                case '.md5mesh': menuconfig.push({ label: '解析', click: () => md5Loader.load(filePath) }); break;
-                case '.md5anim': menuconfig.push({ label: '解析', click: () => md5Loader.loadAnim(filePath) }); break;
+                // case '.md5mesh': menuconfig.push({ label: '解析', click: () => md5Loader.load(filePath) }); break;
+                // case '.md5anim': menuconfig.push({ label: '解析', click: () => md5Loader.loadAnim(filePath) }); break;
             }
         }
     }
