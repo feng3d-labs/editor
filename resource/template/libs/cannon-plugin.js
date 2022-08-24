@@ -1,6 +1,6 @@
 /*!
- * @feng3d-plugins/cannon-plugin - v0.5.0
- * Compiled Fri, 12 Aug 2022 02:04:05 UTC
+ * @feng3d-plugins/cannon-plugin - v0.6.0
+ * Compiled Wed, 24 Aug 2022 05:33:39 UTC
  *
  * @feng3d-plugins/cannon-plugin is licensed under the MIT License.
  * http://www.opensource.org/licenses/mit-license

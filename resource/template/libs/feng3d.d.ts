@@ -2326,12 +2326,6 @@ declare class Quaternion {
      */
     lerp(qa: Quaternion, qb: Quaternion, t: number): void;
     /**
-     * Fills a target Vector3 object with the Euler angles that form the rotation represented by this quaternion.
-     * @param target An optional Vector3 object to contain the Euler angles. If not provided, a new object is created.
-     * @returns The Vector3 containing the Euler angles.
-     */
-    toEulerAngles(target?: Vector3): Vector3;
-    /**
      * 四元数归一化
      */
     normalize(val?: number): this;
@@ -2392,12 +2386,6 @@ declare class Quaternion {
      * @param target Optional
      */
     vmult(v: Vector3, target?: Vector3): Vector3;
-    /**
-     * Convert the quaternion to euler angle representation. Order: YZX, as this page describes: http://www.euclideanspace.com/maths/standards/index.htm
-     * @param target
-     * @param order Three-character string e.g. "YZX", which also is default.
-     */
-    toEuler(target: Vector3, order?: string): void;
     /**
      * 从欧拉角初始化四元素。
      *
@@ -8684,13 +8672,11 @@ declare class PropertyClip {
     path: PropertyClipPath;
     propertyName: string;
     type: 'Number' | 'Vector3' | 'Quaternion';
-    propertyValues: [number, number[]][];
-    private _cacheValues;
-    private _propertyValues;
-    getValue(cliptime: number, fps: number): any;
+    times: number[];
+    values: number[];
+    getValue(cliptime: number): number | Vector3 | Quaternion;
     private interpolation;
     private getpropertyValue;
-    cacheIndex: number;
 }
 /**
  * [time:number,value:number | Vector3 | Quaternion]
@@ -8713,21 +8699,6 @@ declare class AnimationClip extends Feng3dObject {
     propertyClips: PropertyClip[];
 }
 
-/**
- * 骨骼关节数据
- */
-declare class SkeletonJoint {
-    /** 父关节索引 （-1说明本身是总父结点，这个序号其实就是行号了，譬如上面”origin“结点的序号就是0，无父结点； "body"结点序号是1，父结点序号是0，也就是说父结点是”origin“）*/
-    parentIndex: number;
-    /** 关节名字 */
-    name: string;
-    /** 骨骼全局矩阵 */
-    matrix: Matrix4x4;
-    children: number[];
-    get invertMatrix(): Matrix4x4;
-    private _invertMatrix;
-}
-
 declare global {
     export interface MixinsComponentMap {
         SkeletonComponent: SkeletonComponent;
@@ -8735,28 +8706,20 @@ declare global {
 }
 declare class SkeletonComponent extends Component {
     __class__: 'SkeletonComponent';
-    /** 骨骼关节数据列表 */
-    joints: SkeletonJoint[];
+    /**
+     * 骨骼蒙皮时逆矩阵列表。
+     */
+    boneInverses: Matrix4x4[];
+    /**
+     * 骨骼名称列表
+     */
+    boneNames: string[];
     /**
      * 当前骨骼姿势的全局矩阵
      * @see #globalPose
      */
     get globalMatrices(): Matrix4x4[];
-    private isInitJoints;
-    private jointGameobjects;
-    private jointGameObjectMap;
-    private _globalPropertiesInvalid;
-    private _jointsInvalid;
-    private _globalMatrixsInvalid;
-    private globalMatrixs;
     private _globalMatrices;
-    initSkeleton(): void;
-    /**
-     * 更新骨骼全局变换矩阵
-     */
-    private updateGlobalProperties;
-    private invalidjoint;
-    private createSkeletonGameObject;
 }
 
 /**
@@ -9079,9 +9042,9 @@ declare type UniformsLike = UniformsTypes[keyof UniformsTypes];
 /**
  * 材质
  */
-declare class Material$1 extends Feng3dObject {
+declare class Material extends Feng3dObject {
     __class__: 'Material';
-    static create<K extends keyof UniformsTypes>(shaderName: K, uniforms?: gPartial$1<UniformsTypes[K]>, renderParams?: gPartial$1<RenderParams>): Material$1;
+    static create<K extends keyof UniformsTypes>(shaderName: K, uniforms?: gPartial$1<UniformsTypes[K]>, renderParams?: gPartial$1<RenderParams>): Material;
     init<K extends keyof UniformsTypes>(shaderName: K, uniforms?: gPartial$1<UniformsTypes[K]>, renderParams?: gPartial$1<RenderParams>): this;
     private renderAtomic;
     private preview;
@@ -9120,7 +9083,7 @@ declare class Material$1 extends Feng3dObject {
      * @param name 材质名称
      * @param material 材质数据
      */
-    static setDefault<K extends keyof DefaultMaterial>(name: K, material: gPartial$1<Material$1>): void;
+    static setDefault<K extends keyof DefaultMaterial>(name: K, material: gPartial$1<Material>): void;
     /**
      * 获取材质
      *
@@ -9267,7 +9230,7 @@ declare class Renderable extends RayCastable {
     /**
      * 材质
      */
-    material: Material$1;
+    material: Material;
     castShadows: boolean;
     receiveShadows: boolean;
     constructor();
@@ -11142,8 +11105,6 @@ declare global {
 declare class SkinnedMeshRenderer extends Renderable {
     __class__: 'SkinnedMeshRenderer';
     get single(): boolean;
-    skinSkeleton: SkinSkeleton;
-    initMatrix: Matrix4x4;
     /**
      * 创建一个骨骼动画类
      */
@@ -11153,33 +11114,9 @@ declare class SkinnedMeshRenderer extends Renderable {
      * 销毁
      */
     dispose(): void;
-    /**
-     * 缓存，通过寻找父结点获得
-     */
-    private cacheSkeletonComponent;
-    private cacheU_skeletonGlobalMatriices;
     private get u_modelMatrix();
     private get u_ITModelMatrix();
     private get u_skeletonGlobalMatriices();
-}
-declare class SkinSkeleton {
-    /**
-     * [在整个骨架中的编号，骨骼名称]
-     */
-    joints: [number, string][];
-    /**
-     * 当前模型包含骨骼数量
-     */
-    numJoint: number;
-}
-declare class SkinSkeletonTemp extends SkinSkeleton {
-    /**
-     * temp 解析时临时数据
-     */
-    cache_map: {
-        [oldjointid: number]: number;
-    };
-    resetJointIndices(jointIndices: number[], skeleton: SkeletonComponent): void;
 }
 
 /**
@@ -12470,7 +12407,7 @@ declare global {
         segment: SegmentUniforms;
     }
     export interface MixinsDefaultMaterial {
-        'Segment-Material': Material$1;
+        'Segment-Material': Material;
     }
 }
 /**
@@ -12487,7 +12424,7 @@ declare class SegmentUniforms {
 
 declare global {
     export interface MixinsDefaultMaterial {
-        'Default-Material': Material$1;
+        'Default-Material': Material;
     }
     export interface MixinsUniformsTypes {
         standard: StandardUniforms;
@@ -14178,7 +14115,7 @@ declare global {
 declare class Water extends Renderable {
     __class__: 'Water';
     geometry: PlaneGeometry;
-    material: Material$1;
+    material: Material;
     /**
      * 帧缓冲对象，用于处理水面反射
      */
@@ -14191,7 +14128,7 @@ declare global {
         water: WaterUniforms;
     }
     export interface MixinsDefaultMaterial {
-        'Water-Material': Material$1;
+        'Water-Material': Material;
     }
 }
 declare class WaterUniforms {
@@ -14502,13 +14439,9 @@ declare class Animation extends Behaviour {
      * 动作名称
      */
     get clipName(): string;
-    get frame(): number;
     constructor();
     update(interval: number): void;
     dispose(): void;
-    private num;
-    private _fps;
-    private _objectCache;
     private _updateAni;
     private getPropertyHost;
     private _onAnimationChanged;
@@ -14656,7 +14589,7 @@ declare class MaterialAsset extends ObjectAsset {
     /**
      * 材质
      */
-    data: Material$1;
+    data: Material;
     assetType: AssetType;
     initAsset(): void;
 }
@@ -15625,695 +15558,6 @@ declare type GetObjectViewParam = {
      */
     editable?: boolean;
 };
-
-/**
- * MD5动画解析器
- */
-declare class MD5AnimParser {
-    /**
-     * 解析
-     * @param context
-     */
-    parse(context: string): MD5AnimData;
-}
-/**
- * MD5动画解析器
- */
-declare const md5AnimParser: MD5AnimParser;
-/**
- * 帧数据
- */
-declare type MD5_Frame = {
-    index: number;
-    components: number[];
-};
-/**
- * 基础帧数据
- */
-declare type MD5_BaseFrame = {
-    /** 位置 */
-    position: number[];
-    /** 方向 */
-    orientation: number[];
-};
-/**
- * 包围盒信息
- */
-declare type MD5_Bounds = {
-    /** 最小坐标 */
-    min: number[];
-    /** 最大坐标 */
-    max: number[];
-};
-/**
- * 层级数据
- */
-declare type MD5_HierarchyData = {
-    /** Joint 名字 */
-    name: string;
-    /** 父结点序号 */
-    parentIndex: number;
-    /** flag */
-    flags: number;
-    /** 影响的帧数据起始索引 */
-    startIndex: number;
-};
-declare type MD5AnimData = {
-    name?: string;
-    MD5Version: number;
-    commandline: string;
-    numFrames: number;
-    numJoints: number;
-    frameRate: number;
-    numAnimatedComponents: number;
-    hierarchy: MD5_HierarchyData[];
-    bounds: MD5_Bounds[];
-    baseframe: MD5_BaseFrame[];
-    frame: MD5_Frame[];
-};
-
-/**
- * MD5动画转换器
- */
-declare class MD5AnimConverter {
-    /**
-     * MD5动画数据转换为引擎动画数据
-     * @param md5AnimData MD5动画数据
-     * @param completed 转换完成回调
-     */
-    convert(md5AnimData: MD5AnimData, completed?: (animationClip: AnimationClip) => void): void;
-}
-/**
- * MD5动画转换器
- */
-declare const md5AnimConverter: MD5AnimConverter;
-
-/**
- * MD5模型解析器
- */
-declare class MD5MeshParser {
-    /**
-     * 解析
-     * @param context
-     */
-    parse(context: string): MD5MeshData;
-}
-/**
- * MD5模型解析器
- */
-declare const md5MeshParser: MD5MeshParser;
-/**
- * 关节权重数据
- */
-declare type MD5_Weight = {
-    /** weight 序号 */
-    index: number;
-    /** 对应的Joint的序号 */
-    joint: number;
-    /** 作用比例 */
-    bias: number;
-    /** 位置值 */
-    pos: number[];
-};
-declare type MD5_Vertex = {
-    /** 顶点索引 */
-    index: number;
-    /** 纹理坐标u */
-    u: number;
-    /** 纹理坐标v */
-    v: number;
-    /** weight的起始序号 */
-    startWeight: number;
-    /** weight总数 */
-    countWeight: number;
-};
-declare type MD5_Mesh = {
-    shader: string;
-    numverts: number;
-    verts: MD5_Vertex[];
-    numtris: number;
-    tris: number[];
-    numweights: number;
-    weights: MD5_Weight[];
-};
-declare type MD5_Joint = {
-    name: string;
-    parentIndex: number;
-    position: number[];
-    /** 旋转数据 */
-    rotation: number[];
-};
-declare type MD5MeshData = {
-    name?: string;
-    MD5Version: number;
-    commandline: string;
-    numJoints: number;
-    numMeshes: number;
-    joints: MD5_Joint[];
-    meshs: MD5_Mesh[];
-};
-
-/**
- * MD5模型转换器
- */
-declare class MD5MeshConverter {
-    /**
-     * MD5模型数据转换为游戏对象
-     * @param md5MeshData MD5模型数据
-     * @param completed 转换完成回调
-     */
-    convert(md5MeshData: MD5MeshData, completed?: (gameObject: GameObject) => void): void;
-    /**
-     * 计算最大关节数量
-     */
-    private calculateMaxJointCount;
-    /**
-     * 计算0权重关节数量
-     * @param vertex 顶点数据
-     * @param weights 关节权重数组
-     * @return
-     */
-    private countZeroWeightJoints;
-    private createSkeleton;
-    private createSkeletonJoint;
-    private createGeometry;
-}
-/**
- * MD5模型转换器
- */
-declare const md5MeshConverter: MD5MeshConverter;
-
-/**
- * OBJ模型MTL材质解析器
- */
-declare class MTLParser {
-    /**
-     * 解析
-     * @param context
-     */
-    parser(context: string): Mtl_Mtl;
-}
-/**
- * OBJ模型MTL材质解析器
- */
-declare const mtlParser: MTLParser;
-declare type Mtl_Material = {
-    name: string;
-    ka: number[];
-    kd: number[];
-    ks: number[];
-    ns: number;
-    ni: number;
-    d: number;
-    illum: number;
-    map_Bump: string;
-    map_Ka: string;
-    map_Kd: string;
-    map_Ks: string;
-};
-declare type Mtl_Mtl = {
-    [name: string]: Mtl_Material;
-};
-
-/**
- * OBJ模型MTL材质转换器
- */
-declare class MTLConverter {
-    /**
-     * OBJ模型MTL材质原始数据转换引擎中材质对象
-     * @param mtl MTL材质原始数据
-     */
-    convert(mtl: Mtl_Mtl, completed?: (err: Error, materials: {
-        [name: string]: Material$1;
-    }) => void): void;
-}
-/**
- * OBJ模型MTL材质转换器
- */
-declare const mtlConverter: MTLConverter;
-
-/**
- * OBJ模型解析器
- */
-declare class OBJParser {
-    /**
-     * 解析
-     * @param context
-     */
-    parser(context: string): OBJ_OBJData;
-}
-/**
- * OBJ模型解析器
- */
-declare const objParser: OBJParser;
-/**
- * 面数据
- */
-declare type OBJ_Face = {
-    /** 顶点索引 */
-    vertexIndices: string[];
-    /** uv索引 */
-    uvIndices?: string[];
-    /** 法线索引 */
-    normalIndices?: string[];
-    /** 索引数据 */
-    indexIds: string[];
-};
-/**
- * 子对象
- */
-declare type OBJ_SubOBJ = {
-    /** 材质名称 */
-    material?: string;
-    /**  */
-    g?: string;
-    /** 面列表 */
-    faces: OBJ_Face[];
-};
-/**
- * 对象
- */
-declare type OBJ_OBJ = {
-    name: string;
-    /** 子对象 */
-    subObjs: OBJ_SubOBJ[];
-};
-/**
- * Obj模型数据
- */
-declare type OBJ_OBJData = {
-    /**
-     * 模型名称
-     */
-    name?: string;
-    /** mtl文件路径 */
-    mtl: string | null;
-    /** 顶点坐标 */
-    vertex: {
-        x: number;
-        y: number;
-        z: number;
-    }[];
-    /** 顶点法线 */
-    vn: {
-        x: number;
-        y: number;
-        z: number;
-    }[];
-    /** 顶点uv */
-    vt: {
-        u: number;
-        v: number;
-        s: number;
-    }[];
-    /** 模型列表 */
-    objs: OBJ_OBJ[];
-};
-
-/**
- * OBJ模型转换器
- */
-declare class OBJConverter {
-    /**
-     * OBJ模型数据转换为游戏对象
-     * @param objData OBJ模型数据
-     * @param materials 材质列表
-     * @param completed 转换完成回调
-     */
-    convert(objData: OBJ_OBJData, materials: {
-        [name: string]: Material$1;
-    }, completed: (gameObject: GameObject) => void): void;
-}
-/**
- * OBJ模型转换器
- */
-declare const objConverter: OBJConverter;
-
-/**
- * MD5模型加载类
- */
-declare class MD5Loader {
-    /**
-     * 加载资源
-     * @param url   路径
-     * @param completed 加载完成回调
-     */
-    load(url: string, completed?: (gameObject: GameObject) => void): Promise<void>;
-    /**
-     * 加载MD5模型动画
-     * @param url MD5模型动画资源路径
-     * @param completed 加载完成回调
-     */
-    loadAnim(url: string, completed?: (animationClip: AnimationClip) => void): Promise<void>;
-}
-/**
- * MD5模型加载类
- */
-declare const md5Loader: MD5Loader;
-
-/**
- * MDL模型加载器
- */
-declare class MDLLoader {
-    /**
-     * 加载MDL模型
-     * @param mdlurl MDL模型路径
-     * @param callback 加载完成回调
-     */
-    load(mdlurl: string): Promise<GameObject>;
-}
-/**
- * MDL模型加载器
- */
-declare const mdlLoader: MDLLoader;
-
-/**
- * OBJ模型MTL材质加载器
- */
-declare class MTLLoader {
-    /**
-     * 加载MTL材质
-     * @param path MTL材质文件路径
-     * @param completed 加载完成回调
-     */
-    load(path: string, completed?: (err: Error, materials: {
-        [name: string]: Material$1;
-    }) => void): Promise<void>;
-}
-/**
- * OBJ模型MTL材质加载器
- */
-declare const mtlLoader: MTLLoader;
-
-/**
- * Obj模型加载类
- */
-declare class ObjLoader {
-    /**
-     * 加载资源
-     * @param url   路径
-     */
-    load(url: string, completed?: (gameObject: GameObject) => void): Promise<void>;
-}
-/**
- * Obj模型加载类
- */
-declare const objLoader: ObjLoader;
-
-/**
- * 全局动作信息
- */
-declare class AnimInfo {
-    /** 动作名称 */
-    name: string;
-    /** 动作间隔 */
-    interval: Interval;
-    /** 最小范围 */
-    MinimumExtent: Vector3;
-    /** 最大范围 */
-    MaximumExtent: Vector3;
-    /** 半径范围 */
-    BoundsRadius: number;
-    /** 发生频率 */
-    Rarity: number;
-    /** 是否循环 */
-    loop: boolean;
-    /** 移动速度 */
-    MoveSpeed: number;
-}
-/**
- * 几何体动作信息
- */
-declare class AnimInfo1 {
-    /** 最小范围 */
-    MinimumExtent: Vector3;
-    /** 最大范围 */
-    MaximumExtent: Vector3;
-    /** 半径范围 */
-    BoundsRadius: number;
-}
-/**
- * 骨骼的角度信息
- */
-declare class BoneRotation {
-    /** 类型 */
-    type: string;
-    /** */
-    GlobalSeqId: number;
-    rotations: Rotation[];
-    getRotationItem(rotation: Rotation): Quaternion;
-    getRotation(keyFrameTime: number): Quaternion;
-}
-/**
- * 骨骼信息(包含骨骼，helper等其他对象)
- */
-declare class BoneObject {
-    /** 骨骼类型 */
-    type: string;
-    /** 骨骼名称 */
-    name: string;
-    /** 对象编号 */
-    ObjectId: number;
-    /** 父对象 */
-    Parent: number;
-    /** 几何体编号 */
-    GeosetId: string;
-    /** 几何体动画 */
-    GeosetAnimId: string;
-    /** 是否为广告牌 */
-    Billboarded: boolean;
-    /** 骨骼位移动画 */
-    Translation: BoneTranslation;
-    /** 骨骼缩放动画 */
-    Scaling: BoneScaling;
-    /** 骨骼角度动画 */
-    Rotation: BoneRotation;
-    /** 中心位置 */
-    pivotPoint: Vector3;
-    /** 当前对象变换矩阵 */
-    transformation: Matrix4x4;
-    /** 当前全局变换矩阵 */
-    globalTransformation: Matrix4x4;
-    calculateTransformation(keyFrameTime: number): void;
-    buildAnimationclip(animationclip: AnimationClip, __chache__: {
-        [key: string]: PropertyClip;
-    }, start: number, end: number): void;
-    private getMatrix;
-}
-/**
- * 骨骼的位移信息
- */
-declare class BoneScaling {
-    /** 类型 */
-    type: String;
-    /**  */
-    GlobalSeqId: number;
-    scalings: Scaling[];
-    getScaling(keyFrameTime: number): Vector3;
-}
-/**
- * 骨骼的位移信息
- */
-declare class BoneTranslation {
-    /** 类型 */
-    type: string;
-    /**  */
-    GlobalSeqId: number;
-    translations: Translation[];
-    getTranslation(keyFrameTime: number): Vector3;
-}
-/**
- * 纹理
- */
-declare class FBitmap {
-    /** 图片地址 */
-    image: string;
-    /** 可替换纹理id */
-    ReplaceableId: number;
-}
-/**
- * 几何设置
- */
-declare class Geoset {
-    /** 顶点 */
-    Vertices: number[];
-    /** 法线 */
-    Normals: number[];
-    /** 纹理坐标 */
-    TVertices: number[];
-    /** 顶点分组 */
-    VertexGroup: number[];
-    /** 面（索引） */
-    Faces: number[];
-    /** 顶点分组 */
-    Groups: number[][];
-    /** 最小范围 */
-    MinimumExtent: Vector3;
-    /** 最大范围 */
-    MaximumExtent: Vector3;
-    /** 半径范围 */
-    BoundsRadius: number;
-    /** 动作信息 */
-    Anims: AnimInfo1[];
-    /** 材质编号 */
-    MaterialID: number;
-    /**  */
-    SelectionGroup: number;
-    /** 是否不可选 */
-    Unselectable: boolean;
-    /** 顶点对应的关节索引 */
-    jointIndices: number[];
-    /** 顶点对应的关节权重 */
-    jointWeights: number[];
-}
-/**
- * 几何体动画
- */
-declare class GeosetAnim {
-}
-/**
- * 全局序列
- */
-declare class Globalsequences {
-    /** 全局序列编号 */
-    id: number;
-    /** 持续时间 */
-    durations: number[];
-}
-/**
- * 动作间隔
- */
-declare class Interval {
-    /** 开始时间 */
-    start: number;
-    /** 结束时间 */
-    end: number;
-}
-/**
- * 材质层
- */
-declare class Layer {
-    /** 过滤模式 */
-    FilterMode: string;
-    /** 贴图ID */
-    TextureID: number;
-    /** 透明度 */
-    Alpha: number;
-    /** 是否有阴影 */
-    Unshaded: boolean;
-    /** 是否无雾化 */
-    Unfogged: boolean;
-    /** 是否双面 */
-    TwoSided: boolean;
-    /** 是否开启地图环境范围 */
-    SphereEnvMap: boolean;
-    /** 是否无深度测试 */
-    NoDepthTest: boolean;
-    /** 是否无深度设置 */
-    NoDepthSet: boolean;
-}
-/**
- * 材质
- */
-declare class Material {
-    /** 材质层列表 */
-    layers: Layer[];
-    /**
-     * created 材质
-     */
-    material: Material$1;
-}
-/**
- * 模型信息
- */
-declare class Model {
-    /** 模型名称 */
-    name: string;
-    /** 混合时间 */
-    BlendTime: number;
-    /** 最小范围 */
-    MinimumExtent: Vector3;
-    /** 最大范围 */
-    MaximumExtent: Vector3;
-}
-/**
- *
- */
-declare class Rotation {
-    /** 时间 */
-    time: number;
-    /**  */
-    value: Quaternion;
-    InTan: Quaternion;
-    OutTan: Quaternion;
-}
-/**
- *
- */
-declare class Scaling {
-    /** 时间 */
-    time: number;
-    /**  */
-    value: Vector3;
-    InTan: Vector3;
-    OutTan: Vector3;
-}
-/**
- *
- */
-declare class Translation {
-    /** 时间 */
-    time: number;
-    /**  */
-    value: Vector3;
-    InTan: Vector3;
-    OutTan: Vector3;
-}
-
-/**
- * war3模型数据
- */
-declare class War3Model {
-    /** 版本号 */
-    _version: number;
-    /** 模型数据统计结果 */
-    model: Model;
-    /** 动作序列 */
-    sequences: AnimInfo[];
-    /** 全局序列 */
-    globalsequences: Globalsequences;
-    /** 纹理列表 */
-    textures: FBitmap[];
-    /** 材质列表 */
-    materials: Material[];
-    /** 几何设置列表 */
-    geosets: Geoset[];
-    /** 几何动画列表 */
-    geosetAnims: GeosetAnim[];
-    /** 骨骼动画列表 */
-    bones: BoneObject[];
-    /** 骨骼轴心坐标 */
-    pivotPoints: Vector3[];
-    private meshs;
-    private skeletonComponent;
-    getMesh(): GameObject;
-    private getFBitmap;
-}
-
-/**
- * war3的mdl文件解析器
- */
-declare class MDLParser {
-    /**
-     * 解析war3的mdl文件
-     * @param data MDL模型数据
-     */
-    parse(data: string): War3Model;
-}
-/**
- * war3的mdl文件解析器
- */
-declare const mdlParser: MDLParser;
 
 /**
  * The animation type.
@@ -18655,7 +17899,7 @@ declare class ParticleSystem extends Renderable {
     set textureSheetAnimation(v: ParticleTextureSheetAnimationModule);
     private _textureSheetAnimation;
     geometry: QuadGeometry;
-    material: Material$1;
+    material: Material;
     castShadows: boolean;
     receiveShadows: boolean;
     get single(): boolean;
@@ -19064,7 +18308,7 @@ declare class ParticleSystemRenderer extends ParticleModule {
     /**
      * Set the Material that the TrailModule uses to attach trails to particles.
      */
-    trailMaterial: Material$1;
+    trailMaterial: Material;
     /**
      * Specifies how much particles stretch depending on their velocity.
      */
@@ -19076,7 +18320,7 @@ declare global {
         Particles_Additive: ParticlesAdditiveUniforms;
     }
     export interface MixinsDefaultMaterial {
-        'Particle-Material': Material$1;
+        'Particle-Material': Material;
     }
 }
 /**
@@ -20122,7 +19366,7 @@ declare global {
         terrain: TerrainUniforms;
     }
     export interface MixinsDefaultMaterial {
-        'Terrain-Material': Material$1;
+        'Terrain-Material': Material;
     }
 }
 declare class TerrainUniforms extends StandardUniforms {
@@ -20325,7 +19569,7 @@ declare global {
 declare class CanvasRenderer extends Renderable {
     readonly renderAtomic: RenderAtomic;
     geometry: UIGeometry;
-    material: Material$1;
+    material: Material;
     /**
      * 与世界空间射线相交
      *
@@ -20439,7 +19683,7 @@ declare global {
     export interface MixinsUniforms extends UIUniforms {
     }
     export interface MixinsDefaultMaterial {
-        'Default-UIMaterial': Material$1;
+        'Default-UIMaterial': Material;
     }
 }
 declare class UIUniforms {
@@ -21166,5 +20410,5 @@ declare type NonTypePropertyNames<T, KT> = {
  */
 declare const version = "0.1.3";
 
-export { AddComponentMenu, Animation, AnimationClip, AnimationCurve, AnimationCurveKeyframe, AnimationCurveVector3, AnyEmitter, ArcCurve2, ArrayBufferAsset, ArrayUtils, AssetData, AssetMeta, AssetType, AssetTypeClassMap, Attribute, AttributeDefinition, AttributeInfo, AttributeTypeDefinition, AttributeUsage, AttributeViewInfo, Attributes, AudioAsset, AudioListener, AudioSource, Behaviour, Bezier, BezierCurve, BillboardComponent, BlendEquation, BlendFactor, BlockDefinition, BlockViewInfo, BoundingBox, Box3, Button, ButtonState, Camera, Canvas, CanvasLineJoin, CanvasRenderer, CanvasTextBaseline, CanvasTexture2D, CapsuleGeometry, CartoonComponent, CatmullRomCurve3, ClassDefinition, ClassUtils, ClipPropertyType, Color3, Color4, ColorKeywords, ColorMask, ColorUniforms, CompileShaderResult, Component, ComponentMap, ComponentMenu, ComponentNames, Components, ConeGeometry, Constructor$1 as Constructor, ControllerBase, CoordinateSystem, CubeGeometry, CubicBezierCurve2, CubicBezierCurve3, CullFace, Curve, CurvePath, CustomGeometry, CylinderGeometry, DataTransform, Debug, DefaultGeometry, DefaultMaterial, DepthFunc, DirectionalLight, DistanceModelType, EllipseCurve2, EquationSolving, Euler, EventEmitter, EventProxy, FPSController, FS, FSType, Feng3dObject, Feng3dObjectEventMap, FileAsset, FogMode, FolderAsset, Font, FontFamily, FontStyle, FontVariant, FontWeight, FormatInputPathObject, ForwardRenderer, FrameBuffer, FrameBufferObject, FrontFace, Frustum, FunctionPropertyNames, FunctionWrap, GL, GLArrayType, GLCache, GLCapabilities, GLExtension, GameObject, GameObjectAsset, GameObjectEventMap, Geometry, GeometryAsset, GeometryEventMap, GeometryLike, GeometryTypes, GeometryUtils, GetObjectViewParam, Glyph, Gradient, GradientAlphaKey, GradientColorKey, GradientMode, Graphics, HideFlags, HighFunction, HoldSizeComponent, HoverController, HttpFS, IDisposable, IEvent, IEventListener, IEventTarget, IObjectAttributeView, IObjectBlockView, IObjectView, IReadFS, IReadWriteFS, IRectangle, Image, ImageDataTexture2D, ImageDatas, ImageTexture2D, ImageUtil, Index, IndexedDBFS, Interpolations, JSAsset, JsonAsset, KeyBoard, KeyState, Lazy, LazyObject, LazyUniforms, LensBase, LensEventMap, Light, LightPicker, LightType, Line3, LineCurve2, LineCurve3, Loader, LoaderDataFormat, LookAtController, MD5AnimConverter, MD5AnimData, MD5AnimParser, MD5Loader, MD5MeshConverter, MD5MeshData, MD5MeshParser, MD5_BaseFrame, MD5_Bounds, MD5_Frame, MD5_HierarchyData, MD5_Joint, MD5_Mesh, MD5_Vertex, MD5_Weight, MDLLoader, MDLParser, MTLConverter, MTLLoader, MTLParser, MapUtils, Material$1 as Material, MaterialAsset, MathUtil, Matrix3x3, Matrix4x4, MenuConfig, MenuItem, MeshRenderer, MinMaxCurve, MinMaxCurveMode, MinMaxCurveVector3, MinMaxGradient, MinMaxGradientMode, Mouse3DManager, MouseEventMap, MouseInput, MouseRenderer, Mtl_Material, Mtl_Mtl, Noise, NonTypePropertyNames$1 as NonTypePropertyNames, NonTypePropertys, OAVArrayParam, OAVComponent, OAVComponentParamMap, OAVComponentParams, OAVDefaultParam, OAVEnumParam, OAVPickParam, OAVVector3Param, OBJConverter, OBJParser, OBJ_Face, OBJ_OBJ, OBJ_OBJData, OBJ_SubOBJ, OBVComponent, OBVComponentParamMap, OVComponent, OVComponentParamMap, ObjLoader, ObjectAsset, ObjectEventType, ObjectUtils, ObjectView, ObjectViewInfo, OrthographicLens, OutLineComponent, OutlineRenderer, ParametricGeometry, ParsedPath, Particle, ParticleColorBySpeedModule, ParticleColorOverLifetimeModule, ParticleEmissionBurst, ParticleEmissionModule, ParticleForceOverLifetimeModule, ParticleInheritVelocityModule, ParticleLimitVelocityOverLifetimeModule, ParticleMainModule, ParticleModule, ParticleNoiseModule, ParticleRotationBySpeedModule, ParticleRotationOverLifetimeModule, ParticleShapeModule, ParticleSizeBySpeedModule, ParticleSizeOverLifetimeModule, ParticleSubEmittersModule, ParticleSystem, ParticleSystemAnimationType, ParticleSystemEmitInfo, ParticleSystemInheritVelocityMode, ParticleSystemMeshShapeType, ParticleSystemNoiseQuality, ParticleSystemRenderMode, ParticleSystemRenderSpace, ParticleSystemRenderer, ParticleSystemScalingMode, ParticleSystemShape, ParticleSystemShapeBox, ParticleSystemShapeBoxEmitFrom, ParticleSystemShapeCircle, ParticleSystemShapeCone, ParticleSystemShapeConeEmitFrom, ParticleSystemShapeEdge, ParticleSystemShapeHemisphere, ParticleSystemShapeMultiModeValue, ParticleSystemShapeSphere, ParticleSystemShapeType, ParticleSystemShapeType1, ParticleSystemSimulationSpace, ParticleSystemSortMode, ParticleSystemSubEmitterProperties, ParticleSystemSubEmitterType, ParticleTextureSheetAnimationModule, ParticleVelocityOverLifetimeModule, ParticlesAdditiveUniforms, ParticlesAlphaBlendedPremultiplyUniforms, Path, Path2, PathUtils, PerspectiveLens, PickingCollisionVO, Plane, PlaneClassification, PlaneGeometry, PointGeometry, PointInfo, PointLight, PointUniforms, PrimitiveGameObject, Projection, PropertyClip, PropertyClipPath, PropertyClipPathItemType, PropertyNames$1 as PropertyNames, QuadGeometry, QuadraticBezierCurve2, QuadraticBezierCurve3, Quaternion, Ray3, RayCastable, Raycaster, ReadFS, ReadRS, ReadWriteFS, ReadWriteRS, Rect, Rectangle, RegExps, RegisterComponent, RenderAtomic, RenderAtomicData, RenderBuffer, RenderMode, RenderParams, RenderTargetTexture2D, Renderable, RotationOrder, RunEnvironment, Scene, ScenePickCache, SceneUtil, Script, ScriptAsset, ScriptComponent, Segment, Segment3, SegmentGeometry, SegmentUniforms, Serialization, SerializationTempInfo, Shader, ShaderAsset, ShaderConfig, ShaderLib, ShaderMacro, ShaderMacroUtils, ShaderNames, ShadowRenderer, ShadowType, Shape2, ShapePath2, ShapeUtils, ShortCut, ShortCutCapture, SkeletonComponent, SkeletonJoint, SkinSkeleton, SkinSkeletonTemp, SkinnedMeshRenderer, SkyBox, SkyBoxRenderer, Sphere, SphereGeometry, SplineCurve2, SpotLight, SpriteMaskInteraction, StandardUniforms, Stats, StatsPanel, TEXT_GRADIENT, Terrain, TerrainData, TerrainGeometry, TerrainMergeMethod, TerrainUniforms, Text, TextAlign, TextAsset, TextMetrics, TextStyle, TextStyleEventMap, Texture, Texture2D, Texture2DEventMap, TextureAsset, TextureAssetMeta, TextureCube, TextureCubeAsset, TextureCubeEventMap, TextureCubeImageName, TextureDataType, TextureFormat, TextureInfo, TextureMagFilter, TextureMinFilter, TextureType, TextureUniforms, TextureWrap, Ticker, Timer, TorusGeometry, Transform, Transform2D, TransformLayout, Triangle3, TriangleGeometry, TypePropertyNames, TypePropertys, UIGeometry, UIRenderMode, UIUniforms, UVChannelFlags, UniformInfo, Uniforms, UniformsLike, UniformsTypes, Uuid, Vector2, Vector3, Vector3Like, Vector4, VideoTexture2D, View, Watcher, Water, WaterUniforms, WebGLRenderer, WhiteSpaceHandle, WindowMouseInput, WireframeComponent, WireframeRenderer, WrapMode, _IndexedDB, __class__, __functionwrap__, __uuid__, __watchchains__, __watchs__, _indexedDB, anyEmitter, assetTypeClassMap, audioCtx, bezier, bezierCurve, buildLineGeometry, classUtils, componentMap, createGrad, createNodeMenu, dataTransform, debug, debuger, decoratorRegisterClass, drawText, equationSolving, forwardRenderer, functionwrap, gPartial$1 as gPartial, geometryUtils, getAssetTypeClass, getBits, getComponentType, globalEmitter, globalGain, imageDatas, indexedDBFS, lazy, loader, mathUtil, md5AnimConverter, md5AnimParser, md5Loader, md5MeshConverter, md5MeshParser, mdlLoader, mdlParser, menuConfig, mouseRenderer, mtlConverter, mtlLoader, mtlParser, noise, oav, objConverter, objLoader, objParser, objectEmitter, objectview, outlineRenderer, ov, path, pathUtils, raycaster, regExps, registerClass, sceneUtil, serialization, serialize, setAssetTypeClass, shaderConfig, shaderMacroUtils, shaderlib, shadowRenderer, shortcut, skyboxRenderer, ticker, uuid, version, watchContext2D, watcher, windowEventProxy, wireframeRenderer };
+export { AddComponentMenu, Animation, AnimationClip, AnimationCurve, AnimationCurveKeyframe, AnimationCurveVector3, AnyEmitter, ArcCurve2, ArrayBufferAsset, ArrayUtils, AssetData, AssetMeta, AssetType, AssetTypeClassMap, Attribute, AttributeDefinition, AttributeInfo, AttributeTypeDefinition, AttributeUsage, AttributeViewInfo, Attributes, AudioAsset, AudioListener, AudioSource, Behaviour, Bezier, BezierCurve, BillboardComponent, BlendEquation, BlendFactor, BlockDefinition, BlockViewInfo, BoundingBox, Box3, Button, ButtonState, Camera, Canvas, CanvasLineJoin, CanvasRenderer, CanvasTextBaseline, CanvasTexture2D, CapsuleGeometry, CartoonComponent, CatmullRomCurve3, ClassDefinition, ClassUtils, ClipPropertyType, Color3, Color4, ColorKeywords, ColorMask, ColorUniforms, CompileShaderResult, Component, ComponentMap, ComponentMenu, ComponentNames, Components, ConeGeometry, Constructor$1 as Constructor, ControllerBase, CoordinateSystem, CubeGeometry, CubicBezierCurve2, CubicBezierCurve3, CullFace, Curve, CurvePath, CustomGeometry, CylinderGeometry, DataTransform, Debug, DefaultGeometry, DefaultMaterial, DepthFunc, DirectionalLight, DistanceModelType, EllipseCurve2, EquationSolving, Euler, EventEmitter, EventProxy, FPSController, FS, FSType, Feng3dObject, Feng3dObjectEventMap, FileAsset, FogMode, FolderAsset, Font, FontFamily, FontStyle, FontVariant, FontWeight, FormatInputPathObject, ForwardRenderer, FrameBuffer, FrameBufferObject, FrontFace, Frustum, FunctionPropertyNames, FunctionWrap, GL, GLArrayType, GLCache, GLCapabilities, GLExtension, GameObject, GameObjectAsset, GameObjectEventMap, Geometry, GeometryAsset, GeometryEventMap, GeometryLike, GeometryTypes, GeometryUtils, GetObjectViewParam, Glyph, Gradient, GradientAlphaKey, GradientColorKey, GradientMode, Graphics, HideFlags, HighFunction, HoldSizeComponent, HoverController, HttpFS, IDisposable, IEvent, IEventListener, IEventTarget, IObjectAttributeView, IObjectBlockView, IObjectView, IReadFS, IReadWriteFS, IRectangle, Image, ImageDataTexture2D, ImageDatas, ImageTexture2D, ImageUtil, Index, IndexedDBFS, Interpolations, JSAsset, JsonAsset, KeyBoard, KeyState, Lazy, LazyObject, LazyUniforms, LensBase, LensEventMap, Light, LightPicker, LightType, Line3, LineCurve2, LineCurve3, Loader, LoaderDataFormat, LookAtController, MapUtils, Material, MaterialAsset, MathUtil, Matrix3x3, Matrix4x4, MenuConfig, MenuItem, MeshRenderer, MinMaxCurve, MinMaxCurveMode, MinMaxCurveVector3, MinMaxGradient, MinMaxGradientMode, Mouse3DManager, MouseEventMap, MouseInput, MouseRenderer, Noise, NonTypePropertyNames$1 as NonTypePropertyNames, NonTypePropertys, OAVArrayParam, OAVComponent, OAVComponentParamMap, OAVComponentParams, OAVDefaultParam, OAVEnumParam, OAVPickParam, OAVVector3Param, OBVComponent, OBVComponentParamMap, OVComponent, OVComponentParamMap, ObjectAsset, ObjectEventType, ObjectUtils, ObjectView, ObjectViewInfo, OrthographicLens, OutLineComponent, OutlineRenderer, ParametricGeometry, ParsedPath, Particle, ParticleColorBySpeedModule, ParticleColorOverLifetimeModule, ParticleEmissionBurst, ParticleEmissionModule, ParticleForceOverLifetimeModule, ParticleInheritVelocityModule, ParticleLimitVelocityOverLifetimeModule, ParticleMainModule, ParticleModule, ParticleNoiseModule, ParticleRotationBySpeedModule, ParticleRotationOverLifetimeModule, ParticleShapeModule, ParticleSizeBySpeedModule, ParticleSizeOverLifetimeModule, ParticleSubEmittersModule, ParticleSystem, ParticleSystemAnimationType, ParticleSystemEmitInfo, ParticleSystemInheritVelocityMode, ParticleSystemMeshShapeType, ParticleSystemNoiseQuality, ParticleSystemRenderMode, ParticleSystemRenderSpace, ParticleSystemRenderer, ParticleSystemScalingMode, ParticleSystemShape, ParticleSystemShapeBox, ParticleSystemShapeBoxEmitFrom, ParticleSystemShapeCircle, ParticleSystemShapeCone, ParticleSystemShapeConeEmitFrom, ParticleSystemShapeEdge, ParticleSystemShapeHemisphere, ParticleSystemShapeMultiModeValue, ParticleSystemShapeSphere, ParticleSystemShapeType, ParticleSystemShapeType1, ParticleSystemSimulationSpace, ParticleSystemSortMode, ParticleSystemSubEmitterProperties, ParticleSystemSubEmitterType, ParticleTextureSheetAnimationModule, ParticleVelocityOverLifetimeModule, ParticlesAdditiveUniforms, ParticlesAlphaBlendedPremultiplyUniforms, Path, Path2, PathUtils, PerspectiveLens, PickingCollisionVO, Plane, PlaneClassification, PlaneGeometry, PointGeometry, PointInfo, PointLight, PointUniforms, PrimitiveGameObject, Projection, PropertyClip, PropertyClipPath, PropertyClipPathItemType, PropertyNames$1 as PropertyNames, QuadGeometry, QuadraticBezierCurve2, QuadraticBezierCurve3, Quaternion, Ray3, RayCastable, Raycaster, ReadFS, ReadRS, ReadWriteFS, ReadWriteRS, Rect, Rectangle, RegExps, RegisterComponent, RenderAtomic, RenderAtomicData, RenderBuffer, RenderMode, RenderParams, RenderTargetTexture2D, Renderable, RotationOrder, RunEnvironment, Scene, ScenePickCache, SceneUtil, Script, ScriptAsset, ScriptComponent, Segment, Segment3, SegmentGeometry, SegmentUniforms, Serialization, SerializationTempInfo, Shader, ShaderAsset, ShaderConfig, ShaderLib, ShaderMacro, ShaderMacroUtils, ShaderNames, ShadowRenderer, ShadowType, Shape2, ShapePath2, ShapeUtils, ShortCut, ShortCutCapture, SkeletonComponent, SkinnedMeshRenderer, SkyBox, SkyBoxRenderer, Sphere, SphereGeometry, SplineCurve2, SpotLight, SpriteMaskInteraction, StandardUniforms, Stats, StatsPanel, TEXT_GRADIENT, Terrain, TerrainData, TerrainGeometry, TerrainMergeMethod, TerrainUniforms, Text, TextAlign, TextAsset, TextMetrics, TextStyle, TextStyleEventMap, Texture, Texture2D, Texture2DEventMap, TextureAsset, TextureAssetMeta, TextureCube, TextureCubeAsset, TextureCubeEventMap, TextureCubeImageName, TextureDataType, TextureFormat, TextureInfo, TextureMagFilter, TextureMinFilter, TextureType, TextureUniforms, TextureWrap, Ticker, Timer, TorusGeometry, Transform, Transform2D, TransformLayout, Triangle3, TriangleGeometry, TypePropertyNames, TypePropertys, UIGeometry, UIRenderMode, UIUniforms, UVChannelFlags, UniformInfo, Uniforms, UniformsLike, UniformsTypes, Uuid, Vector2, Vector3, Vector3Like, Vector4, VideoTexture2D, View, Watcher, Water, WaterUniforms, WebGLRenderer, WhiteSpaceHandle, WindowMouseInput, WireframeComponent, WireframeRenderer, WrapMode, _IndexedDB, __class__, __functionwrap__, __uuid__, __watchchains__, __watchs__, _indexedDB, anyEmitter, assetTypeClassMap, audioCtx, bezier, bezierCurve, buildLineGeometry, classUtils, componentMap, createGrad, createNodeMenu, dataTransform, debug, debuger, decoratorRegisterClass, drawText, equationSolving, forwardRenderer, functionwrap, gPartial$1 as gPartial, geometryUtils, getAssetTypeClass, getBits, getComponentType, globalEmitter, globalGain, imageDatas, indexedDBFS, lazy, loader, mathUtil, menuConfig, mouseRenderer, noise, oav, objectEmitter, objectview, outlineRenderer, ov, path, pathUtils, raycaster, regExps, registerClass, sceneUtil, serialization, serialize, setAssetTypeClass, shaderConfig, shaderMacroUtils, shaderlib, shadowRenderer, shortcut, skyboxRenderer, ticker, uuid, version, watchContext2D, watcher, windowEventProxy, wireframeRenderer };
 export as namespace feng3d;
