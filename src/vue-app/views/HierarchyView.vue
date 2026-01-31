@@ -1,5 +1,10 @@
 <template>
-  <div class="hierarchy-view">
+  <div 
+    class="hierarchy-view"
+    @click="onTreeClick"
+    @keydown="onKeyDown"
+    tabindex="0"
+  >
     <el-tree
       ref="treeRef"
       :data="treeData"
@@ -11,6 +16,7 @@
       @node-click="onNodeClick"
       @node-contextmenu="onNodeRightClick"
       @node-dblclick="onNodeDoubleClick"
+      @contextmenu="onTreeRightClick"
     >
       <template #default="{ node, data }">
         <div class="tree-node">
@@ -23,21 +29,80 @@
         </div>
       </template>
     </el-tree>
+    <Teleport to="body">
+      <div
+        v-if="dropdownVisible && contextMenuItems.length > 0"
+        class="context-menu-wrapper"
+        :style="{
+          position: 'fixed',
+          left: contextMenuPosition.x + 'px',
+          top: contextMenuPosition.y + 'px',
+          zIndex: 2000
+        }"
+        @click.stop
+      >
+        <div class="context-menu">
+          <div
+            v-for="(item, index) in contextMenuItems"
+            :key="index"
+            :class="['context-menu-item', {
+              'context-menu-item-disabled': item.disabled,
+              'context-menu-item-divided': item.divided,
+              'context-menu-item-has-submenu': item.hasSubmenu
+            }]"
+            @mouseenter="item.hasSubmenu && onItemMouseEnter(item, index)"
+            @mouseleave="item.hasSubmenu && onItemMouseLeave(item, index)"
+            @click="!item.disabled && !item.hasSubmenu && onMenuCommand(item.command)"
+          >
+            <span class="context-menu-item-label">{{ item.label }}</span>
+            <Icon
+              v-if="item.hasSubmenu"
+              icon="mdi:chevron-right"
+              :size="16"
+              class="context-menu-item-arrow"
+            />
+          </div>
+        </div>
+        <!-- 子菜单 -->
+        <div
+          v-if="submenuVisible && currentSubmenu && currentSubmenu.length > 0"
+          class="context-menu submenu"
+          :style="{
+            position: 'fixed',
+            left: submenuPosition.x + 'px',
+            top: submenuPosition.y + 'px',
+            zIndex: 2001
+          }"
+          @click.stop
+          @mouseenter="onSubmenuMouseEnter"
+          @mouseleave="onSubmenuMouseLeave"
+        >
+          <div
+            v-for="(item, index) in currentSubmenu"
+            :key="index"
+            :class="['context-menu-item', {
+              'context-menu-item-disabled': item.disabled,
+              'context-menu-item-divided': item.divided
+            }]"
+            @click="!item.disabled && onMenuCommand(item.command)"
+          >
+            {{ item.label }}
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, Teleport } from 'vue';
 import { globalEmitter, watcher, shortcut, GameObject, serialization, windowEventProxy } from 'feng3d';
 import { hierarchy } from '../../feng3d/hierarchy/Hierarchy';
 import { HierarchyNode } from '../../feng3d/hierarchy/HierarchyNode';
 import { useEditorStore } from '../stores/editorStore';
 import { menuConfig } from '../../configs/CommonConfig';
-import { MenuAdapter, type MenuItem } from '../components/MenuAdapter';
+import type { MenuItem } from '../components/MenuAdapter';
 import Icon from '../components/Icon.vue';
-
-// 创建 Menu 适配器实例
-const menu = new MenuAdapter();
 
 const editorStore = useEditorStore();
 
@@ -49,6 +114,28 @@ const treeProps = {
   children: 'children',
   label: 'label',
 };
+
+// 右键菜单项类型
+interface ContextMenuItem {
+  label: string;
+  command: string;
+  disabled?: boolean;
+  divided?: boolean;
+  submenu?: ContextMenuItem[];
+  hasSubmenu?: boolean;
+}
+
+// 右键菜单项
+const contextMenuItems = ref<ContextMenuItem[]>([]);
+const contextMenuCommandMap = ref<Map<string, () => void>>(new Map());
+const dropdownVisible = ref(false);
+const contextMenuPosition = ref({ x: 0, y: 0 });
+
+// 子菜单相关
+const submenuVisible = ref(false);
+const currentSubmenu = ref<ContextMenuItem[]>([]);
+const submenuPosition = ref({ x: 0, y: 0 });
+const submenuTimer = ref<number | null>(null);
 
 // 更新层级树
 function updateHierarchyTree() {
@@ -128,21 +215,196 @@ function onRootNodeChanged() {
   invalidHierarchy();
 }
 
-// 监听根节点事件
-function onRootNode(node: HierarchyNode) {
+// 递归监听所有节点事件
+function onNode(node: HierarchyNode) {
   if (node) {
     node.on('added', invalidHierarchy);
     node.on('removed', invalidHierarchy);
     node.on('openChanged', invalidHierarchy);
+    
+    // 递归监听子节点
+    if (node.children) {
+      node.children.forEach(onNode);
+    }
+  }
+}
+
+// 监听根节点事件
+function onRootNode(node: HierarchyNode) {
+  onNode(node);
+}
+
+// 递归取消监听所有节点事件
+function offNode(node: HierarchyNode) {
+  if (node) {
+    node.off('added', invalidHierarchy);
+    node.off('removed', invalidHierarchy);
+    node.off('openChanged', invalidHierarchy);
+    
+    // 递归取消监听子节点
+    if (node.children) {
+      node.children.forEach(offNode);
+    }
   }
 }
 
 // 取消监听根节点事件
 function offRootNode(node: HierarchyNode) {
-  if (node) {
-    node.off('added', invalidHierarchy);
-    node.off('removed', invalidHierarchy);
-    node.off('openChanged', invalidHierarchy);
+  offNode(node);
+}
+
+// 递归转换菜单项
+function convertMenuItems(menuItems: any[], commandIndex: { value: number }): ContextMenuItem[] {
+  const items: ContextMenuItem[] = [];
+  let prevWasSeparator = false;
+  
+  menuItems.forEach((item) => {
+    if (item.type === 'separator') {
+      prevWasSeparator = true;
+      return;
+    }
+    
+    if (item.show === false || item.enable === false) {
+      return;
+    }
+    
+    const command = `cmd_${commandIndex.value++}`;
+    const contextItem: ContextMenuItem = {
+      label: item.label || '',
+      command,
+      disabled: item.enable === false,
+      divided: prevWasSeparator,
+      hasSubmenu: !!(item.submenu && item.submenu.length > 0),
+    };
+    
+    // 如果有子菜单，递归转换
+    if (item.submenu && item.submenu.length > 0) {
+      contextItem.submenu = convertMenuItems(item.submenu, commandIndex);
+    }
+    
+    // 如果有点击事件，保存到命令映射
+    if (item.click) {
+      contextMenuCommandMap.value.set(command, item.click);
+    }
+    
+    items.push(contextItem);
+    prevWasSeparator = false;
+  });
+  
+  return items;
+}
+
+// 设置上下文菜单
+function setupContextMenu(menuItems: any[]) {
+  contextMenuCommandMap.value.clear();
+  const commandIndex = { value: 0 };
+  const items = convertMenuItems(menuItems, commandIndex);
+  contextMenuItems.value = items;
+  console.log('设置菜单项完成，数量:', items.length);
+}
+
+// 菜单命令处理
+function onMenuCommand(command: string) {
+  const handler = contextMenuCommandMap.value.get(command);
+  if (handler) {
+    handler();
+    // 创建对象后，手动触发层级树更新
+    // 使用 setTimeout 确保对象已创建完成
+    setTimeout(() => {
+      invalidHierarchy();
+    }, 0);
+  }
+  // 清空命令映射和菜单
+  contextMenuCommandMap.value.clear();
+  dropdownVisible.value = false;
+  submenuVisible.value = false;
+  currentSubmenu.value = [];
+}
+
+// 菜单项鼠标进入（显示子菜单）
+function onItemMouseEnter(item: ContextMenuItem, index: number) {
+  if (!item.hasSubmenu || !item.submenu || item.submenu.length === 0) {
+    return;
+  }
+  
+  // 清除之前的定时器
+  if (submenuTimer.value !== null) {
+    clearTimeout(submenuTimer.value);
+    submenuTimer.value = null;
+  }
+  
+  // 计算子菜单位置
+  const menuItemHeight = 32; // 菜单项高度
+  const menuWidth = 200; // 菜单宽度
+  const submenuX = contextMenuPosition.value.x + menuWidth;
+  const submenuY = contextMenuPosition.value.y + index * menuItemHeight;
+  
+  // 确保子菜单不超出屏幕
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+  let finalX = submenuX;
+  let finalY = submenuY;
+  
+  // 如果右侧空间不足，显示在左侧
+  if (submenuX + menuWidth > screenWidth) {
+    finalX = contextMenuPosition.value.x - menuWidth;
+  }
+  
+  // 如果底部空间不足，向上调整
+  const submenuHeight = item.submenu.length * menuItemHeight;
+  if (submenuY + submenuHeight > screenHeight) {
+    finalY = Math.max(0, screenHeight - submenuHeight);
+  }
+  
+  submenuPosition.value = { x: finalX, y: finalY };
+  currentSubmenu.value = item.submenu;
+  submenuVisible.value = true;
+}
+
+// 菜单项鼠标离开（延迟隐藏子菜单）
+function onItemMouseLeave(item: ContextMenuItem, index: number) {
+  if (!item.hasSubmenu) {
+    return;
+  }
+  
+  // 延迟隐藏，给用户时间移动到子菜单
+  submenuTimer.value = window.setTimeout(() => {
+    submenuVisible.value = false;
+    currentSubmenu.value = [];
+  }, 200);
+}
+
+// 子菜单鼠标进入（保持显示）
+function onSubmenuMouseEnter() {
+  if (submenuTimer.value !== null) {
+    clearTimeout(submenuTimer.value);
+    submenuTimer.value = null;
+  }
+}
+
+// 子菜单鼠标离开（隐藏子菜单）
+function onSubmenuMouseLeave() {
+  submenuVisible.value = false;
+  currentSubmenu.value = [];
+}
+
+// 点击外部关闭菜单
+function handleClickOutside(event: MouseEvent) {
+  if (dropdownVisible.value) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.context-menu-container')) {
+      dropdownVisible.value = false;
+    }
+  }
+}
+
+// 下拉菜单显示状态变化
+function onDropdownVisibleChange(visible: boolean) {
+  if (!visible) {
+    // 菜单关闭时清空菜单项
+    contextMenuItems.value = [];
+    contextMenuCommandMap.value.clear();
+    dropdownVisible.value = false;
   }
 }
 
@@ -172,6 +434,7 @@ function onNodeDoubleClick(data: any) {
 // 树节点右键
 function onNodeRightClick(event: MouseEvent, data: any) {
   event.preventDefault();
+  event.stopPropagation();
   
   const node = data as HierarchyNode;
   if (!node || !node.gameobject) return;
@@ -180,7 +443,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
   editorStore.selectObject(node.gameobject);
   
   // 构建右键菜单
-  const menus: MenuItem[] = [];
+  const menus: any[] = [];
   
   // scene 无法删除
   if (node.gameobject.scene.gameObject !== node.gameobject) {
@@ -253,24 +516,107 @@ function onNodeRightClick(event: MouseEvent, data: any) {
   
   menus.push({ type: 'separator' }, ...menuConfig.getCreateObjectMenu());
   
-  if (menus.length > 0) {
-    menu.popup(menus);
-  }
+  // 设置菜单位置
+  contextMenuPosition.value = {
+    x: event.clientX,
+    y: event.clientY
+  };
+  
+  // 转换为 Element Plus 格式并设置菜单项
+  setupContextMenu(menus);
+  
+  // 使用 nextTick 确保菜单项已设置，然后显示菜单
+  nextTick(() => {
+    console.log('显示菜单，菜单项数量:', contextMenuItems.value.length);
+    console.log('菜单位置:', contextMenuPosition.value);
+    if (contextMenuItems.value.length > 0) {
+      dropdownVisible.value = true;
+      console.log('dropdownVisible 设置为 true');
+    } else {
+      console.warn('菜单项为空，不显示菜单');
+    }
+  });
 }
 
 // 树列表点击（空白处）
 function onTreeClick(event: MouseEvent) {
-  if (event.target === treeRef.value?.$el) {
+  // 检查点击的是否是空白处（不是树节点）
+  const target = event.target as HTMLElement;
+  
+  // 如果点击的是容器本身，取消选择
+  if (target.classList.contains('hierarchy-view')) {
     editorStore.selectObject(null);
+    return;
+  }
+  
+  // 检查是否点击在树的空白区域（不是节点）
+  const treeEl = treeRef.value?.$el;
+  if (treeEl && treeEl.contains(target)) {
+    // 如果点击的不是树节点，取消选择
+    const treeNode = target.closest('.el-tree-node');
+    if (!treeNode) {
+      editorStore.selectObject(null);
+    }
   }
 }
 
 // 树列表右键（空白处）
 function onTreeRightClick(event: MouseEvent) {
-  if (event.target === treeRef.value?.$el) {
+  // 检查右键的是否是空白处（不是树节点）
+  const target = event.target as HTMLElement;
+  
+  // 如果右键的是容器本身，显示创建对象菜单
+  if (target.classList.contains('hierarchy-view')) {
     event.preventDefault();
+    event.stopPropagation();
+    
+    // 取消选择
     editorStore.selectObject(null);
-    menu.popup(menuConfig.getCreateObjectMenu());
+    
+    // 设置菜单位置
+    contextMenuPosition.value = {
+      x: event.clientX,
+      y: event.clientY
+    };
+    
+    // 显示创建对象菜单
+    const menus = menuConfig.getCreateObjectMenu();
+    setupContextMenu(menus);
+    
+    // 使用 nextTick 确保菜单项已设置，然后显示菜单
+    nextTick(() => {
+      dropdownVisible.value = true;
+    });
+    return;
+  }
+  
+  // 检查是否右键在树的空白区域（不是节点）
+  const treeEl = treeRef.value?.$el;
+  if (treeEl && treeEl.contains(target)) {
+    // 如果右键的不是树节点，显示创建对象菜单
+    const treeNode = target.closest('.el-tree-node');
+    if (!treeNode) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // 取消选择
+      editorStore.selectObject(null);
+      
+      // 设置菜单位置
+      contextMenuPosition.value = {
+        x: event.clientX,
+        y: event.clientY
+      };
+      
+      // 显示创建对象菜单
+      const menus = menuConfig.getCreateObjectMenu();
+      setupContextMenu(menus);
+      
+      // 使用 nextTick 确保菜单项已设置，然后显示菜单
+      nextTick(() => {
+        dropdownVisible.value = true;
+      });
+    }
   }
 }
 
@@ -318,6 +664,13 @@ onMounted(() => {
       updateSelectedNode();
     });
   });
+  
+  // 监听快捷键删除命令
+  shortcut.on('deleteSeletedGameObject', deleteSelectedObjects);
+  
+  // 监听点击外部关闭菜单
+  document.addEventListener('click', handleClickOutside);
+  document.addEventListener('contextmenu', handleClickOutside);
 });
 
 onUnmounted(() => {
@@ -326,6 +679,13 @@ onUnmounted(() => {
     offRootNode(hierarchy.rootnode);
   }
   globalEmitter.off('editor.selectedObjectsChanged', () => {});
+  
+  // 移除快捷键监听
+  shortcut.off('deleteSeletedGameObject', deleteSelectedObjects);
+  
+  // 移除点击外部关闭菜单的监听
+  document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener('contextmenu', handleClickOutside);
 });
 
 // 更新选中的节点
@@ -337,6 +697,59 @@ function updateSelectedNode() {
     treeRef.value.setCurrentKey(selectedNode.gameobject.uuid);
   } else {
     treeRef.value.setCurrentKey(null);
+  }
+}
+
+// 删除选中的对象
+function deleteSelectedObjects() {
+  const selectedObjects = editorStore.selectedObjects;
+  if (!selectedObjects || selectedObjects.length === 0) {
+    return;
+  }
+  
+  // 过滤出 GameObject（scene 无法删除）
+  const gameObjects = selectedObjects.filter((obj) => {
+    if (obj instanceof GameObject) {
+      // 检查是否是 scene 根对象
+      return obj.scene.gameObject !== obj;
+    }
+    return false;
+  }) as GameObject[];
+  
+  if (gameObjects.length === 0) {
+    return;
+  }
+  
+  // 删除所有选中的 GameObject
+  gameObjects.forEach((gameObject) => {
+    if (gameObject.parent) {
+      gameObject.parent.removeChild(gameObject);
+    }
+  });
+  
+  // 清空选中对象
+  editorStore.clearSelectedObjects();
+  
+  // 触发层级树更新
+  invalidHierarchy();
+}
+
+// 键盘事件处理（仅处理 Delete 键，作为快捷键系统的补充）
+function onKeyDown(event: KeyboardEvent) {
+  // 检查是否按下了 Delete 键
+  if (event.key === 'Delete') {
+    // 检查是否在输入框中（避免在输入时误删）
+    const target = event.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+      return;
+    }
+    
+    // 阻止默认行为
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // 删除选中的对象
+    deleteSelectedObjects();
   }
 }
 </script>
@@ -376,6 +789,66 @@ function updateSelectedNode() {
 :deep(.el-tree-node.is-current > .el-tree-node__content) {
   background-color: var(--el-fill-color-dark, #3d3d3d);
   color: var(--el-color-primary, #007acc);
+}
+
+/* 右键菜单容器 */
+.context-menu-wrapper {
+  position: fixed;
+  z-index: 2000;
+}
+
+.context-menu {
+  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  border: 1px solid var(--el-border-color, #3d3d3d);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.context-menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: var(--el-text-color-primary, #cccccc);
+  font-size: 14px;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.context-menu-item:hover:not(.context-menu-item-disabled) {
+  background-color: var(--el-fill-color, #2d2d2d);
+}
+
+.context-menu-item-disabled {
+  color: var(--el-text-color-disabled, #666666);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.context-menu-item-divided {
+  border-top: 1px solid var(--el-border-color, #3d3d3d);
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.context-menu-item-has-submenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.context-menu-item-label {
+  flex: 1;
+}
+
+.context-menu-item-arrow {
+  margin-left: 8px;
+  color: var(--el-text-color-secondary, #666666);
+}
+
+.context-menu.submenu {
+  margin-left: 0;
 }
 </style>
 

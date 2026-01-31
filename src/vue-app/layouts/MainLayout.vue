@@ -15,9 +15,13 @@
           <!-- 上方：Hierarchy + Scene -->
           <template #first>
             <SplitPanel direction="horizontal" :split="0.17" :min-size="150">
-              <!-- 左侧：Hierarchy（仅显示层级） -->
+              <!-- 左侧：Hierarchy -->
               <template #first>
-                <HierarchyView />
+                <TabPanel :tabs="hierarchyTabs" :default-active-index="0" @tab-change="onHierarchyTabChange">
+                  <template #tab-hierarchy>
+                    <HierarchyView />
+                  </template>
+                </TabPanel>
               </template>
               
               <!-- 右侧：Scene -->
@@ -31,9 +35,13 @@
             </SplitPanel>
           </template>
           
-          <!-- 下方：Project（仅显示项目） -->
+          <!-- 下方：Project -->
           <template #second>
-            <ProjectView />
+            <TabPanel :tabs="projectTabs" :default-active-index="0" @tab-change="onProjectTabChange">
+              <template #tab-project>
+                <ProjectView />
+              </template>
+            </TabPanel>
           </template>
         </SplitPanel>
       </template>
@@ -67,9 +75,19 @@ import ConsoleView from '../views/ConsoleView.vue';
 import TopMenuBar from '../components/TopMenuBar.vue';
 import TopToolBar from '../components/TopToolBar.vue';
 
-// 主标签页
+// 层级标签页
+const hierarchyTabs = ref<Tab[]>([
+  { id: 'hierarchy', label: '层级' },
+]);
+
+// 场景标签页
 const mainTabs = ref<Tab[]>([
   { id: 'scene', label: '场景' },
+]);
+
+// 项目标签页
+const projectTabs = ref<Tab[]>([
+  { id: 'project', label: '项目' },
 ]);
 
 // 底部标签页
@@ -79,7 +97,15 @@ const bottomTabs = ref<Tab[]>([
 ]);
 
 // 标签切换处理（可选，用于保存状态等）
+function onHierarchyTabChange(index: number) {
+  // TODO: 可以保存标签状态
+}
+
 function onMainTabChange(index: number) {
+  // TODO: 可以保存标签状态
+}
+
+function onProjectTabChange(index: number) {
   // TODO: 可以保存标签状态
 }
 
