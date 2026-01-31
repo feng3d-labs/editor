@@ -9,12 +9,12 @@
 | 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
 | 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
 | 阶段 3: 基础组件迁移 | ✅ 已完成 | 100% | Message ✅、ToolTip ✅、Menu ✅ |
-| 阶段 4: 主要视图迁移 | ⏳ 待开始 | 0% | ProjectView、HierarchyView、InspectorView |
+| 阶段 4: 主要视图迁移 | ⏳ 进行中 | 50% | 布局系统 ✅、ProjectView ⏳、HierarchyView ⏳、InspectorView ⏳ |
 | 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
 | 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
 | 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
 
-**总体进度**: 3/7 阶段已完成 (42.9%)
+**总体进度**: 3.5/7 阶段已完成 (50.0%)
 
 ---
 
@@ -169,13 +169,25 @@
 - ✅ 可以在 Devtools 中查看新组件
 - ✅ 没有冗余的兼容代码
 
-### ⏳ 阶段 4: 主要视图迁移（第 7-10 步）【待开始】
+### ⏳ 阶段 4: 主要视图迁移（第 7-10 步）【进行中 - 50% 完成】
 
-#### ⏳ 步骤 4.1: 创建 Vue 布局系统
-- [ ] 创建 `src/vue-app/layouts/MainLayout.vue` - 主布局
-- [ ] 创建 `src/vue-app/components/SplitPanel.vue` - 分割面板（替换 SplitUIComponent）
-- [ ] 创建 `src/vue-app/components/TabPanel.vue` - 标签页（替换 TabView）
-- [ ] **验证**: 布局组件可以正常使用
+#### ✅ 步骤 4.1: 创建 Vue 布局系统【已完成】
+- [x] 创建 `src/vue-app/components/SplitPanel.vue` - 分割面板（替换 SplitUIComponent）
+- [x] 创建 `src/vue-app/components/TabPanel.vue` - 标签页（替换 TabView）
+- [x] 创建 `src/vue-app/layouts/MainLayout.vue` - 主布局容器（占位，后续迁移视图时使用）
+- [x] 创建 `src/vue-app/components/LayoutDemo.vue` - 布局组件演示（用于测试）
+- [ ] **验证**: 布局组件可以正常使用（可通过 LayoutDemo 测试）
+
+**实现说明**:
+- SplitPanel 支持水平和垂直分割，可拖拽调整大小，支持最小尺寸限制
+- TabPanel 支持多标签页，可以切换和关闭标签，使用 slot 自定义标签内容
+- MainLayout 已创建为占位容器，后续迁移视图时会逐步填充
+- LayoutDemo 提供了布局组件的使用示例，可用于测试和验证
+
+**实现说明**:
+- SplitPanel 支持水平和垂直分割，可拖拽调整大小
+- TabPanel 支持多标签页，可以切换和关闭标签
+- MainLayout 将在迁移具体视图时根据实际布局需求创建
 
 #### ⏳ 步骤 4.2: 迁移 ProjectView（资源面板）
 - [ ] 创建 `src/vue-app/views/ProjectView.vue`
