@@ -1,7 +1,10 @@
 <template>
   <div class="main-layout">
-    <!-- 顶部菜单栏 -->
-    <TopMenuBar />
+    <!-- 顶部菜单栏和工具栏 -->
+    <div class="top-bar-container">
+      <TopMenuBar />
+      <TopToolBar />
+    </div>
     
     <!-- 主布局：水平分割（左侧：Hierarchy + Scene + Project，右侧：Inspector） -->
     <div class="main-content">
@@ -62,6 +65,7 @@ import InspectorView from '../views/InspectorView.vue';
 import SceneView from '../views/SceneView.vue';
 import ConsoleView from '../views/ConsoleView.vue';
 import TopMenuBar from '../components/TopMenuBar.vue';
+import TopToolBar from '../components/TopToolBar.vue';
 
 // 主标签页
 const mainTabs = ref<Tab[]>([
@@ -94,6 +98,14 @@ function onBottomTabChange(index: number) {
   flex-direction: column;
   /* 使用 Element Plus 主题变量 */
   background-color: var(--el-bg-color, #1e1e1e);
+}
+
+.top-bar-container {
+  position: relative;
+  width: 100%;
+  height: 44px; /* 菜单栏 22px + 工具栏 22px */
+  flex-shrink: 0;
+  z-index: 1000;
 }
 
 .main-content {
