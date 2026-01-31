@@ -1,7 +1,11 @@
 <template>
   <div class="main-layout">
+    <!-- 顶部菜单栏 -->
+    <TopMenuBar />
+    
     <!-- 主布局：水平分割（左侧：Hierarchy + Scene + Project，右侧：Inspector） -->
-    <SplitPanel direction="horizontal" :split="0.82" :min-size="200">
+    <div class="main-content">
+      <SplitPanel direction="horizontal" :split="0.82" :min-size="200">
       <!-- 左侧：Hierarchy + Scene + Project -->
       <template #first>
         <SplitPanel direction="vertical" :split="0.64" :min-size="200">
@@ -42,7 +46,8 @@
           </template>
         </TabPanel>
       </template>
-    </SplitPanel>
+      </SplitPanel>
+    </div>
   </div>
 </template>
 
@@ -56,6 +61,7 @@ import HierarchyView from '../views/HierarchyView.vue';
 import InspectorView from '../views/InspectorView.vue';
 import SceneView from '../views/SceneView.vue';
 import ConsoleView from '../views/ConsoleView.vue';
+import TopMenuBar from '../components/TopMenuBar.vue';
 
 // 主标签页
 const mainTabs = ref<Tab[]>([
@@ -84,8 +90,16 @@ function onBottomTabChange(index: number) {
   height: 100%;
   position: relative;
   pointer-events: auto;
+  display: flex;
+  flex-direction: column;
   /* 使用 Element Plus 主题变量 */
   background-color: var(--el-bg-color, #1e1e1e);
+}
+
+.main-content {
+  flex: 1;
+  min-height: 0;
+  position: relative;
 }
 
 .panel-placeholder {
