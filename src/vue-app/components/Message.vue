@@ -27,7 +27,11 @@ interface MessageItem {
 }
 
 const messages = ref<MessageItem[]>([]);
+const messageQueue = ref<Array<{ type: 'normal' | 'error'; text: string }>>([]);
 let messageIdCounter = 0;
+let isShowingMessage = false;
+const interval = 400; // 消息显示间隔（毫秒）
+const messageSpacing = 50; // 消息之间的垂直间距（像素）
 
 // 获取消息样式
 function getMessageStyle(msg: MessageItem) {
@@ -37,16 +41,32 @@ function getMessageStyle(msg: MessageItem) {
   };
 }
 
-// 显示消息
-function showMessage(type: 'normal' | 'error', text: string) {
-  const initialY = window.innerHeight / 4;
+// 计算消息的初始 Y 位置（根据当前显示的消息数量）
+function calculateInitialY(): number {
+  // 基础位置：屏幕上方 1/4
+  const baseY = window.innerHeight / 4;
+  // 根据已显示的消息数量，向下偏移
+  const offsetY = messages.value.length * messageSpacing;
+  return baseY - offsetY;
+}
+
+// 显示消息队列中的下一条消息
+function showNextMessage() {
+  if (messageQueue.value.length === 0) {
+    isShowingMessage = false;
+    return;
+  }
+
+  isShowingMessage = true;
+  const messageData = messageQueue.value.shift()!;
+  const initialY = calculateInitialY();
   const targetY = window.innerHeight / 8;
   
   // 创建消息对象并添加到数组
   const message: MessageItem = {
     id: messageIdCounter++,
-    type,
-    text,
+    type: messageData.type,
+    text: messageData.text,
     y: initialY,
     opacity: 1,
   };
@@ -78,8 +98,23 @@ function showMessage(type: 'normal' | 'error', text: string) {
       if (index > -1) {
         messages.value.splice(index, 1);
       }
+      
+      // 延迟后显示下一条消息（避免重叠）
+      setTimeout(() => {
+        showNextMessage();
+      }, interval);
     })
     .start(); // start() 会自动启动更新循环（通过 Tween.ts 的重写）
+}
+
+// 显示消息（添加到队列）
+function showMessage(type: 'normal' | 'error', text: string) {
+  messageQueue.value.push({ type, text });
+  
+  // 如果当前没有在显示消息，立即开始显示
+  if (!isShowingMessage) {
+    showNextMessage();
+  }
 }
 
 // 处理普通消息
