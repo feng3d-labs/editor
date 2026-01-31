@@ -10,8 +10,8 @@ const result = [];
     if (fstype === 'indexedDB')
     {
         feng3d.indexedDBFS.projectname = decodeURI(GetQueryString('project'));
-        feng3d.FS.fs = feng3d.indexedDBFS;
-        feng3d.ReadRS.rs = new feng3d.ReadRS(feng3d.indexedDBFS);
+        feng3d.FS.fs = feng3d.indexedDBFS as any;
+        feng3d.ReadRS.rs = new feng3d.ReadRS(feng3d.indexedDBFS as any);
     }
     // 初始化资源系统
     await feng3d.ReadRS.rs.init();
@@ -47,8 +47,8 @@ async function initProject()
     // 加载并初始化场景
     const obj = await feng3d.FS.fs.readObject('default.scene.json');
 
-    const scene = await feng3d.ReadRS.rs.deserializeWithAssets(obj);
-    if (scene.getComponent(feng3d.Scene))
+    const scene = await feng3d.ReadRS.rs.deserializeWithAssets(obj) as any;
+    if (scene && typeof scene.getComponent === 'function' && scene.getComponent(feng3d.Scene))
     {
         view.scene = scene.getComponent(feng3d.Scene);
     }

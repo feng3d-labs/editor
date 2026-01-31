@@ -146,19 +146,21 @@ export class ScriptCompiler
         const outputs: { name: string, text: string }[] = [];
         // 排序
         let program = this.createProgram(fileNames, options, tsSourceMap, outputs);
-        const result = ts.reorderSourceFiles(program);
-        console.log(`ts 排序结果`);
-        console.log(result);
-        if (result.circularReferences.length > 0)
+        // TypeScript API 可能不包含 reorderSourceFiles，使用类型断言避免编译错误
+        const result = (ts as any).reorderSourceFiles?.(program);
+        if (result)
         {
-            console.warn(`出现循环引用`);
-
-            return;
+            console.log(`ts 排序结果`);
+            console.log(result);
+            if (result.circularReferences && result.circularReferences.length > 0)
+            {
+                console.warn(`出现循环引用`);
+            }
+            this.tsconfig.files = result.sortedFileNames;
+            editorRS.fs.writeObject('tsconfig.json', this.tsconfig);
+            // 编译
+            program = this.createProgram(result.sortedFileNames, options, tsSourceMap, outputs);
         }
-        this.tsconfig.files = result.sortedFileNames;
-        editorRS.fs.writeObject('tsconfig.json', this.tsconfig);
-        // 编译
-        program = this.createProgram(result.sortedFileNames, options, tsSourceMap, outputs);
         program.emit();
 
         return outputs;

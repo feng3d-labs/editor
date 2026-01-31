@@ -137,7 +137,13 @@ export class AssetFileItemRenderer extends eui.ItemRenderer
             selected = selectedAssetFile.indexOf(this.data) !== -1;
             if (!selected)
             {
-                const assetids = EditorData.editorData.selectedObjects.map((v) => (<AssetData>v).assetId);
+                // 从 selectedObjects 中提取 AssetData 对象（通过检查是否有 assetId 属性）
+                const assetids = EditorData.editorData.selectedObjects
+                    .filter((v) => {
+                        // 检查是否为 AssetData 类型（通过检查是否有 assetId 属性）
+                        return v && typeof v === 'object' && 'assetId' in v;
+                    })
+                    .map((v) => (v as any).assetId);
                 selected = assetids.indexOf(this.data.asset.assetId) !== -1;
             }
         }
