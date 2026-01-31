@@ -45,6 +45,7 @@
     "@feng3d-plugins/cannon": "^0.6.0",
     "@feng3d-plugins/cannon-plugin": "^0.6.0",
     "@feng3d/filesaver": "^0.0.1",
+    "@tweenjs/tween.js": "^25.0.0",
     "feng3d": "^0.6.0",
     "jsonc-parser": "^3.1.0",
     "jszip": "^3.10.0",

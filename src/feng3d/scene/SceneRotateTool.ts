@@ -1,4 +1,5 @@
 import { RegisterComponent, Component, GameObject, loader, serialization, ticker, mathUtil, Vector3, Rectangle, windowEventProxy, shortcut, View, IEvent, Matrix4x4, globalEmitter, Quaternion } from 'feng3d';
+import * as TWEEN from '@tweenjs/tween.js';
 import { EditorData } from '../../global/EditorData';
 import { sceneControlConfig } from '../../shortcut/Editorshortcut';
 import { menu } from '../../ui/components/Menu';
@@ -253,8 +254,10 @@ export class SceneRotateTool extends Component
         const sourceQuat = new Quaternion();
         sourceQuat.fromEuler(camera.transform.rx * mathUtil.DEG2RAD, camera.transform.ry * mathUtil.DEG2RAD, camera.transform.rz * mathUtil.DEG2RAD);
         const rate = { rate: 0.0 };
-        egret.Tween.get(rate, {
-            onChange: () =>
+        const tween = new TWEEN.Tween(rate)
+            .to({ rate: 1 }, 300)
+            .easing(TWEEN.Easing.Sinusoidal.In)
+            .onUpdate(() =>
             {
                 const cameraQuat = sourceQuat.slerpTo(targetQuat, rate.rate);
                 camera.transform.orientation = cameraQuat;
@@ -262,7 +265,10 @@ export class SceneRotateTool extends Component
                 const translation = camera.transform.matrix.getAxisZ();
                 translation.normalize(-lookDistance);
                 camera.transform.position = rotateCenter.addTo(translation);
-            },
-        }).to({ rate: 1 }, 300, egret.Ease.sineIn);
+            });
+
+        // 不传时间参数，让 TWEEN 使用默认时间（当前时间）
+        // 全局 TWEEN 更新循环会自动处理更新，无需手动调用
+        tween.start();
     }
 }

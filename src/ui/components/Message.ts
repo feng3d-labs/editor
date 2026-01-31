@@ -1,4 +1,5 @@
 import { globalEmitter, IEvent, ticker } from 'feng3d';
+import * as TWEEN from '@tweenjs/tween.js';
 import { editorui } from '../../global/editorui';
 
 enum MessageType
@@ -79,10 +80,14 @@ return;
         showItem.y = (editorui.stage.stageHeight - showItem.height) / 4;
         editorui.messageLayer.addChild(showItem);
         //
-        egret.Tween.get(showItem).to({ y: (editorui.stage.stageHeight - showItem.height) / 8, alpha: 0 }, 1000, egret.Ease.sineIn).call(() =>
+        new TWEEN.Tween(showItem)
+            .to({ y: (editorui.stage.stageHeight - showItem.height) / 8, alpha: 0 }, 1000)
+            .easing(TWEEN.Easing.Sinusoidal.In)
+            .onComplete(() =>
         {
             editorui.messageLayer.removeChild(showItem);
             this._messageLabelPool.push(showItem);
-        });
+            })
+            .start();
     }
 }

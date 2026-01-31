@@ -1,4 +1,5 @@
 import { Vector2, Camera, GameObject, Vector3, Matrix4x4, Stats, serialization, FPSController, Scene, RunEnvironment, loader, shortcut, globalEmitter, windowEventProxy, raycaster, ticker, PerspectiveLens, IEvent } from 'feng3d';
+import * as TWEEN from '@tweenjs/tween.js';
 import { EditorComponent } from '../feng3d/EditorComponent';
 import { EditorView } from '../feng3d/EditorView';
 import { GroundGrid } from '../feng3d/GroundGrid';
@@ -460,7 +461,10 @@ export class SceneView extends eui.Component implements ModuleView
 			{
 				localLookPos = this.editorCamera.transform.parent.worldToLocalMatrix.transformPoint3(lookPos);
 			}
-			egret.Tween.get(this.editorCamera.transform).to({ x: localLookPos.x, y: localLookPos.y, z: localLookPos.z }, 300, egret.Ease.sineIn);
+			const tween = new TWEEN.Tween(this.editorCamera.transform)
+				.to({ x: localLookPos.x, y: localLookPos.y, z: localLookPos.z }, 300)
+				.easing(TWEEN.Easing.Sinusoidal.In)
+				.start();
 		}
 	}
 

@@ -4,6 +4,7 @@ import * as feng3dModule from 'feng3d';
 import { ClassUtils } from 'feng3d';
 import * as editorModule from './index';
 import { initQRCode } from './utils/QRCode';
+import './utils/Tween'; // 初始化 Tween 更新循环
 
 // 直接将整个模块挂载到 editor 命名空间
 window.editor = editorModule;
