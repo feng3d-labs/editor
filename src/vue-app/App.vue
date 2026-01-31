@@ -80,6 +80,7 @@ onUnmounted(() => {
   height: 100%;
   pointer-events: none; /* 初始阶段不影响 Egret 的交互 */
   z-index: 1;
+  overflow: hidden; /* 防止内容溢出 */
 }
 
 /* 布局组件需要 pointer-events: auto 才能交互 */
@@ -88,6 +89,19 @@ onUnmounted(() => {
 #vue-app-container :deep(.main-layout),
 #vue-app-container :deep(.layout-test-page) {
   pointer-events: auto;
+}
+</style>
+
+<!-- 全局样式：确保 #vue-app 元素正确显示 -->
+<style>
+#vue-app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
 }
 </style>
 

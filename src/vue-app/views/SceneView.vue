@@ -22,6 +22,7 @@ import { useEditorStore } from '../stores/editorStore';
 import { sceneControlConfig } from '../../shortcut/Editorshortcut';
 import { AreaSelectRect } from '../../ui/components/AreaSelectRect';
 import { drag } from '../../ui/drag/Drag';
+import { editorui } from '../../global/editorui';
 
 const editorStore = useEditorStore();
 
@@ -36,6 +37,9 @@ const view = ref<any>(null); // EditorView
 const editorCamera = ref<Camera | null>(null);
 const areaSelectRect = ref<AreaSelectRect | null>(null);
 const areaSelectStartPosition = ref<Vector2 | null>(null);
+
+// Egret 容器用于拖放注册（drag.register 需要 egret.DisplayObject）
+let dragContainer: egret.DisplayObject | null = null;
 
 // 状态
 const selectedObjectsHistory = ref<GameObject[]>([]);
@@ -417,12 +421,47 @@ function onMouseWheelMoveSceneCamera() {
 
 // 添加场景工具视图
 function onAddSceneToolView(event: IEvent<any>) {
-  // 注意：这里需要将 Egret 组件添加到容器
-  // 暂时使用占位，后续需要更好的集成方式
-  if (toolViewContainerRef.value && event.data) {
-    // 如果是 Egret 组件，需要特殊处理
-    console.warn('SceneView: Egret tool view integration needs special handling');
+  // 获取原始对象（避免 Vue Proxy 干扰）
+  const component = getRawObject(event.data);
+  if (!component || !toolViewContainerRef.value) return;
+  
+  // 如果 component 是 Egret 组件，需要添加到 Egret 舞台
+  // 由于 Vue 和 Egret 的显示系统不同，我们需要将 Egret 组件添加到 editorui.stage
+  // 但需要确保它显示在 SceneView 容器上方
+  if (component instanceof (globalThis as any).eui.Component || component instanceof (globalThis as any).egret.DisplayObject) {
+    // 将组件添加到 editorui 的 messageLayer（最上层）
+    // 或者创建一个专门的容器层
+    if (editorui.stage && editorui.messageLayer) {
+      // 设置组件位置和大小，使其覆盖 SceneView 区域
+      const rect = toolViewContainerRef.value.getBoundingClientRect();
+      component.x = rect.left;
+      component.y = rect.top;
+      component.width = rect.width;
+      component.height = rect.height;
+      
+      // 添加到 messageLayer（最上层，不会被其他内容遮挡）
+      editorui.messageLayer.addChild(component);
+    } else {
+      console.warn('SceneView: editorui.stage or messageLayer not available');
+    }
   }
+}
+
+// 获取原始对象的辅助函数（避免 Vue Proxy 干扰 feng3d 事件系统）
+function getRawObject<T>(obj: T): T {
+  if (!obj) return obj;
+  const proxy = obj as any;
+  if (proxy && typeof proxy === 'object' && '__v_raw' in proxy) {
+    return proxy.__v_raw;
+  }
+  if (typeof (window as any).toRaw === 'function') {
+    try {
+      return (window as any).toRaw(obj);
+    } catch (e) {
+      // 忽略错误
+    }
+  }
+  return obj;
 }
 
 onMounted(async () => {
@@ -488,18 +527,30 @@ onMounted(async () => {
   globalEmitter.on('editor.addSceneToolView', onAddSceneToolView);
   
   // 拖放功能
-  drag.register(containerRef.value as any, null, ['file_gameobject', 'file_script'], (dragdata) => {
-    dragdata.getDragData('file_gameobject').forEach((v) => {
-      hierarchy.addGameoObjectFromAsset(v, hierarchy.rootnode.gameobject);
+  // drag.register 需要 egret.DisplayObject，但 containerRef.value 是 DOM 元素
+  // 创建一个隐藏的 Egret 容器用于拖放注册
+  if (editorui.stage) {
+    dragContainer = new (globalThis as any).eui.Group();
+    dragContainer.width = 0;
+    dragContainer.height = 0;
+    dragContainer.visible = false;
+    // 将容器添加到舞台（但不显示）
+    editorui.stage.addChild(dragContainer);
+    
+    // 注册拖放功能
+    drag.register(dragContainer, null, ['file_gameobject', 'file_script'], (dragdata) => {
+      dragdata.getDragData('file_gameobject').forEach((v) => {
+        hierarchy.addGameoObjectFromAsset(v, hierarchy.rootnode.gameobject);
+      });
+      dragdata.getDragData('file_script').forEach((v) => {
+        let gameobject = view.value?.mouse3DManager.selectedGameObject;
+        if (!gameobject || !gameobject.scene) {
+          gameobject = hierarchy.rootnode.gameobject;
+        }
+        gameobject.addScript(v.scriptName);
+      });
     });
-    dragdata.getDragData('file_script').forEach((v) => {
-      let gameobject = view.value?.mouse3DManager.selectedGameObject;
-      if (!gameobject || !gameobject.scene) {
-        gameobject = hierarchy.rootnode.gameobject;
-      }
-      gameobject.addScript(v.scriptName);
-    });
-  });
+  }
   
   // 保存观察器引用
   (containerRef.value as any)._resizeObserver = resizeObserver;
@@ -535,7 +586,13 @@ onUnmounted(() => {
   globalEmitter.off('editor.addSceneToolView', onAddSceneToolView);
   
   // 移除拖放功能
-  drag.unregister(containerRef.value as any);
+  if (dragContainer) {
+    drag.unregister(dragContainer);
+    if (dragContainer.parent) {
+      dragContainer.parent.removeChild(dragContainer);
+    }
+    dragContainer = null;
+  }
   
   // 清理 ResizeObserver
   if ((containerRef.value as any)?._resizeObserver) {

@@ -1,45 +1,48 @@
 <template>
   <div class="main-layout">
-    <!-- 主布局：水平分割 -->
-    <SplitPanel direction="horizontal" :split="0.2" :min-size="150">
-      <!-- 左侧：ProjectView 和 HierarchyView -->
+    <!-- 主布局：水平分割（左侧：Hierarchy + Scene + Project，右侧：Inspector） -->
+    <SplitPanel direction="horizontal" :split="0.82" :min-size="200">
+      <!-- 左侧：Hierarchy + Scene + Project -->
       <template #first>
-        <TabPanel :tabs="leftTabs" :default-active-index="0" @tab-change="onLeftTabChange">
-          <template #tab-project>
-            <ProjectView />
-          </template>
-          <template #tab-hierarchy>
-            <HierarchyView />
-          </template>
-        </TabPanel>
-      </template>
-      
-      <!-- 右侧：SceneView 和 InspectorView -->
-      <template #second>
-        <SplitPanel direction="vertical" :split="0.7" :min-size="200">
-          <!-- 上方：SceneView -->
+        <SplitPanel direction="vertical" :split="0.64" :min-size="200">
+          <!-- 上方：Hierarchy + Scene -->
           <template #first>
-            <TabPanel :tabs="mainTabs" :default-active-index="0" @tab-change="onMainTabChange">
-              <template #tab-scene>
-                <SceneView />
+            <SplitPanel direction="horizontal" :split="0.17" :min-size="150">
+              <!-- 左侧：Hierarchy（仅显示层级） -->
+              <template #first>
+                <HierarchyView />
               </template>
-            </TabPanel>
+              
+              <!-- 右侧：Scene -->
+              <template #second>
+                <TabPanel :tabs="mainTabs" :default-active-index="0" @tab-change="onMainTabChange">
+                  <template #tab-scene>
+                    <SceneView />
+                  </template>
+                </TabPanel>
+              </template>
+            </SplitPanel>
           </template>
           
-          <!-- 下方：InspectorView 和 Console -->
+          <!-- 下方：Project（仅显示项目） -->
           <template #second>
-            <TabPanel :tabs="bottomTabs" :default-active-index="0" @tab-change="onBottomTabChange">
-              <template #tab-inspector>
-                <InspectorView />
-              </template>
-              <template #tab-console>
-                <div class="panel-placeholder">
-                  <p>Console（待迁移）</p>
-                </div>
-              </template>
-            </TabPanel>
+            <ProjectView />
           </template>
         </SplitPanel>
+      </template>
+      
+      <!-- 右侧：Inspector -->
+      <template #second>
+        <TabPanel :tabs="bottomTabs" :default-active-index="0" @tab-change="onBottomTabChange">
+          <template #tab-inspector>
+            <InspectorView />
+          </template>
+          <template #tab-console>
+            <div class="panel-placeholder">
+              <p>Console（待迁移）</p>
+            </div>
+          </template>
+        </TabPanel>
       </template>
     </SplitPanel>
   </div>
@@ -55,12 +58,6 @@ import HierarchyView from '../views/HierarchyView.vue';
 import InspectorView from '../views/InspectorView.vue';
 import SceneView from '../views/SceneView.vue';
 
-// 左侧标签页
-const leftTabs = ref<Tab[]>([
-  { id: 'project', label: '项目' },
-  { id: 'hierarchy', label: '层级' },
-]);
-
 // 主标签页
 const mainTabs = ref<Tab[]>([
   { id: 'scene', label: '场景' },
@@ -73,10 +70,6 @@ const bottomTabs = ref<Tab[]>([
 ]);
 
 // 标签切换处理（可选，用于保存状态等）
-function onLeftTabChange(index: number) {
-  // TODO: 可以保存标签状态
-}
-
 function onMainTabChange(index: number) {
   // TODO: 可以保存标签状态
 }
