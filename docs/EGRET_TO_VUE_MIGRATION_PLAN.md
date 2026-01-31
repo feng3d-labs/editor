@@ -2,19 +2,19 @@
 
 ## 📊 迁移进度总览
 
-**当前阶段**: 阶段 4 进行中 ⏳ (66.7% 完成) | ProjectView 已迁移 ✅
+**当前阶段**: 阶段 4 进行中 ⏳ (75% 完成) | HierarchyView 已迁移 ✅
 
 | 阶段 | 状态 | 进度 | 备注 |
 |------|------|------|------|
 | 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
 | 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
 | 阶段 3: 基础组件迁移 | ✅ 已完成 | 100% | Message ✅、ToolTip ✅、Menu ✅ |
-| 阶段 4: 主要视图迁移 | ⏳ 进行中 | 66.7% | 布局系统 ✅、ProjectView ✅、HierarchyView ⏳、InspectorView ⏳ |
+| 阶段 4: 主要视图迁移 | ⏳ 进行中 | 75% | 布局系统 ✅、ProjectView ✅、HierarchyView ✅、InspectorView ⏳ |
 | 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
 | 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
 | 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
 
-**总体进度**: 4.0/7 阶段已完成 (57.1%)
+**总体进度**: 4.25/7 阶段已完成 (60.7%)
 
 ---
 
@@ -198,12 +198,12 @@
 - [ ] **移除旧代码**: 验证功能正常后，删除 `src/ui/assets/ProjectView.ts`（保留一段时间确保稳定）
 - [ ] **验证**: 资源面板功能正常，可以浏览和管理资源
 
-#### ⏳ 步骤 4.3: 迁移 HierarchyView（层级面板）
-- [ ] 创建 `src/vue-app/views/HierarchyView.vue`
-- [ ] 迁移场景树功能
-- [ ] 直接使用 Pinia store 获取状态（不通过适配层）
-- [ ] **直接替换**: 在 MainView 中直接使用新的 Vue 组件
-- [ ] **移除旧代码**: 替换完成后立即删除 `src/ui/hierarchy/HierarchyView.ts`
+#### ✅ 步骤 4.3: 迁移 HierarchyView（层级面板）【已完成】
+- [x] 创建 `src/vue-app/views/HierarchyView.vue`
+- [x] 迁移场景树功能
+- [x] 直接使用 Pinia store 获取状态（不通过适配层）
+- [x] **集成到 MainLayout**: 已在 MainLayout 中使用新的 Vue 组件
+- [ ] **移除旧代码**: 验证功能正常后，删除 `src/ui/hierarchy/HierarchyView.ts`（保留一段时间确保稳定）
 - [ ] **验证**: 层级面板功能正常，可以选择对象
 
 #### ⏳ 步骤 4.4: 迁移 InspectorView（检查器面板）
@@ -224,7 +224,8 @@
 - ✅ 布局系统已创建
 - ✅ ProjectView 已迁移并可用，已集成到 MainLayout
 - ⏳ ProjectView 旧代码待删除（验证稳定后）
-- ⏳ HierarchyView 已迁移并可用，旧代码已删除
+- ✅ HierarchyView 已迁移并可用，已集成到 MainLayout
+- ⏳ HierarchyView 旧代码待删除（验证稳定后）
 - ⏳ InspectorView 已迁移并可用，旧代码已删除
 - ⏳ 所有视图可以正常交互
 - ✅ ProjectView 与 feng3d 引擎的交互正常（直接调用）

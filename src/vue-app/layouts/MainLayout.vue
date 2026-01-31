@@ -9,9 +9,7 @@
             <ProjectView />
           </template>
           <template #tab-hierarchy>
-            <div class="panel-placeholder">
-              <p>HierarchyView（待迁移）</p>
-            </div>
+            <HierarchyView />
           </template>
         </TabPanel>
       </template>
@@ -57,6 +55,7 @@ import SplitPanel from '../components/SplitPanel.vue';
 import TabPanel from '../components/TabPanel.vue';
 import type { Tab } from '../components/TabPanel.types';
 import ProjectView from '../views/ProjectView.vue';
+import HierarchyView from '../views/HierarchyView.vue';
 
 // 左侧标签页
 const leftTabs = ref<Tab[]>([
@@ -76,15 +75,15 @@ const bottomTabs = ref<Tab[]>([
 ]);
 
 // 标签切换处理（可选，用于保存状态等）
-function onLeftTabChange(tabId: string) {
+function onLeftTabChange(index: number) {
   // TODO: 可以保存标签状态
 }
 
-function onMainTabChange(tabId: string) {
+function onMainTabChange(index: number) {
   // TODO: 可以保存标签状态
 }
 
-function onBottomTabChange(tabId: string) {
+function onBottomTabChange(index: number) {
   // TODO: 可以保存标签状态
 }
 </script>

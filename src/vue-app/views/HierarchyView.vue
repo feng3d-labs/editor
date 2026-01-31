@@ -27,13 +27,16 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue';
-import { globalEmitter, watcher, shortcut, GameObject, serialization } from 'feng3d';
+import { globalEmitter, watcher, shortcut, GameObject, serialization, windowEventProxy } from 'feng3d';
 import { hierarchy } from '../../feng3d/hierarchy/Hierarchy';
 import { HierarchyNode } from '../../feng3d/hierarchy/HierarchyNode';
 import { useEditorStore } from '../stores/editorStore';
 import { menuConfig } from '../../configs/CommonConfig';
-import { menu, MenuItem } from '../components/Menu';
+import { MenuAdapter, type MenuItem } from '../components/MenuAdapter';
 import Icon from '../components/Icon.vue';
+
+// 创建 Menu 适配器实例
+const menu = new MenuAdapter();
 
 const editorStore = useEditorStore();
 
@@ -56,9 +59,11 @@ function updateHierarchyTree() {
   
   // 转换为 el-tree 需要的格式
   function convertNode(node: HierarchyNode): any {
+    // 使用 gameobject 的 uuid 作为唯一标识
+    const id = node.gameobject.uuid;
     return {
       ...node,
-      id: node.gameobject.uuid, // 使用 GameObject 的 uuid 作为唯一标识
+      id, // 使用 uuid 作为唯一标识
       label: node.label || node.gameobject.name,
       children: node.children && node.children.length > 0 
         ? node.children.map(convertNode) 
@@ -78,17 +83,23 @@ function updateHierarchyTree() {
 function updateExpandedNodes() {
   if (!treeRef.value || !hierarchy.rootnode) return;
   
-  function expandNode(node: HierarchyNode) {
+  const expandedKeys: string[] = [];
+  
+  function collectExpandedKeys(node: HierarchyNode) {
     if (node.isOpen) {
-      treeRef.value.setExpandedKeys([...treeRef.value.store.expandedKeys, node.gameobject.uuid]);
+      expandedKeys.push(node.gameobject.uuid);
     }
     
     if (node.children) {
-      node.children.forEach(expandNode);
+      node.children.forEach(collectExpandedKeys);
     }
   }
   
-  expandNode(hierarchy.rootnode);
+  collectExpandedKeys(hierarchy.rootnode);
+  
+  if (expandedKeys.length > 0) {
+    treeRef.value.setExpandedKeys(expandedKeys);
+  }
 }
 
 // 使层级树无效（触发更新）
@@ -196,7 +207,6 @@ function onNodeRightClick(event: MouseEvent, data: any) {
         click: () => {
           const undoSelectedObjects = editorStore.selectedObjects;
           const objects = editorStore.selectedGameObjects;
-          const { serialization } = (global as any).feng3d;
           const newGameObjects = objects.map((v) => {
             const no = serialization.clone(v);
             v.parent.addChild(no);
