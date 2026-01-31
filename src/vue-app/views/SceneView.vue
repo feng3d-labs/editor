@@ -5,6 +5,8 @@
     <div ref="backRectRef" class="scene-back-rect"></div>
     <!-- 工具视图容器 -->
     <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
+    <!-- 相机预览组件（显示在场景界面右下角） -->
+    <CameraPreview :parent-container="containerRef" />
   </div>
 </template>
 
@@ -23,6 +25,7 @@ import { sceneControlConfig } from '../../shortcut/Editorshortcut';
 import { AreaSelectRect } from '../../ui/components/AreaSelectRect';
 import { drag } from '../../ui/drag/Drag';
 import { editorui } from '../../global/editorui';
+import CameraPreview from '../components/CameraPreview.vue';
 
 const editorStore = useEditorStore();
 

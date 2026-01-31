@@ -149,8 +149,25 @@ async function updateView() {
           view.value.parent.removeChild(view.value);
         }
         
+        // 获取或创建 InspectorView 的 group 容器（用于 CameraPreview 等组件）
+        // 这个 group 应该模拟原来的 InspectorView.group（在 InspectorView.exml 中定义）
+        // CameraPreview 会通过 this.parent 获取到这个 group，并保存为 saveParent
+        let inspectorGroup = (window as any).__inspectorGroup;
+        if (!inspectorGroup) {
+          inspectorGroup = new (global as any).eui.Group();
+          // 使用 VerticalLayout，与原 InspectorView.group 保持一致
+          const layout = new (global as any).eui.VerticalLayout();
+          layout.gap = 0;
+          layout.horizontalAlign = 'justify';
+          inspectorGroup.layout = layout;
+          inspectorGroup.percentWidth = 100;
+          inspectorGroup.percentHeight = 100;
+          editorui.popupLayer.addChild(inspectorGroup);
+          (window as any).__inspectorGroup = inspectorGroup;
+        }
+        
         // 创建一个 Egret Group 作为容器，用于承载 ObjectView
-        // 使用 popupLayer 作为父容器（类似于原来的实现）
+        // 这个容器会被添加到 inspectorGroup 中，模拟原来的 this.group.addChild(this._view)
         const container = new (global as any).eui.Group();
         container.percentWidth = 100;
         container.percentHeight = 100;
@@ -158,18 +175,21 @@ async function updateView() {
         // 将 ObjectView 添加到容器
         container.addChild(view.value);
         
-        // 将容器添加到 popupLayer
-        editorui.popupLayer.addChild(container);
+        // 将容器添加到 inspectorGroup（模拟原来的 this.group.addChild(this._view)）
+        // 这样当 CameraPreview 被 objectview 创建时，它的 parent 就是 inspectorGroup
+        inspectorGroup.addChild(container);
         
         // 设置容器的位置和大小，使其覆盖 InspectorView 的内容区域
         // 使用 nextTick 确保 DOM 已渲染
         nextTick(() => {
           updateEgretContainerPosition(container);
+          updateInspectorGroupPosition(inspectorGroup);
         });
         
         // 监听窗口大小变化，更新容器位置
         const resizeObserver = new ResizeObserver(() => {
           updateEgretContainerPosition(container);
+          updateInspectorGroupPosition(inspectorGroup);
         });
         if (contentRef.value) {
           resizeObserver.observe(contentRef.value);
@@ -290,6 +310,22 @@ function updateEgretContainerPosition(container: any) {
   }
 }
 
+// 更新 InspectorView 的 group 位置和大小（用于 CameraPreview 等组件）
+function updateInspectorGroupPosition(inspectorGroup: any) {
+  if (!contentRef.value || !inspectorGroup) return;
+  
+  const rect = contentRef.value.getBoundingClientRect();
+  const editorui = (global as any).editor?.editorui || (window as any).editor?.editorui;
+  
+  if (editorui && editorui.stage) {
+    // 将屏幕坐标转换为 Egret 舞台坐标
+    inspectorGroup.x = rect.left;
+    inspectorGroup.y = rect.top;
+    inspectorGroup.width = rect.width;
+    inspectorGroup.height = rect.height;
+  }
+}
+
 // 监听更新事件
 function onUpdateView() {
   updateView();
@@ -305,6 +341,38 @@ onMounted(() => {
   globalEmitter.on('inspector.update', onUpdateView);
   globalEmitter.on('inspector.saveShowData', onSaveShowData);
   
+  // 创建 InspectorView 的 group 容器（用于 CameraPreview 等组件）
+  // 这个 group 应该模拟原来的 InspectorView.group
+  const editorui = (global as any).editor?.editorui || (window as any).editor?.editorui;
+  if (editorui && editorui.popupLayer) {
+    let inspectorGroup = (window as any).__inspectorGroup;
+    if (!inspectorGroup) {
+      inspectorGroup = new (global as any).eui.Group();
+      inspectorGroup.percentWidth = 100;
+      inspectorGroup.percentHeight = 100;
+      editorui.popupLayer.addChild(inspectorGroup);
+      (window as any).__inspectorGroup = inspectorGroup;
+      
+      // 监听窗口大小变化，更新 group 位置
+      const resizeObserver = new ResizeObserver(() => {
+        if (contentRef.value && inspectorGroup) {
+          updateInspectorGroupPosition(inspectorGroup);
+        }
+      });
+      if (contentRef.value) {
+        resizeObserver.observe(contentRef.value);
+      }
+      (window as any).__inspectorGroupResizeObserver = resizeObserver;
+      
+      // 初始更新位置
+      nextTick(() => {
+        if (contentRef.value && inspectorGroup) {
+          updateInspectorGroupPosition(inspectorGroup);
+        }
+      });
+    }
+  }
+  
   // 初始化视图
   updateView();
 });
@@ -313,6 +381,12 @@ onUnmounted(() => {
   globalEmitter.off('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.off('inspector.update', onUpdateView);
   globalEmitter.off('inspector.saveShowData', onSaveShowData);
+  
+  // 清理 InspectorView group 的 ResizeObserver
+  if ((window as any).__inspectorGroupResizeObserver) {
+    (window as any).__inspectorGroupResizeObserver.disconnect();
+    delete (window as any).__inspectorGroupResizeObserver;
+  }
   
   // 清理视图
   if (view.value) {

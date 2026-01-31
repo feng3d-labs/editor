@@ -38,9 +38,7 @@
             <InspectorView />
           </template>
           <template #tab-console>
-            <div class="panel-placeholder">
-              <p>Console（待迁移）</p>
-            </div>
+            <ConsoleView />
           </template>
         </TabPanel>
       </template>
@@ -57,6 +55,7 @@ import ProjectView from '../views/ProjectView.vue';
 import HierarchyView from '../views/HierarchyView.vue';
 import InspectorView from '../views/InspectorView.vue';
 import SceneView from '../views/SceneView.vue';
+import ConsoleView from '../views/ConsoleView.vue';
 
 // 主标签页
 const mainTabs = ref<Tab[]>([
