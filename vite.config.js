@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
+import vue from '@vitejs/plugin-vue';
+import vueDevtools from 'vite-plugin-vue-devtools';
 
 // 复制静态资源的插件
 function copyStaticAssets()
@@ -133,6 +135,10 @@ export default defineConfig(({ mode }) =>
 
         // 插件配置
         plugins: [
+            vue(),
+            vueDevtools({
+                enabled: true,
+            }),
             copyStaticAssets()
         ],
 

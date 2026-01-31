@@ -94,6 +94,24 @@ else
 // 初始化 Egret
 egret.runEgret({ renderMode: 'webgl', audioType: 0 });
 
+// 初始化 Vue 应用（与 Egret 并行运行）
+// 延迟加载，确保 DOM 已准备好
+if (typeof window !== 'undefined')
+{
+    // 等待 DOM 加载完成
+    if (document.readyState === 'loading')
+    {
+        document.addEventListener('DOMContentLoaded', () =>
+        {
+            import('./vue-app/main');
+        });
+    }
+    else
+    {
+        import('./vue-app/main');
+    }
+}
+
 // 导出所有内容
 export * from './index';
 
