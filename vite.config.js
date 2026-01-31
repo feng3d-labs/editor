@@ -108,7 +108,20 @@ export default defineConfig(({ mode }) =>
         // 优化配置
         optimizeDeps: {
             // 排除不需要预构建的依赖
-            exclude: []
+            // feng3d 是已构建的库，不需要预构建，避免类名被修改
+            exclude: [
+                'feng3d',
+                '@feng3d-plugins/cannon',
+                '@feng3d-plugins/cannon-plugin'
+            ],
+            // 包含需要预构建的 CommonJS 模块
+            include: [
+                'js-beautify'
+            ],
+            // 保持类名不被修改
+            esbuildOptions: {
+                keepNames: true
+            }
         }
     };
 });
