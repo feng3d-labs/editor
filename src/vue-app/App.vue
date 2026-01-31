@@ -8,12 +8,16 @@
     
     <!-- ToolTip 组件：显示工具提示 -->
     <ToolTip />
+    
+    <!-- Menu 组件：显示右键菜单 -->
+    <Menu />
   </div>
 </template>
 
 <script setup lang="ts">
 import Message from './components/Message.vue';
 import ToolTip from './components/ToolTip.vue';
+import Menu from './components/Menu.vue';
 </script>
 
 <style scoped>

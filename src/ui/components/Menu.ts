@@ -30,55 +30,106 @@ export type MenuItem = {
     show?: boolean;
 };
 
+/**
+ * Menu 类
+ * @deprecated 请使用 Vue Menu 组件，此类作为过渡层
+ */
 export class Menu
 {
+    private adapter: any;
+
+    constructor() {
+        // 延迟加载适配器，避免循环依赖
+        this.loadAdapter();
+    }
+
+    private async loadAdapter() {
+        try {
+            const { createMenuAdapter } = await import('../../vue-app/components/MenuAdapter');
+            this.adapter = createMenuAdapter();
+        } catch (error) {
+            console.warn('Menu adapter not available, using fallback', error);
+            // 如果适配器不可用，使用旧的实现作为后备
+            this.adapter = new LegacyMenu();
+        }
+    }
+
     /**
      * 弹出菜单
-     *
-     *
      * @param menuItems 菜单数据
-     *
-     * @returns
-该功能存在一个暂时无法解决的bug
-```
-[{
-label: "Rendering",
-submenu: [
-    { label: "Camera", click: () => { gameobject.addComponent(Camera); } },
-    { label: "PointLight", click: () => { gameobject.addComponent(PointLight); } },
-    { label: "DirectionalLight", click: () => { gameobject.addComponent(DirectionalLight); } },
-]
-}]
-```
-如上代码中 ``` "Camera" ``` 比 ``` "DirectionalLight" ``` 要短时会出现子菜单盖住父菜单情况，代码需要修改如下才能规避该情况
-```
-[{
-label: "Rendering",
-submenu: [
-    { label: "DirectionalLight", click: () => { gameobject.addComponent(DirectionalLight); } },
-    { label: "Camera", click: () => { gameobject.addComponent(Camera); } },
-    { label: "PointLight", click: () => { gameobject.addComponent(PointLight); } },
-]
-}]
-```
-     *
+     * @returns 返回一个占位对象，用于兼容旧代码
      */
-    popup(menuItems: MenuItem[])
+    popup(menuItems: MenuItem[]): any
     {
-        const menuItem = this.handleShow({ submenu: menuItems });
-        if (menuItem.submenu.length === 0) return;
-        const menuUI = MenuUI.create(menuItem.submenu, null);
-        maskview.mask(menuUI);
-
-        return menuUI;
+        if (!this.adapter) {
+            // 如果适配器还没加载，延迟执行
+            const placeholder = {
+                x: windowEventProxy.clientX,
+                y: windowEventProxy.clientY,
+                addEventListener: () => {},
+                removeEventListener: () => {},
+                parent: null,
+                stage: null,
+            };
+            this.loadAdapter().then(() => {
+                this.adapter?.popup(menuItems);
+            });
+            return placeholder;
+        }
+        return this.adapter.popup(menuItems);
     }
 
     /**
      * 处理菜单中 show==false的菜单项
-     *
      * @param menuItem 菜单数据
      */
     handleShow(menuItem: MenuItem)
+    {
+        if (!this.adapter) {
+            // 如果适配器还没加载，使用简单实现
+            if (menuItem.submenu) {
+                menuItem.submenu = menuItem.submenu.filter((v) => v.show !== false);
+                menuItem.submenu.forEach((v) => this.handleShow(v));
+            }
+            return menuItem;
+        }
+        return this.adapter.handleShow(menuItem);
+    }
+
+    /**
+     * 弹出枚举选择菜单
+     * @param enumDefinition 枚举定义
+     * @param currentValue 当前枚举值
+     * @param selectCallBack 选择回调
+     */
+    popupEnum(enumDefinition: Object, currentValue: any, selectCallBack: (v: any) => void)
+    {
+        if (!this.adapter) {
+            // 如果适配器还没加载，延迟执行
+            this.loadAdapter().then(() => {
+                this.adapter?.popupEnum(enumDefinition, currentValue, selectCallBack);
+            });
+            return;
+        }
+        this.adapter.popupEnum(enumDefinition, currentValue, selectCallBack);
+    }
+}
+
+/**
+ * 旧版 Menu 实现（作为后备）
+ */
+class LegacyMenu
+{
+    popup(menuItems: MenuItem[])
+    {
+        const menuItem = this.handleShow({ submenu: menuItems });
+        if (menuItem.submenu && menuItem.submenu.length === 0) return;
+        const menuUI = MenuUI.create(menuItem.submenu!, null);
+        maskview.mask(menuUI);
+        return menuUI;
+    }
+
+    handleShow(menuItem: MenuItem): MenuItem
     {
         if (menuItem.submenu)
         {
@@ -105,13 +156,6 @@ submenu: [
         return menuItem;
     }
 
-    /**
-     * 弹出枚举选择菜单
-     *
-     * @param enumDefinition 枚举定义
-     * @param currentValue 当前枚举值
-     * @param selectCallBack 选择回调
-     */
     popupEnum(enumDefinition: Object, currentValue: any, selectCallBack: (v: any) => void)
     {
         const menu: MenuItem[] = [];

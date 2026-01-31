@@ -229,11 +229,19 @@ function showMenu(item: TopMenuItemRenderer)
 
 	//
 	const rect = item.getTransformedBounds(item.stage);
+	// 注意：Vue Menu 组件通过事件系统工作，位置通过事件参数传递
+	// 这里仍然调用 popup，但位置信息会通过适配器传递
 	const menuView = menu.popup(item.data.submenu);
-	menuView.x = rect.x;
-	menuView.y = rect.bottom;
-	menuView.addEventListener(egret.Event.REMOVED_FROM_STAGE, onRemoveFromeStage, null);
-	showMenuItem = { menu: menuView, item };
+	// 对于 Vue Menu，这些设置不会生效，但保留以兼容旧代码
+	if (menuView) {
+		menuView.x = rect.x;
+		menuView.y = rect.bottom;
+		menuView.addEventListener(egret.Event.REMOVED_FROM_STAGE, onRemoveFromeStage, null);
+		showMenuItem = { menu: menuView, item };
+	} else {
+		// Vue Menu 组件通过事件系统工作，不需要手动管理
+		showMenuItem = { menu: null as any, item };
+	}
 }
 
 function onMenuMouseMove()

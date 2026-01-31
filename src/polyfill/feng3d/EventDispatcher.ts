@@ -76,6 +76,16 @@ declare global
         'tooltip.hide': undefined;
 
         /**
+         * 显示菜单
+         */
+        'menu.show': { items: any[]; parentRect?: { left: number; top: number; right: number; bottom: number }; x?: number; y?: number };
+
+        /**
+         * 隐藏菜单
+         */
+        'menu.hide': undefined;
+
+        /**
          * 界面布局发生变化
          */
         'viewLayout.changed': string;

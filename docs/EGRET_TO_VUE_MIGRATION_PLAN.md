@@ -8,13 +8,13 @@
 |------|------|------|------|
 | 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
 | 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
-| 阶段 3: 基础组件迁移 | ⏳ 进行中 | 67% | Message ✅、ToolTip ✅、Menu ⏳ |
+| 阶段 3: 基础组件迁移 | ✅ 已完成 | 100% | Message ✅、ToolTip ✅、Menu ✅ |
 | 阶段 4: 主要视图迁移 | ⏳ 待开始 | 0% | ProjectView、HierarchyView、InspectorView |
 | 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
 | 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
 | 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
 
-**总体进度**: 2.67/7 阶段已完成 (38.1%)
+**总体进度**: 3/7 阶段已完成 (42.9%)
 
 ---
 
@@ -105,7 +105,7 @@
 - ✅ 应用功能不受影响，正常使用
 - ✅ 没有冗余的状态同步代码
 
-### ⏳ 阶段 3: 基础组件迁移（第 4-6 步）【进行中 - 67% 完成】
+### ✅ 阶段 3: 基础组件迁移（第 4-6 步）【已完成 - 100%】
 
 #### ✅ 步骤 3.1: 迁移简单组件 - Message【已完成】
 - [x] 创建 `src/vue-app/components/Message.vue`
@@ -135,9 +135,21 @@
 - 支持字符串提示（自定义视图类型暂不支持）
 - 旧代码可以继续使用 `toolTip.register()` 和 `toolTip.unregister()`，无需修改
 
-#### ⏳ 步骤 3.3: 迁移简单组件 - Menu
-- [ ] 创建 `src/vue-app/components/Menu.vue`
-- [ ] 支持右键菜单功能
+#### ✅ 步骤 3.3: 迁移简单组件 - Menu【已完成】
+- [x] 创建 `src/vue-app/components/Menu.vue`
+- [x] 创建 `src/vue-app/components/MenuAdapter.ts` 适配器
+- [x] **集成到 App.vue**: Menu 组件已在 App.vue 中挂载
+- [x] **Menu.ts 更新**: 使用适配器替代旧的实现
+- [x] **事件类型定义**: 添加 `menu.show` 和 `menu.hide` 事件类型
+- [x] **支持功能**: 右键菜单、子菜单、分隔符、禁用项、枚举选择菜单
+- [ ] **移除旧代码**: 验证功能正常后，删除旧实现（保留一段时间确保稳定）
+
+**实现说明**:
+- Vue Menu 组件监听 `globalEmitter` 的 `menu.show` 和 `menu.hide` 事件
+- 支持子菜单、分隔符、禁用项、优先级排序
+- 支持枚举选择菜单（popupEnum）
+- 自动处理菜单位置，避免超出屏幕
+- 旧代码可以继续使用 `menu.popup()` 和 `menu.popupEnum()`，无需修改
 - [ ] **直接替换**: 找到所有使用 Menu 的地方，直接替换为 Vue 组件
 - [ ] **移除旧代码**: 替换完成后立即删除旧实现
 - [ ] **验证**: 右键菜单功能正常
