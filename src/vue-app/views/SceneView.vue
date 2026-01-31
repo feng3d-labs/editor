@@ -190,8 +190,11 @@ function updateCanvasSize() {
   
   // 更新 Stats 位置（相对于视口）
   if (Stats.instance && Stats.instance.dom) {
+    Stats.instance.dom.style.position = 'absolute';
     Stats.instance.dom.style.left = `${rect.left}px`;
     Stats.instance.dom.style.top = `${rect.top}px`;
+    Stats.instance.dom.style.zIndex = '10';
+    Stats.instance.dom.style.pointerEvents = 'none';
   }
   
   console.log('SceneView: canvas size updated', { width: rect.width, height: rect.height });

@@ -169,6 +169,8 @@ export class SceneRotateTool extends Component
         const canvas = document.createElement('canvas');
         document.getElementById('SceneRotateToolLayer').appendChild(canvas);
         canvas.style.position = 'absolute';
+        canvas.style.zIndex = '10';
+        canvas.style.pointerEvents = 'auto';
         canvas.width = 80;
         canvas.height = 80;
         //

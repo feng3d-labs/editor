@@ -42,9 +42,10 @@
 <body>
 
 	<div id="app" style="position: absolute;"> </div>
-	<div id="CameraPreviewLayer" style="position: absolute;"> </div>
-	<div id="SceneRotateToolLayer" style="position: absolute;"> </div>
-	<div id="stats"></div>
+	<!-- 工具层：需要显示在 Vue 应用之上 -->
+	<div id="CameraPreviewLayer" style="position: absolute; z-index: 10; pointer-events: none;"></div>
+	<div id="SceneRotateToolLayer" style="position: absolute; z-index: 10; pointer-events: none;"></div>
+	<div id="stats" style="position: absolute; z-index: 10; pointer-events: none;"></div>
 	<!-- Vue 应用挂载点（与 egretDiv 共存） -->
 	<div id="vue-app" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
 	<div id="egretDiv" style="margin: auto;width: 100%;height: 100%;" class="egret-player"

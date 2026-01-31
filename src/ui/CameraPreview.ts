@@ -50,6 +50,10 @@ export class CameraPreview extends eui.Component
         //
         const canvas = this.canvas = document.createElement('canvas');
         (document.getElementById('CameraPreviewLayer')).appendChild(canvas);
+        // 确保 canvas 有正确的 z-index 和样式
+        canvas.style.position = 'absolute';
+        canvas.style.zIndex = '10';
+        canvas.style.pointerEvents = 'auto';
         this.previewView = new View(canvas);
         this.previewView.mouse3DManager.mouseInput.enable = false;
         this.previewView.stop();

@@ -57,8 +57,6 @@ function updateHierarchyTree() {
     return;
   }
   
-  const nodes = hierarchy.rootnode.getShowNodes();
-  
   // 转换为 el-tree 需要的格式
   function convertNode(node: HierarchyNode): any {
     // 使用 gameobject 的 uuid 作为唯一标识
@@ -73,7 +71,11 @@ function updateHierarchyTree() {
     };
   }
   
-  treeData.value = nodes.map(convertNode);
+  // el-tree 需要树形结构，只使用根节点的直接子节点
+  // 而不是使用 getShowNodes() 返回的扁平化数组
+  treeData.value = hierarchy.rootnode.children 
+    ? hierarchy.rootnode.children.map(convertNode)
+    : [];
   
   // 更新展开状态
   nextTick(() => {
