@@ -123,11 +123,12 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 22px;
-  background-color: #ffffff;
-  border-bottom: 1px solid var(--el-border-color, #e4e7ed);
+  background-color: transparent;
   display: flex;
   align-items: center;
   z-index: 1000;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
 .menu-items {
@@ -146,17 +147,20 @@ onUnmounted(() => {
   justify-content: center;
   cursor: pointer;
   user-select: none;
-  color: #000000;
+  color: var(--el-text-color-primary, #000000);
   font-size: 12px;
   min-width: 40px;
+  transition: background-color 0.15s ease;
+  border-radius: 2px;
+  margin: 0 2px;
 }
 
 .menu-item:hover {
-  background-color: #cce8ff;
+  background-color: var(--el-fill-color-light, #f5f7fa);
 }
 
 .menu-item-active {
-  background-color: #cce8ff;
+  background-color: var(--el-color-primary-light-9, #ecf5ff);
 }
 
 .menu-item-label {
@@ -168,10 +172,11 @@ onUnmounted(() => {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  color: #000000;
+  color: var(--el-text-color-primary, #000000);
   font-size: 12px;
   pointer-events: none;
   user-select: none;
+  font-weight: 500;
 }
 </style>
 

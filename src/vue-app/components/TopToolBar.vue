@@ -1,91 +1,98 @@
 <template>
   <div class="top-tool-bar">
-    <!-- 左侧工具组：移动、旋转、缩放 -->
-    <div class="tool-group tool-group-left">
-      <button
-        :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.MOVE }]"
-        @click="onMoveClick"
-        title="移动"
-      >
-        <img v-if="toolType !== MRSToolType.MOVE" :src="getImageUrl('move_up_png')" class="button-icon" />
-        <img v-else :src="getImageUrl('move_down_png')" class="button-icon" />
-      </button>
-      <button
-        :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.ROTATION }]"
-        @click="onRotateClick"
-        title="旋转"
-      >
-        <img v-if="toolType !== MRSToolType.ROTATION" :src="getImageUrl('rotate_up_png')" class="button-icon" />
-        <img v-else :src="getImageUrl('rotate_down_png')" class="button-icon" />
-      </button>
-      <button
-        :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.SCALE }]"
-        @click="onScaleClick"
-        title="缩放"
-      >
-        <img v-if="toolType !== MRSToolType.SCALE" :src="getImageUrl('scale_up_png')" class="button-icon" />
-        <img v-else :src="getImageUrl('scale_down_png')" class="button-icon" />
-      </button>
+    <!-- 左侧：工具组 -->
+    <div class="tool-section tool-section-left">
+      <!-- 工具组：移动、旋转、缩放 -->
+      <div class="tool-group">
+        <button
+          :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.MOVE }]"
+          @click="onMoveClick"
+          title="移动 (W)"
+        >
+          <Icon icon="mdi:cursor-move" :size="18" />
+        </button>
+        <button
+          :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.ROTATION }]"
+          @click="onRotateClick"
+          title="旋转 (E)"
+        >
+          <Icon icon="mdi:rotate-3d-variant" :size="18" />
+        </button>
+        <button
+          :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.SCALE }]"
+          @click="onScaleClick"
+          title="缩放 (R)"
+        >
+          <Icon icon="mdi:arrow-expand-all" :size="18" />
+        </button>
+      </div>
+      
+      <!-- 分隔线 -->
+      <div class="divider"></div>
+      
+      <!-- 工具组：Pivot/Center、Local/World -->
+      <div class="tool-group">
+        <button
+          :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': isBaryCenter }]"
+          @click="onCenterClick"
+          title="Pivot/Center"
+        >
+          <Icon v-if="!isBaryCenter" icon="mdi:crosshairs-gps" :size="18" />
+          <Icon v-else icon="mdi:vector-point" :size="18" />
+        </button>
+        <button
+          :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': !isWoldCoordinate }]"
+          @click="onWorldClick"
+          title="Local/World"
+        >
+          <Icon v-if="isWoldCoordinate" icon="mdi:earth" :size="18" />
+          <Icon v-else icon="mdi:axis-arrow" :size="18" />
+        </button>
+      </div>
     </div>
 
-    <!-- 中间工具组：Pivot/Center、Local/World -->
-    <div class="tool-group tool-group-center-left">
-      <button
-        :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': isBaryCenter }]"
-        @click="onCenterClick"
-        title="Pivot/Center"
-      >
-        <img v-if="!isBaryCenter" :src="getImageUrl('center_png')" class="button-icon" />
-        <img v-else :src="getImageUrl('pivot_png')" class="button-icon" />
-      </button>
-      <button
-        :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': !isWoldCoordinate }]"
-        @click="onWorldClick"
-        title="Local/World"
-      >
-        <img v-if="isWoldCoordinate" :src="getImageUrl('global_png')" class="button-icon" />
-        <img v-else :src="getImageUrl('local_png')" class="button-icon" />
-      </button>
+    <!-- 中间：播放按钮 -->
+    <div class="tool-section tool-section-center">
+      <div class="play-button-container">
+        <button
+          class="tool-button play-button"
+          @mousedown.stop="handlePlayMouseDown"
+          @mouseup.stop="handlePlayMouseUp"
+          @mouseleave="isPlayPressed = false"
+          title="播放"
+          type="button"
+        >
+          <Icon icon="mdi:play" :size="18" />
+        </button>
+      </div>
     </div>
 
-    <!-- 中间播放按钮 -->
-    <div class="tool-group tool-group-center">
-      <button
-        class="tool-button play-button"
-        @mousedown.stop="handlePlayMouseDown"
-        @mouseup.stop="handlePlayMouseUp"
-        @mouseleave="isPlayPressed = false"
-        title="播放"
-        type="button"
-      >
-        <img v-if="!isPlayPressed" :src="getImageUrl('play_up_png')" class="button-icon" />
-        <img v-else :src="getImageUrl('play_down_png')" class="button-icon" />
-      </button>
-    </div>
-
-    <!-- 右侧工具组：帮助、二维码、设置 -->
-    <div class="tool-group tool-group-right">
-      <button
-        class="tool-button"
-        @click="onHelpClick"
-        title="帮助"
-      >
-        <img :src="getImageUrl('help_png')" class="button-icon" />
-      </button>
-      <button
-        class="tool-button"
-        @click="onQRCodeClick"
-        title="二维码"
-      >
-        <img :src="getImageUrl('qrcode_jpg')" class="button-icon" />
-      </button>
-      <button
-        class="tool-button"
-        @click="onSettingClick"
-        title="设置"
-      >
-        <img :src="getImageUrl('setting_png')" class="button-icon" />
-      </button>
+    <!-- 右侧：工具按钮 -->
+    <div class="tool-section tool-section-right">
+      <!-- 工具组：帮助、二维码、设置 -->
+      <div class="tool-group">
+        <button
+          class="tool-button"
+          @click="onHelpClick"
+          title="帮助"
+        >
+          <Icon icon="mdi:help-circle" :size="18" />
+        </button>
+        <button
+          class="tool-button"
+          @click="onQRCodeClick"
+          title="二维码"
+        >
+          <Icon icon="mdi:qrcode" :size="18" />
+        </button>
+        <button
+          class="tool-button"
+          @click="onSettingClick"
+          title="设置"
+        >
+          <Icon icon="mdi:cog" :size="18" />
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -99,6 +106,7 @@ import { editorcache } from '../../caches/Editorcache';
 import { showQRCode } from '../../utils/QRCode';
 import { useEditorStore } from '../stores/editorStore';
 import { closeRunWindow, setRunWindow, getRunWindow } from '../utils/runWindowManager';
+import Icon from './Icon.vue';
 
 const editorStore = useEditorStore();
 
@@ -110,38 +118,6 @@ const isWoldCoordinate = computed(() => editorStore.isWoldCoordinate);
 // 播放按钮按下状态
 const isPlayPressed = ref(false);
 let playButtonMouseDownTime = 0;
-
-// 获取图片 URL（从 Egret 资源系统）
-function getImageUrl(resourceName: string): string {
-  // 使用 Egret RES 系统获取资源
-  if (typeof (window as any).RES !== 'undefined') {
-    const res = (window as any).RES.getRes(resourceName);
-    if (res && res.texture && res.texture._bitmapData) {
-      return res.texture._bitmapData.source;
-    }
-  }
-  
-  // 回退方案：直接使用资源路径
-  const resourceMap: Record<string, string> = {
-    'move_up_png': 'resource/assets/Button/move_up.png',
-    'move_down_png': 'resource/assets/Button/move_down.png',
-    'rotate_up_png': 'resource/assets/Button/rotate_up.png',
-    'rotate_down_png': 'resource/assets/Button/rotate_down.png',
-    'scale_up_png': 'resource/assets/Button/scale_up.png',
-    'scale_down_png': 'resource/assets/Button/scale_down.png',
-    'center_png': 'resource/assets/Button/center.png',
-    'pivot_png': 'resource/assets/Button/pivot.png',
-    'global_png': 'resource/assets/Button/global.png',
-    'local_png': 'resource/assets/Button/local.png',
-    'play_up_png': 'resource/assets/Button/play_up.png',
-    'play_down_png': 'resource/assets/Button/play_down.png',
-    'help_png': 'resource/assets/Button/help.png',
-    'qrcode_jpg': 'resource/assets/Button/qrcode.jpg',
-    'setting_png': 'resource/assets/Button/setting.png',
-  };
-  
-  return resourceMap[resourceName] || `resource/assets/Button/${resourceName.replace('_png', '.png').replace('_jpg', '.jpg')}`;
-}
 
 // 工具按钮点击处理
 function onMoveClick() {
@@ -276,66 +252,87 @@ onUnmounted(() => {
   background-color: transparent;
   z-index: 1001;
   pointer-events: auto;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
+.tool-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.tool-section-left {
+  flex: 0 0 auto;
+}
+
+.tool-section-center {
+  flex: 1;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tool-section-right {
+  flex: 0 0 auto;
+  justify-content: flex-end;
+}
+
+/* 分隔线 */
+.divider {
+  width: 1px;
+  height: 16px;
+  background-color: var(--el-border-color, #e4e7ed);
+  flex-shrink: 0;
+}
+
+/* 工具组 */
 .tool-group {
   display: flex;
   align-items: center;
-  gap: 0;
+  gap: 2px;
   flex-wrap: nowrap;
 }
 
-.tool-group-left {
-  position: absolute;
-  left: 50px;
-  top: 50%;
-  transform: translateY(-50%);
+/* 播放按钮容器 */
+.play-button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.tool-group-center-left {
-  position: absolute;
-  left: 220px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.tool-group-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10000;
-  pointer-events: auto;
-}
-
-.tool-group-right {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
+/* 工具按钮 */
 .tool-button {
   position: relative;
-  width: 22px;
-  height: 22px;
   min-width: 22px;
   min-height: 22px;
-  max-width: 22px;
-  max-height: 22px;
   padding: 0;
   margin: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   z-index: 1002;
   pointer-events: auto;
   flex-shrink: 0;
   box-sizing: border-box;
-  line-height: 0;
-  vertical-align: top;
+  border-radius: 2px;
+  transition: background-color 0.15s ease;
+}
+
+.tool-button:hover {
+  background-color: var(--el-fill-color-light, #f5f7fa);
+}
+
+.tool-button:active {
+  background-color: var(--el-fill-color, #e4e7ed);
+}
+
+.tool-button.is-selected {
+  background-color: var(--el-color-primary-light-9, #ecf5ff);
 }
 
 .play-button {
@@ -345,44 +342,25 @@ onUnmounted(() => {
 }
 
 .center-world-button {
-  width: 22px !important;
-  height: 22px !important;
-  min-width: 22px !important;
-  min-height: 22px !important;
-  max-width: 22px !important;
-  max-height: 22px !important;
-  line-height: 0 !important;
-  font-size: 0 !important;
-  display: inline-block !important;
-}
-
-.center-world-button img {
-  display: block !important;
-  width: 22px !important;
-  height: 22px !important;
-  object-fit: cover !important;
-  margin: 0 !important;
+  display: inline-flex !important;
   padding: 0 !important;
+  margin: 0 !important;
+  vertical-align: top !important;
 }
 
-.button-icon {
-  position: absolute;
+/* 图标样式 */
+.tool-button :deep(svg) {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  transition: opacity 0.1s;
   display: block;
+  transition: color 0.15s ease;
 }
 
-.center-world-button .button-icon {
-  object-fit: cover;
+.tool-button:hover :deep(svg) {
+  color: var(--el-color-primary, #409eff);
 }
 
-.tool-button:hover {
-  opacity: 0.8;
-}
-
-.tool-button:active {
-  opacity: 0.6;
+.tool-button.is-selected :deep(svg) {
+  color: var(--el-color-primary, #409eff);
 }
 </style>

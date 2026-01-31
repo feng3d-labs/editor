@@ -106,6 +106,9 @@ function onBottomTabChange(index: number) {
   height: 44px; /* 菜单栏 22px + 工具栏 22px */
   flex-shrink: 0;
   z-index: 1000;
+  background-color: var(--el-bg-color, #ffffff);
+  border-bottom: 1px solid var(--el-border-color, #e4e7ed);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .main-content {
