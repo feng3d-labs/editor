@@ -9,19 +9,13 @@
   "author": "feng",
   "license": "MIT",
   "scripts": {
+    "dev": "vite",
     "clean": "rimraf \"{lib,dist}\"",
     "build": "vite build",
-    "build:prod": "cross-env NODE_ENV=production vite build && npm run build:types",
-    "build:types": "tsc --emitDeclarationOnly --declaration --declarationMap --outDir dist",
     "watch": "tsc --watch",
-    "dev": "vite",
     "preview": "vite preview",
     "lint": "eslint --ext .js --ext .ts src vite.config.js --ignore-path .gitignore --max-warnings 0",
-    "lintfix": "npm run lint -- --fix",
-    "deploy": "npm run clean && npm run build:prod && node scripts/deploy.js",
-    "release": "npm run clean && npm run build:prod && npm publish",
-    "server": "node server/index.js",
-    "refreshTemplate": "node scripts/refreshTemplate.js"
+    "lintfix": "npm run lint -- --fix"
   },
   "repository": {
     "type": "git",
@@ -67,7 +61,6 @@
     "eslint": "8.12.0",
     "fs-extra": "^10.1.0",
     "rimraf": "3.0.2",
-    "ts-node": "10.7.0",
     "tslib": "^2.4.0",
     "typescript": "4.3.5",
     "vite": "^5.0.0"
