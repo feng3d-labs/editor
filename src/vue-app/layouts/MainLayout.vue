@@ -1,17 +1,92 @@
 <template>
   <div class="main-layout">
-    <!-- 主布局容器 -->
-    <!-- 当前阶段：作为占位，后续会逐步迁移视图到这里 -->
-    <div class="layout-placeholder">
-      <p>主布局容器</p>
-      <p>后续会在这里集成 ProjectView、HierarchyView、InspectorView 等视图</p>
-    </div>
+    <!-- 主布局：水平分割 -->
+    <SplitPanel direction="horizontal" :split="0.2" :min-size="150">
+      <!-- 左侧：ProjectView 和 HierarchyView -->
+      <template #first>
+        <TabPanel :tabs="leftTabs" :default-active-index="0" @tab-change="onLeftTabChange">
+          <template #tab-project>
+            <ProjectView />
+          </template>
+          <template #tab-hierarchy>
+            <div class="panel-placeholder">
+              <p>HierarchyView（待迁移）</p>
+            </div>
+          </template>
+        </TabPanel>
+      </template>
+      
+      <!-- 右侧：SceneView 和 InspectorView -->
+      <template #second>
+        <SplitPanel direction="vertical" :split="0.7" :min-size="200">
+          <!-- 上方：SceneView -->
+          <template #first>
+            <TabPanel :tabs="mainTabs" :default-active-index="0" @tab-change="onMainTabChange">
+              <template #tab-scene>
+                <div class="panel-placeholder">
+                  <p>SceneView（待迁移）</p>
+                </div>
+              </template>
+            </TabPanel>
+          </template>
+          
+          <!-- 下方：InspectorView 和 Console -->
+          <template #second>
+            <TabPanel :tabs="bottomTabs" :default-active-index="0" @tab-change="onBottomTabChange">
+              <template #tab-inspector>
+                <div class="panel-placeholder">
+                  <p>InspectorView（待迁移）</p>
+                </div>
+              </template>
+              <template #tab-console>
+                <div class="panel-placeholder">
+                  <p>Console（待迁移）</p>
+                </div>
+              </template>
+            </TabPanel>
+          </template>
+        </SplitPanel>
+      </template>
+    </SplitPanel>
   </div>
 </template>
 
 <script setup lang="ts">
-// 主布局组件
-// 当前阶段：占位组件，后续会逐步迁移视图
+import { ref } from 'vue';
+import SplitPanel from '../components/SplitPanel.vue';
+import TabPanel from '../components/TabPanel.vue';
+import type { Tab } from '../components/TabPanel.types';
+import ProjectView from '../views/ProjectView.vue';
+
+// 左侧标签页
+const leftTabs = ref<Tab[]>([
+  { id: 'project', label: '项目' },
+  { id: 'hierarchy', label: '层级' },
+]);
+
+// 主标签页
+const mainTabs = ref<Tab[]>([
+  { id: 'scene', label: '场景' },
+]);
+
+// 底部标签页
+const bottomTabs = ref<Tab[]>([
+  { id: 'inspector', label: '检查器' },
+  { id: 'console', label: '控制台' },
+]);
+
+// 标签切换处理（可选，用于保存状态等）
+function onLeftTabChange(tabId: string) {
+  // TODO: 可以保存标签状态
+}
+
+function onMainTabChange(tabId: string) {
+  // TODO: 可以保存标签状态
+}
+
+function onBottomTabChange(tabId: string) {
+  // TODO: 可以保存标签状态
+}
 </script>
 
 <style scoped>
@@ -20,21 +95,24 @@
   height: 100%;
   position: relative;
   pointer-events: auto;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color, #1e1e1e);
 }
 
-.layout-placeholder {
+.panel-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: #999;
+  /* 使用 Element Plus 主题变量 */
+  color: var(--el-text-color-secondary, #666666);
   font-size: 14px;
   text-align: center;
 }
 
-.layout-placeholder p {
+.panel-placeholder p {
   margin: 10px 0;
 }
 </style>

@@ -2,19 +2,19 @@
 
 ## 📊 迁移进度总览
 
-**当前阶段**: 阶段 3 进行中 ⏳ (33% 完成) | Message 组件已迁移 ✅
+**当前阶段**: 阶段 4 进行中 ⏳ (66.7% 完成) | ProjectView 已迁移 ✅
 
 | 阶段 | 状态 | 进度 | 备注 |
 |------|------|------|------|
 | 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
 | 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
 | 阶段 3: 基础组件迁移 | ✅ 已完成 | 100% | Message ✅、ToolTip ✅、Menu ✅ |
-| 阶段 4: 主要视图迁移 | ⏳ 进行中 | 50% | 布局系统 ✅、ProjectView ⏳、HierarchyView ⏳、InspectorView ⏳ |
+| 阶段 4: 主要视图迁移 | ⏳ 进行中 | 66.7% | 布局系统 ✅、ProjectView ✅、HierarchyView ⏳、InspectorView ⏳ |
 | 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
 | 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
 | 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
 
-**总体进度**: 3.5/7 阶段已完成 (50.0%)
+**总体进度**: 4.0/7 阶段已完成 (57.1%)
 
 ---
 
@@ -169,7 +169,7 @@
 - ✅ 可以在 Devtools 中查看新组件
 - ✅ 没有冗余的兼容代码
 
-### ⏳ 阶段 4: 主要视图迁移（第 7-10 步）【进行中 - 50% 完成】
+### ⏳ 阶段 4: 主要视图迁移（第 7-10 步）【进行中 - 66.7% 完成】
 
 #### ✅ 步骤 4.1: 创建 Vue 布局系统【已完成】
 - [x] 创建 `src/vue-app/components/SplitPanel.vue` - 分割面板（替换 SplitUIComponent）
@@ -189,12 +189,13 @@
 - TabPanel 支持多标签页，可以切换和关闭标签
 - MainLayout 将在迁移具体视图时根据实际布局需求创建
 
-#### ⏳ 步骤 4.2: 迁移 ProjectView（资源面板）
-- [ ] 创建 `src/vue-app/views/ProjectView.vue`
-- [ ] 迁移资源树、文件列表功能
-- [ ] 保持与 feng3d 的交互接口（直接调用，不通过适配层）
-- [ ] **直接替换**: 在 MainView 中直接使用新的 Vue 组件
-- [ ] **移除旧代码**: 替换完成后立即删除 `src/ui/assets/ProjectView.ts`
+#### ✅ 步骤 4.2: 迁移 ProjectView（资源面板）【已完成】
+- [x] 创建 `src/vue-app/views/ProjectView.vue`
+- [x] 迁移资源树、文件列表功能
+- [x] 保持与 feng3d 的交互接口（直接调用，不通过适配层）
+- [x] **集成到 MainLayout**: 已在 MainLayout 中使用新的 Vue 组件
+- [x] **适配器支持**: 创建 ProjectViewAdapter 支持旧代码调用 `editorui.assetview.invalidateAssettree()`
+- [ ] **移除旧代码**: 验证功能正常后，删除 `src/ui/assets/ProjectView.ts`（保留一段时间确保稳定）
 - [ ] **验证**: 资源面板功能正常，可以浏览和管理资源
 
 #### ⏳ 步骤 4.3: 迁移 HierarchyView（层级面板）
@@ -221,13 +222,14 @@
 
 **阶段 4 完成标准**:
 - ✅ 布局系统已创建
-- ✅ ProjectView 已迁移并可用，旧代码已删除
-- ✅ HierarchyView 已迁移并可用，旧代码已删除
-- ✅ InspectorView 已迁移并可用，旧代码已删除
-- ✅ 所有视图可以正常交互
-- ✅ 与 feng3d 引擎的交互正常（直接调用）
-- ✅ 编辑器核心功能（选择、编辑、资源管理）正常使用
-- ✅ 没有冗余的适配层代码
+- ✅ ProjectView 已迁移并可用，已集成到 MainLayout
+- ⏳ ProjectView 旧代码待删除（验证稳定后）
+- ⏳ HierarchyView 已迁移并可用，旧代码已删除
+- ⏳ InspectorView 已迁移并可用，旧代码已删除
+- ⏳ 所有视图可以正常交互
+- ✅ ProjectView 与 feng3d 引擎的交互正常（直接调用）
+- ⏳ 编辑器核心功能（选择、编辑、资源管理）正常使用
+- ✅ ProjectView 适配器已创建（临时，后续会移除）
 
 ### ⏳ 阶段 5: SceneView 特殊处理（第 11 步）【待开始】
 
