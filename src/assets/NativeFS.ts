@@ -3,9 +3,9 @@ import { nativeAPI, NativeFSBase, supportNative } from './NativeRequire';
 
 /**
  * 本地文件系统
+ * 注意：native 功能已移至独立的 workspace 子项目 @feng3d-editor/native
  */
-// eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-export const nativeFS1: NativeFSBase = supportNative ? (require(`${__dirname}/native/NativeFSBase.js`).nativeFS) : null;
+export const nativeFS1: NativeFSBase = null;
 
 /**
  * 本地文件系统

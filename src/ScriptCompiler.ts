@@ -37,7 +37,7 @@ export class ScriptCompiler
         else
         {
             if (EditorAsset.codeeditoWin) EditorAsset.codeeditoWin.close();
-            EditorAsset.codeeditoWin = window.open(`codeeditor.html`);
+            EditorAsset.codeeditoWin = window.open(`packages/codeeditor/codeeditor.html`);
             EditorAsset.codeeditoWin.onload = () =>
             {
                 globalEmitter.emit('codeeditor.openScript', EditorData.editorData.openScript);

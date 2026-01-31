@@ -1,7 +1,5 @@
 import { defineConfig } from 'vite';
-import { resolve } from 'path';
-import { existsSync } from 'fs';
-import { copySync } from 'fs-extra';
+import { fileURLToPath, URL } from 'node:url';
 
 // 复制静态资源的插件
 function copyStaticAssets()
@@ -10,6 +8,36 @@ function copyStaticAssets()
         name: 'copy-static-assets',
         async writeBundle()
         {
+            // 使用 Node.js 内置模块（vite.config.js 在 Node.js 环境运行）
+            const { resolve, dirname } = await import('node:path');
+            const { existsSync, mkdirSync, copyFileSync, readdirSync, statSync } = await import('node:fs');
+            const { fileURLToPath } = await import('node:url');
+            const __filename = fileURLToPath(import.meta.url);
+            const __dirname = dirname(__filename);
+
+            // 递归复制目录的函数
+            const copyDir = (src, dest) =>
+            {
+                if (!existsSync(src)) return;
+                if (!existsSync(dest)) mkdirSync(dest, { recursive: true });
+
+                const entries = readdirSync(src, { withFileTypes: true });
+                for (const entry of entries)
+                {
+                    const srcPath = resolve(src, entry.name);
+                    const destPath = resolve(dest, entry.name);
+
+                    if (entry.isDirectory())
+                    {
+                        copyDir(srcPath, destPath);
+                    }
+                    else
+                    {
+                        copyFileSync(srcPath, destPath);
+                    }
+                }
+            };
+
             const outDir = resolve(__dirname, 'dist-vite');
             const assetsToCopy = [
                 { from: 'libs', to: 'libs' },
@@ -30,7 +58,17 @@ function copyStaticAssets()
                 {
                     try
                     {
-                        copySync(srcPath, destPath, { overwrite: true });
+                        const stat = statSync(srcPath);
+                        if (stat.isDirectory())
+                        {
+                            copyDir(srcPath, destPath);
+                        }
+                        else
+                        {
+                            const destDir = dirname(destPath);
+                            if (!existsSync(destDir)) mkdirSync(destDir, { recursive: true });
+                            copyFileSync(srcPath, destPath);
+                        }
                         console.log(`已复制: ${from} -> ${to}`);
                     }
                     catch (error)
@@ -67,10 +105,10 @@ export default defineConfig(({ mode }) =>
             minify: isProduction ? 'esbuild' : false,
             rollupOptions: {
                 // 多页面入口配置
-                input: {
-                    index: resolve(__dirname, 'index.html'),
-                    run: resolve(__dirname, 'run.html')
-                },
+            input: {
+                index: fileURLToPath(new URL('./index.html', import.meta.url)),
+                run: fileURLToPath(new URL('./run.html', import.meta.url))
+            },
                 output: {
                     // 保持目录结构
                     entryFileNames: 'assets/[name]-[hash].js',
@@ -101,7 +139,7 @@ export default defineConfig(({ mode }) =>
         // 解析配置
         resolve: {
             alias: {
-                '@': resolve(__dirname, 'src')
+                '@': fileURLToPath(new URL('./src', import.meta.url))
             }
         },
 

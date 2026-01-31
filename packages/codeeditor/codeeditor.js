@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 /* eslint-disable spaced-comment */
-/// <reference path="../feng3d/dist/index.d.ts" />
-/// <reference path="dist/index.d.ts" />
-/// <reference path="libs/monaco-editor/monaco.d.ts" />
+/// <reference path="../../node_modules/feng3d/dist/index.d.ts" />
+/// <reference path="../../dist/index.d.ts" />
+/// <reference path="../../libs/monaco-editor/monaco.d.ts" />
 
 // 参考 https://microsoft.github.io/monaco-editor/api/index.html
 
@@ -65,7 +65,7 @@ function initMonaco(callback)
     }
 
     //
-    amdRequire.config({ paths: { vs: 'libs/monaco-editor/min/vs' } });
+    amdRequire.config({ paths: { vs: '../../libs/monaco-editor/min/vs' } });
     amdRequire(['vs/editor/editor.main'], () =>
     {
         // 设置ts编译选项
@@ -178,3 +178,4 @@ function triggerCompile(callback)
         }
     });
 }
+

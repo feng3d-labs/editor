@@ -27,5 +27,11 @@
     "include": [
         //
         "src/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "lib",
+        "dist-vite"
     ]
 }
