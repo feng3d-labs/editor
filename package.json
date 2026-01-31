@@ -15,8 +15,11 @@
     "build": "rollup -c",
     "build:prod": "cross-env NODE_ENV=production rollup -c",
     "watch": "rollup -cw",
+    "vite:dev": "vite",
+    "vite:build": "vite build",
+    "vite:preview": "vite preview",
     "test": "mocha",
-    "lint": "eslint --ext .js --ext .ts src test rollup.config.js --ignore-path .gitignore --max-warnings 0",
+    "lint": "eslint --ext .js --ext .ts src test rollup.config.js vite.config.js --ignore-path .gitignore --max-warnings 0",
     "lintfix": "npm run lint -- --fix",
     "docs": "typedoc",
     "deploy": "npm run clean && npm run build:prod && npm run docs && node scripts/deploy.js",
@@ -95,7 +98,8 @@
     "tslib": "^2.4.0",
     "typedoc": "0.21.4",
     "typedoc-plugin-sourcefile-url": "1.0.6",
-    "typescript": "4.3.5"
+    "typescript": "4.3.5",
+    "vite": "^5.0.0"
   },
   "config": {
     "forge": {
