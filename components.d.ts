@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElTree: typeof import('element-plus/es')['ElTree']
   }

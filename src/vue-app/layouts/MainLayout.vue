@@ -21,9 +21,7 @@
           <template #first>
             <TabPanel :tabs="mainTabs" :default-active-index="0" @tab-change="onMainTabChange">
               <template #tab-scene>
-                <div class="panel-placeholder">
-                  <p>SceneView（待迁移）</p>
-                </div>
+                <SceneView />
               </template>
             </TabPanel>
           </template>
@@ -32,9 +30,7 @@
           <template #second>
             <TabPanel :tabs="bottomTabs" :default-active-index="0" @tab-change="onBottomTabChange">
               <template #tab-inspector>
-                <div class="panel-placeholder">
-                  <p>InspectorView（待迁移）</p>
-                </div>
+                <InspectorView />
               </template>
               <template #tab-console>
                 <div class="panel-placeholder">
@@ -56,6 +52,8 @@ import TabPanel from '../components/TabPanel.vue';
 import type { Tab } from '../components/TabPanel.types';
 import ProjectView from '../views/ProjectView.vue';
 import HierarchyView from '../views/HierarchyView.vue';
+import InspectorView from '../views/InspectorView.vue';
+import SceneView from '../views/SceneView.vue';
 
 // 左侧标签页
 const leftTabs = ref<Tab[]>([

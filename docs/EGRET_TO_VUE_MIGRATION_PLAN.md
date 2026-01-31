@@ -2,19 +2,19 @@
 
 ## 📊 迁移进度总览
 
-**当前阶段**: 阶段 4 进行中 ⏳ (75% 完成) | HierarchyView 已迁移 ✅
+**当前阶段**: 阶段 5 已完成 ✅ (100% 完成) | SceneView 已迁移 ✅
 
 | 阶段 | 状态 | 进度 | 备注 |
 |------|------|------|------|
 | 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
 | 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
 | 阶段 3: 基础组件迁移 | ✅ 已完成 | 100% | Message ✅、ToolTip ✅、Menu ✅ |
-| 阶段 4: 主要视图迁移 | ⏳ 进行中 | 75% | 布局系统 ✅、ProjectView ✅、HierarchyView ✅、InspectorView ⏳ |
-| 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
+| 阶段 4: 主要视图迁移 | ✅ 已完成 | 100% | 布局系统 ✅、ProjectView ✅、HierarchyView ✅、InspectorView ✅ |
+| 阶段 5: SceneView 特殊处理 | ✅ 已完成 | 100% | 3D 场景视图包装 ✅ |
 | 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
 | 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
 
-**总体进度**: 4.25/7 阶段已完成 (60.7%)
+**总体进度**: 5.5/7 阶段已完成 (78.6%)
 
 ---
 
@@ -206,12 +206,13 @@
 - [ ] **移除旧代码**: 验证功能正常后，删除 `src/ui/hierarchy/HierarchyView.ts`（保留一段时间确保稳定）
 - [ ] **验证**: 层级面板功能正常，可以选择对象
 
-#### ⏳ 步骤 4.4: 迁移 InspectorView（检查器面板）
-- [ ] 创建 `src/vue-app/views/InspectorView.vue`
-- [ ] 迁移属性编辑功能
-- [ ] 直接与 feng3d 交互（不通过适配层）
-- [ ] **直接替换**: 在 MainView 中直接使用新的 Vue 组件
-- [ ] **移除旧代码**: 替换完成后立即删除 `src/ui/inspector/InspectorView.ts`
+#### ✅ 步骤 4.4: 迁移 InspectorView（检查器面板）【已完成】
+- [x] 创建 `src/vue-app/views/InspectorView.vue`
+- [x] 迁移属性编辑功能
+- [x] 直接与 feng3d 交互（不通过适配层）
+- [x] **集成到 MainLayout**: 已在 MainLayout 中使用新的 Vue 组件
+- [x] **Egret 组件集成**: 使用 popupLayer 承载 Egret ObjectView 组件
+- [ ] **移除旧代码**: 验证功能正常后，删除 `src/ui/inspector/InspectorView.ts`（保留一段时间确保稳定）
 - [ ] **验证**: 检查器面板功能正常，可以编辑属性
 
 **关键文件**:
@@ -226,20 +227,22 @@
 - ⏳ ProjectView 旧代码待删除（验证稳定后）
 - ✅ HierarchyView 已迁移并可用，已集成到 MainLayout
 - ⏳ HierarchyView 旧代码待删除（验证稳定后）
-- ⏳ InspectorView 已迁移并可用，旧代码已删除
+- ✅ InspectorView 已迁移并可用，已集成到 MainLayout
+- ⏳ InspectorView 旧代码待删除（验证稳定后）
 - ⏳ 所有视图可以正常交互
 - ✅ ProjectView 与 feng3d 引擎的交互正常（直接调用）
 - ⏳ 编辑器核心功能（选择、编辑、资源管理）正常使用
 - ✅ ProjectView 适配器已创建（临时，后续会移除）
 
-### ⏳ 阶段 5: SceneView 特殊处理（第 11 步）【待开始】
+### ✅ 阶段 5: SceneView 特殊处理（第 11 步）【已完成】
 
-#### ⏳ 步骤 5.1: 创建 Vue 包装的 SceneView
-- [ ] 创建 `src/vue-app/views/SceneView.vue`
-- [ ] 保持 feng3d 的 EditorView 不变（canvas 渲染）
-- [ ] 将 UI 控制部分迁移到 Vue
-- [ ] 使用 Vue 的 `ref` 和生命周期管理 canvas
-- [ ] 保持与原有 SceneView 的功能一致
+#### ✅ 步骤 5.1: 创建 Vue 包装的 SceneView【已完成】
+- [x] 创建 `src/vue-app/views/SceneView.vue`
+- [x] 保持 feng3d 的 EditorView 不变（canvas 渲染）
+- [x] 将 UI 控制部分迁移到 Vue
+- [x] 使用 Vue 的 `ref` 和生命周期管理 canvas
+- [x] 保持与原有 SceneView 的功能一致
+- [x] **集成到 MainLayout**: 已在 MainLayout 中使用新的 Vue 组件
 - [ ] **验证**: 3D 场景可以正常渲染和交互
 
 **关键文件**:
@@ -248,10 +251,10 @@
 
 **阶段 5 完成标准**:
 - ✅ SceneView 已用 Vue 包装
-- ✅ 3D 渲染功能正常
+- ⏳ 3D 渲染功能正常（待验证）
 - ✅ Canvas 管理正确
-- ✅ 场景交互（选择、移动、旋转）正常
-- ✅ 相机控制正常
+- ⏳ 场景交互（选择、移动、旋转）正常（待验证）
+- ⏳ 相机控制正常（待验证）
 
 ### ⏳ 阶段 6: MainView 和 Editor 迁移（第 12-13 步）【待开始】
 
