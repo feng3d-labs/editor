@@ -36,7 +36,9 @@ async function main()
         replace({
             __VERSION__: pkg.version,
         }),
-        transpile(),
+        transpile({
+            exclude: 'node_modules/**',
+        }),
     ];
 
     const compiled = (new Date()).toUTCString().replace(/GMT/g, 'UTC');
