@@ -36,7 +36,7 @@
         v-for="(tab, index) in tabs"
         :key="tab.id"
       >
-        <div v-show="index === activeIndex">
+        <div v-show="index === activeIndex" class="tab-panel-content-item">
           <slot :name="`tab-${tab.id}`"></slot>
         </div>
       </template>
@@ -179,6 +179,13 @@ defineExpose({
 .tab-panel-content {
   flex: 1;
   overflow: hidden;
+  position: relative;
+  min-height: 0; /* 重要：允许 flex 子元素缩小 */
+}
+
+.tab-panel-content-item {
+  width: 100%;
+  height: 100%;
   position: relative;
 }
 </style>

@@ -175,6 +175,8 @@ onUnmounted(() => {
 .split-panel-second {
   overflow: hidden;
   position: relative;
+  min-width: 0; /* 重要：允许 flex 子元素缩小 */
+  min-height: 0; /* 重要：允许 flex 子元素缩小 */
 }
 
 .split-panel-splitter {

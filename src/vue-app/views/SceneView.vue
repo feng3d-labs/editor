@@ -83,6 +83,20 @@ function getGlobalBounds() {
 // 初始化 3D 场景
 function initScene() {
   if (canvas.value && !view.value) {
+    // 确保 canvas 在 DOM 中并且有尺寸
+    if (!canvas.value.parentElement) {
+      console.error('SceneView: canvas is not in DOM');
+      return false; // 返回 false 表示初始化失败
+    }
+    
+    const rect = canvas.value.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      // 尺寸无效，返回 false，等待 ResizeObserver 触发
+      return false;
+    }
+    
+    console.log('SceneView: initializing scene', { canvasSize: { width: rect.width, height: rect.height } });
+    
     // 初始化 Stats
     Stats.init(document.getElementById('stats'));
     
@@ -92,6 +106,9 @@ function initScene() {
     // 启动渲染循环（View 类需要手动启动）
     if (view.value && typeof (view.value as any).start === 'function') {
       (view.value as any).start();
+      console.log('SceneView: rendering started');
+    } else {
+      console.warn('SceneView: view.start() is not available');
     }
     
     // 创建编辑器相机（使用 markRaw 防止 Vue 响应式包装）
@@ -130,7 +147,24 @@ function initScene() {
         editorScene.gameObject.addChild(trident);
       });
     }
+    
+    // 初始化成功，返回 true
+    return true;
   }
+  return false;
+}
+
+// 尝试初始化场景（如果尺寸有效）
+function tryInitScene() {
+  if (canvas.value && !view.value) {
+    const success = initScene();
+    if (success) {
+      // 初始化成功后，更新 canvas 大小
+      updateCanvasSize();
+    }
+    return success;
+  }
+  return false;
 }
 
 // 更新 Canvas 位置和大小
@@ -138,6 +172,12 @@ function updateCanvasSize() {
   if (!canvas.value || !containerRef.value) return;
   
   const rect = containerRef.value.getBoundingClientRect();
+  
+  // 确保 canvas 有有效的尺寸
+  if (rect.width <= 0 || rect.height <= 0) {
+    console.warn('SceneView: container has invalid size', rect);
+    return;
+  }
   
   // 设置 canvas 大小（相对于容器）
   if (view.value && typeof (view.value as any).setSize === 'function') {
@@ -153,6 +193,8 @@ function updateCanvasSize() {
     Stats.instance.dom.style.left = `${rect.left}px`;
     Stats.instance.dom.style.top = `${rect.top}px`;
   }
+  
+  console.log('SceneView: canvas size updated', { width: rect.width, height: rect.height });
 }
 
 // 鼠标进入视图
@@ -475,33 +517,59 @@ onMounted(async () => {
   
   // 创建 canvas
   canvas.value = document.createElement('canvas');
+  canvas.value.id = 'scene-canvas';
   canvas.value.style.position = 'absolute';
   canvas.value.style.left = '0px';
   canvas.value.style.top = '0px';
   canvas.value.style.width = '100%';
   canvas.value.style.height = '100%';
   canvas.value.style.pointerEvents = 'auto';
+  canvas.value.style.zIndex = '0';
+  // 先添加到 DOM，确保 View 可以正确初始化
   containerRef.value.appendChild(canvas.value);
   
-  // 初始化场景
+  // 等待 DOM 更新
   await nextTick();
-  initScene();
   
-  // 更新 canvas 大小
-  updateCanvasSize();
-  
-  // 监听窗口大小变化
-  const resizeObserver = new ResizeObserver(() => {
-    updateCanvasSize();
+  // 使用 ResizeObserver 监听容器尺寸变化
+  const resizeObserver = new ResizeObserver((entries) => {
+    if (!entries.length) return;
+    
+    const entry = entries[0];
+    const { width, height } = entry.contentRect;
+    
+    // 如果容器有有效尺寸，尝试初始化场景
+    if (width > 0 && height > 0) {
+      if (!view.value) {
+        // 场景未初始化，尝试初始化
+        const success = tryInitScene();
+        if (success) {
+          console.log('SceneView: scene initialized after resize', { width, height });
+        }
+      } else {
+        // 场景已初始化，更新 canvas 大小
+        updateCanvasSize();
+      }
+    }
   });
+  
+  // 开始观察容器尺寸
   if (containerRef.value) {
     resizeObserver.observe(containerRef.value);
+    // 保存 observer 引用以便清理
+    (containerRef.value as any)._resizeObserver = resizeObserver;
+    
+    // 立即检查一次尺寸（可能容器已经有尺寸了）
+    const rect = containerRef.value.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      tryInitScene();
+    }
   }
   
-  // 鼠标事件
-  if (backRectRef.value) {
-    backRectRef.value.addEventListener('mouseenter', onMouseOver);
-    backRectRef.value.addEventListener('mouseleave', onMouseOut);
+  // 鼠标事件 - 直接绑定到 canvas 上，因为 canvas 需要接收所有鼠标事件
+  if (canvas.value) {
+    canvas.value.addEventListener('mouseenter', onMouseOver);
+    canvas.value.addEventListener('mouseleave', onMouseOut);
   }
   
   // 快捷键
@@ -558,9 +626,9 @@ onMounted(async () => {
 
 onUnmounted(() => {
   // 移除鼠标事件
-  if (backRectRef.value) {
-    backRectRef.value.removeEventListener('mouseenter', onMouseOver);
-    backRectRef.value.removeEventListener('mouseleave', onMouseOut);
+  if (canvas.value) {
+    canvas.value.removeEventListener('mouseenter', onMouseOver);
+    canvas.value.removeEventListener('mouseleave', onMouseOut);
   }
   
   // 移除快捷键
@@ -634,7 +702,9 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   display: block;
-  pointer-events: auto;
+  pointer-events: auto; /* 确保 canvas 可以接收鼠标事件 */
+  z-index: 0; /* Canvas 在最底层，但要在容器内 */
+  /* Canvas 需要接收所有鼠标事件以支持点选、框选、旋转等操作 */
 }
 
 .scene-back-rect {
@@ -644,6 +714,8 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   z-index: 1;
+  pointer-events: none; /* 不拦截鼠标事件，让 canvas 接收 */
+  /* 注意：此元素仅用于布局，不接收鼠标事件 */
 }
 
 .scene-tool-view-container {
