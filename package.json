@@ -62,7 +62,6 @@
     "vite": "^5.0.0"
   },
   "workspaces": [
-    "packages/native",
-    "packages/codeeditor"
+    "packages/*"
   ]
 }
