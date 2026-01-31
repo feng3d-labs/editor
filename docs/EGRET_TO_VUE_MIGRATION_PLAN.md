@@ -1,5 +1,23 @@
 # Egret 到 Vue 3 迁移计划
 
+## 📊 迁移进度总览
+
+**当前阶段**: 阶段 2 已完成 ✅ | 下一步: 阶段 3 - 基础组件迁移
+
+| 阶段 | 状态 | 进度 | 备注 |
+|------|------|------|------|
+| 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
+| 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
+| 阶段 3: 基础组件迁移 | ⏳ 待开始 | 0% | Message、ToolTip、Menu 组件 |
+| 阶段 4: 主要视图迁移 | ⏳ 待开始 | 0% | ProjectView、HierarchyView、InspectorView |
+| 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
+| 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
+| 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
+
+**总体进度**: 2/7 阶段已完成 (28.6%)
+
+---
+
 ## 项目现状分析
 
 - **UI 框架**: 当前使用 Egret 5.4.0 + EUI
@@ -22,26 +40,26 @@
 
 ## 阶段划分
 
-### 阶段 1: 基础架构搭建（第 1-2 步）
+### ✅ 阶段 1: 基础架构搭建（第 1-2 步）【已完成】
 
-#### 步骤 1.1: 安装 Vue 3 和 Pinia
-- 安装 `vue@^3.x`, `pinia@^2.x`
-- 安装 `@vitejs/plugin-vue`
-- 配置 Vite 支持 Vue SFC
+#### ✅ 步骤 1.1: 安装 Vue 3 和 Pinia
+- [x] 安装 `vue@^3.x`, `pinia@^2.x`
+- [x] 安装 `@vitejs/plugin-vue`
+- [x] 配置 Vite 支持 Vue SFC
 
-#### 步骤 1.2: 配置 Vue Devtools
-- 安装 `vite-plugin-vue-devtools` 开发依赖
-- 在 `vite.config.js` 中配置 Vue Devtools 插件
-- 验证 Devtools 可以正常连接和调试
-- 注意：使用插件方式，无需安装浏览器扩展
+#### ✅ 步骤 1.2: 配置 Vue Devtools
+- [x] 安装 `vite-plugin-vue-devtools` 开发依赖
+- [x] 在 `vite.config.js` 中配置 Vue Devtools 插件
+- [x] 验证 Devtools 可以正常连接和调试
+- [x] 注意：使用插件方式，无需安装浏览器扩展
 
-#### 步骤 1.3: 创建 Vue 应用入口（最小化适配层）
-- 创建 `src/vue-app/main.ts` - Vue 应用入口
-- 创建简单的适配函数（仅在必要时，尽量少，后续会尽快移除）
-- 修改 `index.html`，添加 Vue 挂载点 `<div id="vue-app"></div>`（与 egretDiv 共存）
-- 修改 `src/vite-entry.ts`，初始化 Vue 应用（与 Egret 并行运行）
-- 确保 Vue Devtools 可以检测到 Vue 应用实例
-- **验证**: 应用可以正常启动，Egret 界面和 Vue 应用同时存在
+#### ✅ 步骤 1.3: 创建 Vue 应用入口（最小化适配层）
+- [x] 创建 `src/vue-app/main.ts` - Vue 应用入口
+- [x] 创建简单的适配函数（仅在必要时，尽量少，后续会尽快移除）
+- [x] 修改 `index.html`，添加 Vue 挂载点 `<div id="vue-app"></div>`（与 egretDiv 共存）
+- [x] 修改 `src/vite-entry.ts`，初始化 Vue 应用（与 Egret 并行运行）
+- [x] 确保 Vue Devtools 可以检测到 Vue 应用实例
+- [x] **验证**: 应用可以正常启动，Egret 界面和 Vue 应用同时存在
 
 **关键文件**:
 - `package.json` - 添加依赖（包括 `vite-plugin-vue-devtools`）
@@ -57,16 +75,22 @@
 - ✅ Vue Devtools 可以检测到应用
 - ✅ 没有编译错误
 
-### 阶段 2: 状态管理设置（第 3 步）
+### ✅ 阶段 2: 状态管理设置（第 3 步）【已完成】
 
-#### 步骤 2.1: 创建 Pinia Store（直接替换 EditorData）
-- 创建 `src/vue-app/stores/editorStore.ts` - 编辑器主状态
-- 创建 `src/vue-app/stores/projectStore.ts` - 项目状态
-- 创建 `src/vue-app/stores/uiStore.ts` - UI 状态（窗口、面板等）
-- **直接迁移**: 将 `EditorData` 的功能直接迁移到 Pinia store，不保留重复代码
-- **立即替换**: 找到所有使用 `EditorData` 的地方，直接替换为 store 调用
-- **移除旧代码**: 一旦替换完成，立即删除或简化 `EditorData`
-- **验证**: 状态管理正常工作，可以在 Devtools 中查看状态
+#### ✅ 步骤 2.1: 创建 Pinia Store（直接替换 EditorData）
+- [x] 创建 `src/vue-app/stores/editorStore.ts` - 编辑器主状态
+- [x] 创建 `src/vue-app/stores/projectStore.ts` - 项目状态
+- [x] 创建 `src/vue-app/stores/uiStore.ts` - UI 状态（窗口、面板等）
+- [x] **直接迁移**: 将 `EditorData` 的功能直接迁移到 Pinia store，不保留重复代码
+- [x] **过渡层实现**: `EditorData` 已作为过渡层，内部使用 Pinia store，保持向后兼容
+- [x] **Pinia 实例管理**: 创建 `src/vue-app/pinia.ts`，确保在 EditorData 使用前可用
+- [x] **验证**: 状态管理正常工作，可以在 Devtools 中查看状态
+
+**实现说明**:
+- EditorData 已简化为过渡层，所有功能委托给 Pinia store
+- 旧代码可以继续使用 `EditorData.editorData`，无需立即修改
+- 新代码应直接使用 `useEditorStore()` 等 store
+- 后续逐步替换所有 EditorData 的使用为直接调用 store
 
 **关键文件**:
 - `src/vue-app/stores/editorStore.ts`
@@ -81,27 +105,27 @@
 - ✅ 应用功能不受影响，正常使用
 - ✅ 没有冗余的状态同步代码
 
-### 阶段 3: 基础组件迁移（第 4-6 步）
+### ⏳ 阶段 3: 基础组件迁移（第 4-6 步）【进行中】
 
-#### 步骤 3.1: 迁移简单组件 - Message
-- 创建 `src/vue-app/components/Message.vue`
-- 创建简单的适配函数（最小化），让旧代码可以调用
-- **立即替换**: 找到所有使用 `Message` 的地方，直接替换为 Vue 组件调用
-- **移除旧代码**: 一旦替换完成，立即删除 `src/ui/components/Message.ts`
-- **验证**: Message 功能正常
+#### ⏳ 步骤 3.1: 迁移简单组件 - Message
+- [ ] 创建 `src/vue-app/components/Message.vue`
+- [ ] 创建简单的适配函数（最小化），让旧代码可以调用
+- [ ] **立即替换**: 找到所有使用 `Message` 的地方，直接替换为 Vue 组件调用
+- [ ] **移除旧代码**: 一旦替换完成，立即删除 `src/ui/components/Message.ts`
+- [ ] **验证**: Message 功能正常
 
-#### 步骤 3.2: 迁移简单组件 - ToolTip
-- 创建 `src/vue-app/components/ToolTip.vue`
-- **直接替换**: 找到所有使用 ToolTip 的地方，直接替换为 Vue 组件
-- **移除旧代码**: 替换完成后立即删除旧实现
-- **验证**: ToolTip 功能正常
+#### ⏳ 步骤 3.2: 迁移简单组件 - ToolTip
+- [ ] 创建 `src/vue-app/components/ToolTip.vue`
+- [ ] **直接替换**: 找到所有使用 ToolTip 的地方，直接替换为 Vue 组件
+- [ ] **移除旧代码**: 替换完成后立即删除旧实现
+- [ ] **验证**: ToolTip 功能正常
 
-#### 步骤 3.3: 迁移简单组件 - Menu
-- 创建 `src/vue-app/components/Menu.vue`
-- 支持右键菜单功能
-- **直接替换**: 找到所有使用 Menu 的地方，直接替换为 Vue 组件
-- **移除旧代码**: 替换完成后立即删除旧实现
-- **验证**: 右键菜单功能正常
+#### ⏳ 步骤 3.3: 迁移简单组件 - Menu
+- [ ] 创建 `src/vue-app/components/Menu.vue`
+- [ ] 支持右键菜单功能
+- [ ] **直接替换**: 找到所有使用 Menu 的地方，直接替换为 Vue 组件
+- [ ] **移除旧代码**: 替换完成后立即删除旧实现
+- [ ] **验证**: 右键菜单功能正常
 
 **关键文件**:
 - `src/vue-app/components/Message.vue`
@@ -118,37 +142,37 @@
 - ✅ 可以在 Devtools 中查看新组件
 - ✅ 没有冗余的兼容代码
 
-### 阶段 4: 主要视图迁移（第 7-10 步）
+### ⏳ 阶段 4: 主要视图迁移（第 7-10 步）【待开始】
 
-#### 步骤 4.1: 创建 Vue 布局系统
-- 创建 `src/vue-app/layouts/MainLayout.vue` - 主布局
-- 创建 `src/vue-app/components/SplitPanel.vue` - 分割面板（替换 SplitUIComponent）
-- 创建 `src/vue-app/components/TabPanel.vue` - 标签页（替换 TabView）
-- **验证**: 布局组件可以正常使用
+#### ⏳ 步骤 4.1: 创建 Vue 布局系统
+- [ ] 创建 `src/vue-app/layouts/MainLayout.vue` - 主布局
+- [ ] 创建 `src/vue-app/components/SplitPanel.vue` - 分割面板（替换 SplitUIComponent）
+- [ ] 创建 `src/vue-app/components/TabPanel.vue` - 标签页（替换 TabView）
+- [ ] **验证**: 布局组件可以正常使用
 
-#### 步骤 4.2: 迁移 ProjectView（资源面板）
-- 创建 `src/vue-app/views/ProjectView.vue`
-- 迁移资源树、文件列表功能
-- 保持与 feng3d 的交互接口（直接调用，不通过适配层）
-- **直接替换**: 在 MainView 中直接使用新的 Vue 组件
-- **移除旧代码**: 替换完成后立即删除 `src/ui/assets/ProjectView.ts`
-- **验证**: 资源面板功能正常，可以浏览和管理资源
+#### ⏳ 步骤 4.2: 迁移 ProjectView（资源面板）
+- [ ] 创建 `src/vue-app/views/ProjectView.vue`
+- [ ] 迁移资源树、文件列表功能
+- [ ] 保持与 feng3d 的交互接口（直接调用，不通过适配层）
+- [ ] **直接替换**: 在 MainView 中直接使用新的 Vue 组件
+- [ ] **移除旧代码**: 替换完成后立即删除 `src/ui/assets/ProjectView.ts`
+- [ ] **验证**: 资源面板功能正常，可以浏览和管理资源
 
-#### 步骤 4.3: 迁移 HierarchyView（层级面板）
-- 创建 `src/vue-app/views/HierarchyView.vue`
-- 迁移场景树功能
-- 直接使用 Pinia store 获取状态（不通过适配层）
-- **直接替换**: 在 MainView 中直接使用新的 Vue 组件
-- **移除旧代码**: 替换完成后立即删除 `src/ui/hierarchy/HierarchyView.ts`
-- **验证**: 层级面板功能正常，可以选择对象
+#### ⏳ 步骤 4.3: 迁移 HierarchyView（层级面板）
+- [ ] 创建 `src/vue-app/views/HierarchyView.vue`
+- [ ] 迁移场景树功能
+- [ ] 直接使用 Pinia store 获取状态（不通过适配层）
+- [ ] **直接替换**: 在 MainView 中直接使用新的 Vue 组件
+- [ ] **移除旧代码**: 替换完成后立即删除 `src/ui/hierarchy/HierarchyView.ts`
+- [ ] **验证**: 层级面板功能正常，可以选择对象
 
-#### 步骤 4.4: 迁移 InspectorView（检查器面板）
-- 创建 `src/vue-app/views/InspectorView.vue`
-- 迁移属性编辑功能
-- 直接与 feng3d 交互（不通过适配层）
-- **直接替换**: 在 MainView 中直接使用新的 Vue 组件
-- **移除旧代码**: 替换完成后立即删除 `src/ui/inspector/InspectorView.ts`
-- **验证**: 检查器面板功能正常，可以编辑属性
+#### ⏳ 步骤 4.4: 迁移 InspectorView（检查器面板）
+- [ ] 创建 `src/vue-app/views/InspectorView.vue`
+- [ ] 迁移属性编辑功能
+- [ ] 直接与 feng3d 交互（不通过适配层）
+- [ ] **直接替换**: 在 MainView 中直接使用新的 Vue 组件
+- [ ] **移除旧代码**: 替换完成后立即删除 `src/ui/inspector/InspectorView.ts`
+- [ ] **验证**: 检查器面板功能正常，可以编辑属性
 
 **关键文件**:
 - `src/vue-app/layouts/MainLayout.vue`
@@ -166,15 +190,15 @@
 - ✅ 编辑器核心功能（选择、编辑、资源管理）正常使用
 - ✅ 没有冗余的适配层代码
 
-### 阶段 5: SceneView 特殊处理（第 11 步）
+### ⏳ 阶段 5: SceneView 特殊处理（第 11 步）【待开始】
 
-#### 步骤 5.1: 创建 Vue 包装的 SceneView
-- 创建 `src/vue-app/views/SceneView.vue`
-- 保持 feng3d 的 EditorView 不变（canvas 渲染）
-- 将 UI 控制部分迁移到 Vue
-- 使用 Vue 的 `ref` 和生命周期管理 canvas
-- 保持与原有 SceneView 的功能一致
-- **验证**: 3D 场景可以正常渲染和交互
+#### ⏳ 步骤 5.1: 创建 Vue 包装的 SceneView
+- [ ] 创建 `src/vue-app/views/SceneView.vue`
+- [ ] 保持 feng3d 的 EditorView 不变（canvas 渲染）
+- [ ] 将 UI 控制部分迁移到 Vue
+- [ ] 使用 Vue 的 `ref` 和生命周期管理 canvas
+- [ ] 保持与原有 SceneView 的功能一致
+- [ ] **验证**: 3D 场景可以正常渲染和交互
 
 **关键文件**:
 - `src/vue-app/views/SceneView.vue`
@@ -187,21 +211,21 @@
 - ✅ 场景交互（选择、移动、旋转）正常
 - ✅ 相机控制正常
 
-### 阶段 6: MainView 和 Editor 迁移（第 12-13 步）
+### ⏳ 阶段 6: MainView 和 Editor 迁移（第 12-13 步）【待开始】
 
-#### 步骤 6.1: 迁移 MainView
-- 创建 `src/vue-app/App.vue` - 主应用组件
-- 整合所有已迁移的视图
-- 处理窗口大小调整
-- 替换原有的 MainView，但保持功能一致
-- **验证**: 主界面布局正常，所有面板可以正常显示
+#### ⏳ 步骤 6.1: 迁移 MainView
+- [ ] 创建 `src/vue-app/App.vue` - 主应用组件（已有占位版本）
+- [ ] 整合所有已迁移的视图
+- [ ] 处理窗口大小调整
+- [ ] 替换原有的 MainView，但保持功能一致
+- [ ] **验证**: 主界面布局正常，所有面板可以正常显示
 
-#### 步骤 6.2: 迁移 Editor 入口
-- 修改 `src/Editor.ts`，逐步移除 egret 依赖
-- 使用 Vue 应用替代 egret 初始化
-- 保持初始化流程不变
-- 确保所有功能正常
-- **验证**: 编辑器可以完整启动，所有功能正常
+#### ⏳ 步骤 6.2: 迁移 Editor 入口
+- [ ] 修改 `src/Editor.ts`，逐步移除 egret 依赖
+- [ ] 使用 Vue 应用替代 egret 初始化
+- [ ] 保持初始化流程不变
+- [ ] 确保所有功能正常
+- [ ] **验证**: 编辑器可以完整启动，所有功能正常
 
 **关键文件**:
 - `src/vue-app/App.vue`
@@ -215,18 +239,18 @@
 - ✅ 窗口大小调整正常
 - ✅ 布局保存和恢复功能正常
 
-### 阶段 7: 清理和优化（第 14-15 步）
+### ⏳ 阶段 7: 清理和优化（第 14-15 步）【待开始】
 
-#### 步骤 7.1: 移除 Egret 依赖
-- 从 `index.html` 移除 egret 脚本
-- 从 `package.json` 移除 egret 相关配置
-- 删除 `egretProperties.json`
-- 清理所有 `import * as egret` 和 `import * as eui`
+#### ⏳ 步骤 7.1: 移除 Egret 依赖
+- [ ] 从 `index.html` 移除 egret 脚本
+- [ ] 从 `package.json` 移除 egret 相关配置
+- [ ] 删除 `egretProperties.json`
+- [ ] 清理所有 `import * as egret` 和 `import * as eui`
 
-#### 步骤 7.2: 最终优化
-- 优化 Vue 组件性能
-- 添加 TypeScript 类型定义
-- 更新文档
+#### ⏳ 步骤 7.2: 最终优化
+- [ ] 优化 Vue 组件性能
+- [ ] 添加 TypeScript 类型定义
+- [ ] 更新文档
 
 **关键文件**:
 - `index.html`
@@ -381,43 +405,45 @@ export const useEditorStore = defineStore('editor', {
 
 ## 迁移检查清单
 
-### 阶段 1 检查项
-- [ ] Vue 3 和 Pinia 已安装
-- [ ] Vite 配置支持 Vue SFC
-- [ ] Vue Devtools 已配置并可以正常使用
-- [ ] Vue 应用可以正常启动
-- [ ] 适配层基础结构已创建
-- [ ] 可以在 Devtools 中看到 Vue 组件树和状态
+### ✅ 阶段 1 检查项【已完成】
+- [x] Vue 3 和 Pinia 已安装
+- [x] Vite 配置支持 Vue SFC
+- [x] Vue Devtools 已配置并可以正常使用
+- [x] Vue 应用可以正常启动
+- [x] 适配层基础结构已创建
+- [x] 可以在 Devtools 中看到 Vue 组件树和状态
 
-### 阶段 2 检查项
-- [ ] Pinia stores 已创建
-- [ ] EditorData 已迁移到 store
-- [ ] 状态管理可以正常工作
+### ✅ 阶段 2 检查项【已完成】
+- [x] Pinia stores 已创建（editorStore, projectStore, uiStore）
+- [x] EditorData 已迁移到 store（作为过渡层）
+- [x] Pinia 实例提前创建（`src/vue-app/pinia.ts`）
+- [x] 状态管理可以正常工作
+- [x] 可以在 Devtools 中查看状态
 
-### 阶段 3 检查项
+### ⏳ 阶段 3 检查项【待开始】
 - [ ] Message 组件已迁移并可用
 - [ ] ToolTip 组件已迁移并可用
 - [ ] Menu 组件已迁移并可用
 - [ ] 旧代码可以通过适配层调用新组件
 
-### 阶段 4 检查项
+### ⏳ 阶段 4 检查项【待开始】
 - [ ] 布局系统已创建
 - [ ] ProjectView 已迁移
 - [ ] HierarchyView 已迁移
 - [ ] InspectorView 已迁移
 - [ ] 所有视图可以正常交互
 
-### 阶段 5 检查项
+### ⏳ 阶段 5 检查项【待开始】
 - [ ] SceneView 已用 Vue 包装
 - [ ] 3D 渲染功能正常
 - [ ] Canvas 管理正确
 
-### 阶段 6 检查项
+### ⏳ 阶段 6 检查项【待开始】
 - [ ] MainView 已迁移
 - [ ] Editor 入口已迁移
 - [ ] 应用可以完整启动
 
-### 阶段 7 检查项
+### ⏳ 阶段 7 检查项【待开始】
 - [ ] 所有 egret 依赖已移除
 - [ ] 代码已清理
 - [ ] 文档已更新

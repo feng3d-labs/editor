@@ -6,6 +6,9 @@ import * as editorModule from './index';
 import { initQRCode } from './utils/QRCode';
 import './utils/Tween'; // 初始化 Tween 更新循环
 
+// 提前创建 Pinia 实例，确保在 EditorData 使用之前可用
+import './vue-app/pinia';
+
 // 直接将整个模块挂载到 editor 命名空间
 window.editor = editorModule;
 window.feng3d = window.feng3d || {} as any;

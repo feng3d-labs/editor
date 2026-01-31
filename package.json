@@ -12,6 +12,7 @@
     "dev": "vite",
     "clean": "rimraf \"{lib,dist}\"",
     "build": "vite build",
+    "type-check": "tsc --noEmit",
     "watch": "tsc --watch",
     "preview": "vite preview",
     "lint": "eslint --ext .js --ext .ts src vite.config.js --ignore-path .gitignore --max-warnings 0",
