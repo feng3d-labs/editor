@@ -1,4 +1,5 @@
 // Vite 入口文件：将 Editor 类挂载到全局命名空间
+import { ClassUtils } from 'feng3d';
 import * as editorModule from './index';
 
 // 扩展 Window 接口
@@ -41,6 +42,56 @@ function waitForPlugins(): Promise<void>
     });
 }
 
+// 覆盖 ClassUtils.getDefinitionByName，如果找不到类则从 feng3d 命名空间查找
+if (typeof window !== 'undefined' && ClassUtils && ClassUtils.prototype)
+{
+    // 保存原始方法
+    const originalGetDefinitionByName = ClassUtils.prototype.getDefinitionByName;
+
+    // 覆盖方法
+    ClassUtils.prototype.getDefinitionByName = function(name: string): any
+    {
+        // 先尝试使用原始方法查找
+        let result = originalGetDefinitionByName.call(this, name);
+
+        // 如果找不到，从 feng3d 命名空间中查找
+        if (!result && window.feng3d && typeof name === 'string')
+        {
+            // 尝试直接通过类名查找
+            if (window.feng3d[name])
+            {
+                result = window.feng3d[name];
+            }
+            else
+            {
+                // 尝试通过命名空间路径查找（例如 'PhysicsWorld' 或 'feng3d.PhysicsWorld'）
+                const parts = name.split('.');
+                let current: any = window.feng3d;
+
+                for (const part of parts)
+                {
+                    if (current && current[part])
+                    {
+                        current = current[part];
+                    }
+                    else
+                    {
+                        current = null;
+                        break;
+                    }
+                }
+
+                if (current)
+                {
+                    result = current;
+                }
+            }
+        }
+
+        return result;
+    };
+}
+
 // 初始化函数
 async function init()
 {
@@ -59,7 +110,7 @@ async function init()
         window.dispatchEvent(new CustomEvent('editorReady'));
 
         // 初始化 Egret
-        egret.runEgret({ renderMode: "webgl", audioType: 0 });
+        egret.runEgret({ renderMode: 'webgl', audioType: 0 });
     }
 }
 
