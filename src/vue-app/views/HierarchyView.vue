@@ -197,7 +197,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
             newGameObjects.forEach((v) => {
               v.remove();
             });
-            editorStore.selectMultiObject(undoSelectedObjects, false);
+            editorStore.selectMultiObject(undoSelectedObjects as any, false);
           });
         },
       },
@@ -205,7 +205,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
       {
         label: '副本',
         click: () => {
-          const undoSelectedObjects = editorStore.selectedObjects;
+          const undoSelectedObjects = [...editorStore.selectedObjects] as any;
           const objects = editorStore.selectedGameObjects;
           const newGameObjects = objects.map((v) => {
             const no = serialization.clone(v);
@@ -219,7 +219,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
             newGameObjects.forEach((v) => {
               v.remove();
             });
-            editorStore.selectMultiObject(undoSelectedObjects, false);
+            editorStore.selectMultiObject(undoSelectedObjects as any, false);
           });
         },
       },
@@ -229,9 +229,9 @@ function onNodeRightClick(event: MouseEvent, data: any) {
           node.gameobject.parent.removeChild(node.gameobject);
           const index = editorStore.selectedObjects.indexOf(node.gameobject);
           if (index !== -1) {
-            const selectedObjects = editorStore.selectedObjects.concat();
+            const selectedObjects = [...editorStore.selectedObjects];
             selectedObjects.splice(index, 1);
-            editorStore.selectMultiObject(selectedObjects);
+            editorStore.selectMultiObject(selectedObjects as Array<GameObject | import('../../ui/assets/AssetNode').AssetNode>);
           }
         },
       }

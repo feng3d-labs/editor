@@ -80,19 +80,19 @@
       >
         <div
           v-for="(file, index) in filteredFiles"
-          :key="file.asset.assetId || index"
-          :class="['file-item', { 'file-item-selected': isFileSelected(file) }]"
-          @click.stop="onFileClick(file)"
-          @dblclick="onFileDoubleClick(file)"
-          @contextmenu.stop="onFileRightClick(file, $event)"
+          :key="(file as AssetNode).asset.assetId || index"
+          :class="['file-item', { 'file-item-selected': isFileSelected(file as AssetNode) }]"
+          @click.stop="onFileClick(file as AssetNode)"
+          @dblclick="onFileDoubleClick(file as AssetNode)"
+          @contextmenu.stop="onFileRightClick(file as AssetNode, $event)"
         >
           <div class="file-item-icon">
             <Icon
-              :icon="file.isDirectory ? 'material-symbols:folder' : getFileIcon(file)"
+              :icon="(file as AssetNode).isDirectory ? 'material-symbols:folder' : getFileIcon(file as AssetNode)"
               :size="24"
             />
           </div>
-          <div class="file-item-label">{{ file.label }}</div>
+          <div class="file-item-label">{{ (file as AssetNode).label }}</div>
         </div>
       </div>
 
@@ -126,14 +126,14 @@ const treeProps = {
 // 为树节点添加 id 属性（el-tree 需要）
 // 注意：返回的对象是普通对象，不是 AssetNode 实例，但包含所有 AssetNode 的属性
 const processedTreeData = computed(() => {
-  function addId(nodes: AssetNode[]): Array<AssetNode & { id: string }> {
+  function addId(nodes: AssetNode[]): any[] {
     return nodes.map((node) => ({
       ...node,
       id: node.asset.assetId, // el-tree 的 node-key
-      children: node.children && node.children.length > 0 ? addId(node.children) : undefined,
-    })) as Array<AssetNode & { id: string }>;
+      children: node.children && node.children.length > 0 ? addId(node.children as AssetNode[]) : undefined,
+    }));
   }
-  return addId(treeData.value);
+  return addId(treeData.value as AssetNode[]);
 });
 
 // 文件列表
@@ -310,13 +310,13 @@ function findAssetNodeByAssetId(assetId: string): AssetNode | null {
         return node;
       }
       if (node.children && node.children.length > 0) {
-        const found = search(node.children);
+        const found = search(node.children as AssetNode[]);
         if (found) return found;
       }
     }
     return null;
   }
-  return search(treeData.value);
+  return search(treeData.value as AssetNode[]);
 }
 
 // 树节点右键
