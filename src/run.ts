@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 // eslint-disable-next-line spaced-comment
-/// <reference path="../feng3d/dist/index.d.ts" />
 
 const fstype = GetQueryString('fstype');
 
@@ -67,7 +66,7 @@ async function initProject()
     }
 }
 
-function GetQueryString(name)
+function GetQueryString(name): string
 {
     const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
     const r = window.location.search.substr(1).match(reg);
