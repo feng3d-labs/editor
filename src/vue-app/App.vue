@@ -5,11 +5,15 @@
     
     <!-- Message 组件：显示全局消息提示 -->
     <Message />
+    
+    <!-- ToolTip 组件：显示工具提示 -->
+    <ToolTip />
   </div>
 </template>
 
 <script setup lang="ts">
 import Message from './components/Message.vue';
+import ToolTip from './components/ToolTip.vue';
 </script>
 
 <style scoped>

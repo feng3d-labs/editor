@@ -66,6 +66,16 @@ declare global
         'message.error': string;
 
         /**
+         * 显示工具提示
+         */
+        'tooltip.show': { text: string; x: number; y: number };
+
+        /**
+         * 隐藏工具提示
+         */
+        'tooltip.hide': undefined;
+
+        /**
          * 界面布局发生变化
          */
         'viewLayout.changed': string;
