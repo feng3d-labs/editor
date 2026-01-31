@@ -1,3 +1,14 @@
+<!--
+  ⚠️ 自定义组件说明：
+  此组件保持自定义实现，未使用 Element Plus 的组件，原因：
+  1. Element Plus 没有提供 SplitPanel 组件
+  2. 需要支持水平和垂直两种方向
+  3. 需要支持最小尺寸限制
+  4. 需要支持拖拽调整分割比例
+  5. 需要与编辑器布局系统深度集成
+  
+  这是专业布局组件，保持自定义实现是合理的。
+-->
 <template>
   <div class="split-panel" :class="{ 'split-panel-horizontal': direction === 'horizontal', 'split-panel-vertical': direction === 'vertical' }">
     <div
@@ -167,7 +178,8 @@ onUnmounted(() => {
 }
 
 .split-panel-splitter {
-  background-color: #2d2d2d;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color-overlay, #2d2d2d);
   position: relative;
   flex-shrink: 0;
   z-index: 10;
@@ -184,7 +196,8 @@ onUnmounted(() => {
 }
 
 .split-panel-splitter:hover {
-  background-color: #3d3d3d;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-fill-color-dark, #3d3d3d);
 }
 
 .split-panel-splitter-horizontal:hover {

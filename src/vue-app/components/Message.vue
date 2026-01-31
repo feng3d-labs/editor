@@ -1,3 +1,16 @@
+<!--
+  ⚠️ 自定义组件说明：
+  此组件保持自定义实现，未使用 Element Plus 的 ElMessage，原因：
+  1. 需要特殊的 TWEEN 动画效果（从下往上淡出）
+  2. 需要消息队列管理，防止消息重叠
+  3. 需要动态计算消息位置（根据已显示消息数量）
+  4. 需要与 Egret 代码兼容（通过全局事件触发）
+  
+  如果未来需要替换为 ElMessage，需要：
+  - 实现自定义动画
+  - 实现消息队列
+  - 修改全局事件触发方式
+-->
 <template>
   <Teleport to="body">
     <div class="message-container">

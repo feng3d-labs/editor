@@ -1,3 +1,17 @@
+<!--
+  ⚠️ 自定义组件说明：
+  此组件保持自定义实现，未使用 Element Plus 的 ElTabs，原因：
+  1. 需要与编辑器布局系统深度集成（与 SplitPanel 配合使用）
+  2. 需要支持动态标签页（通过 slot 传递内容）
+  3. 需要支持标签页关闭功能
+  4. 需要自定义样式以匹配编辑器深色主题
+  5. 已有完整的实现和测试
+  
+  如果未来需要替换为 ElTabs，需要：
+  - 重新实现标签页关闭功能
+  - 调整样式以匹配编辑器主题
+  - 修改与 SplitPanel 的集成方式
+-->
 <template>
   <div class="tab-panel">
     <div class="tab-panel-tabs">
@@ -101,13 +115,15 @@ defineExpose({
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: #1e1e1e;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color, #1e1e1e);
 }
 
 .tab-panel-tabs {
   display: flex;
-  background-color: #2d2d2d;
-  border-bottom: 1px solid #3d3d3d;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
   overflow-x: auto;
   flex-shrink: 0;
 }
@@ -116,23 +132,26 @@ defineExpose({
   display: flex;
   align-items: center;
   padding: 8px 16px;
-  background-color: #2d2d2d;
-  color: #cccccc;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  color: var(--el-text-color-primary, #cccccc);
   cursor: pointer;
   user-select: none;
-  border-right: 1px solid #3d3d3d;
+  border-right: 1px solid var(--el-border-color, #3d3d3d);
   min-width: 100px;
   position: relative;
 }
 
 .tab-panel-tab:hover {
-  background-color: #3d3d3d;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-fill-color-dark, #3d3d3d);
 }
 
 .tab-panel-tab-active {
-  background-color: #1e1e1e;
-  color: #ffffff;
-  border-bottom: 2px solid #007acc;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color, #1e1e1e);
+  color: var(--el-text-color-primary, #ffffff);
+  border-bottom: 2px solid var(--el-color-primary, #007acc);
 }
 
 .tab-panel-tab-label {
@@ -152,7 +171,8 @@ defineExpose({
 }
 
 .tab-panel-tab-close:hover {
-  background-color: #555555;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-fill-color-dark, #3d3d3d);
   opacity: 1;
 }
 

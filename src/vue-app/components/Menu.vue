@@ -1,3 +1,18 @@
+<!--
+  ⚠️ 自定义组件说明：
+  此组件保持自定义实现，未使用 Element Plus 的 ElDropdownMenu，原因：
+  1. 需要与 Egret 代码兼容（通过全局事件 menu.show/menu.hide 触发）
+  2. 需要支持多级子菜单（递归嵌套）
+  3. 需要动态位置计算（防止菜单溢出屏幕）
+  4. 需要支持右键菜单的特殊交互（点击外部关闭、键盘导航等）
+  5. 已有适配层（MenuAdapter）与旧代码桥接
+  
+  如果未来需要替换为 ElDropdownMenu，需要：
+  - 修改所有 Egret 代码的菜单触发方式
+  - 实现多级子菜单支持
+  - 实现动态位置计算
+  - 移除 MenuAdapter 适配层
+-->
 <template>
   <Teleport to="body">
     <div
@@ -273,8 +288,9 @@ onUnmounted(() => {
 
 .menu-container {
   position: fixed;
-  background-color: #ffffff;
-  border: 1px solid #cccccc;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  border: 1px solid var(--el-border-color, #3d3d3d);
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   min-width: 150px;
@@ -290,16 +306,19 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   user-select: none;
-  color: #000000;
+  /* 使用 Element Plus 主题变量 */
+  color: var(--el-text-color-primary, #cccccc);
   font-size: 14px;
 }
 
 .menu-item:hover:not(.menu-item-separator):not(.menu-item-disabled) {
-  background-color: #e6f3ff;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-fill-color, #2d2d2d);
 }
 
 .menu-item-disabled {
-  color: #6e6e6e;
+  /* 使用 Element Plus 主题变量 */
+  color: var(--el-text-color-disabled, #444444);
   cursor: not-allowed;
 }
 
@@ -312,7 +331,8 @@ onUnmounted(() => {
 
 .menu-separator {
   height: 1px;
-  background-color: #e0e0e0;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-border-color, #3d3d3d);
   margin: 0 8px;
 }
 
@@ -323,11 +343,13 @@ onUnmounted(() => {
 .menu-item-arrow {
   margin-left: 8px;
   font-size: 10px;
-  color: #666666;
+  /* 使用 Element Plus 主题变量 */
+  color: var(--el-text-color-secondary, #666666);
 }
 
 .menu-item-hover {
-  background-color: #e6f3ff;
+  /* 使用 Element Plus 主题变量 */
+  background-color: var(--el-fill-color-dark, #3d3d3d);
 }
 </style>
 

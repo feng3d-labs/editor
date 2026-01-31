@@ -2,7 +2,10 @@
   <div class="layout-test-page">
     <div class="test-header">
       <h1>布局组件测试页面</h1>
-      <button @click="closeTest" class="close-button">关闭</button>
+      <el-button type="primary" @click="closeTest">
+        <Icon icon="mdi:close" :size="16" style="margin-right: 4px" />
+        关闭
+      </el-button>
     </div>
 
     <div class="test-content">
@@ -89,7 +92,7 @@
             <div class="tab-content">
               <h3>标签页 3</h3>
               <p>这是第三个标签页的内容</p>
-              <p>可以点击 × 关闭标签</p>
+              <p>可以点击 <Icon icon="mdi:close" :size="14" style="vertical-align: middle" /> 关闭标签</p>
             </div>
           </template>
           <template #tab-tab4>
@@ -236,19 +239,7 @@ function closeTest() {
   font-size: 20px;
 }
 
-.close-button {
-  padding: 8px 16px;
-  background-color: #007acc;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.close-button:hover {
-  background-color: #0098ff;
-}
+/* 按钮样式已由 Element Plus 提供，无需自定义 */
 
 .test-content {
   padding: 20px;
