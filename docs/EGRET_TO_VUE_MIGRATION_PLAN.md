@@ -2,7 +2,7 @@
 
 ## 📊 迁移进度总览
 
-**当前阶段**: 阶段 6 已完成 ✅ (100% 完成) | MainView 和 Editor 已迁移 ✅
+**当前阶段**: 阶段 6 已完成 ✅ (100% 完成) | 阶段 7 部分开始 ⏳
 
 | 阶段 | 状态 | 进度 | 备注 |
 |------|------|------|------|
@@ -11,10 +11,10 @@
 | 阶段 3: 基础组件迁移 | ✅ 已完成 | 100% | Message ✅、ToolTip ✅、Menu ✅ |
 | 阶段 4: 主要视图迁移 | ✅ 已完成 | 100% | 布局系统 ✅、ProjectView ✅、HierarchyView ✅、InspectorView ✅ |
 | 阶段 5: SceneView 特殊处理 | ✅ 已完成 | 100% | 3D 场景视图包装 ✅ |
-| 阶段 6: MainView 和 Editor 迁移 | ✅ 已完成 | 100% | 主界面和入口迁移 ✅ |
-| 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
+| 阶段 6: MainView 和 Editor 迁移 | ✅ 已完成 | 100% | 主界面和入口迁移 ✅，已修复 HierarchyView 错误 |
+| 阶段 7: 清理和优化 | ⏳ 部分开始 | 10% | 评估 Egret 依赖，部分清理 |
 
-**总体进度**: 6.5/7 阶段已完成 (92.9%)
+**总体进度**: 6.5/7 阶段已完成 (92.9%)，阶段 7 已开始评估
 
 ---
 
@@ -279,18 +279,30 @@
 **阶段 6 完成标准**:
 - ✅ MainView 已迁移（功能已迁移到 App.vue 和 MainLayout.vue）
 - ✅ Editor 入口已迁移（移除了 MainView 依赖，保持向后兼容）
-- ⏳ 应用可以完整启动（待验证）
-- ⏳ 所有功能正常使用（待验证）
+- ✅ 应用可以完整启动（已验证，已修复 HierarchyView 的 setExpandedKeys 错误）
+- ⏳ 所有功能正常使用（部分验证中）
 - ✅ 窗口大小调整正常（已在 App.vue 中实现）
 - ⏳ 布局保存和恢复功能正常（待实现）
 
-### ⏳ 阶段 7: 清理和优化（第 14-15 步）【待开始】
+**修复记录**:
+- ✅ 修复 HierarchyView.vue 中 `setExpandedKeys is not a function` 错误
+  - 使用 `default-expanded-keys` 属性和响应式 `expandedKeys` 变量
+  - 添加了错误处理和延迟重试机制
 
-#### ⏳ 步骤 7.1: 移除 Egret 依赖
-- [ ] 从 `index.html` 移除 egret 脚本
-- [ ] 从 `package.json` 移除 egret 相关配置
-- [ ] 删除 `egretProperties.json`
-- [ ] 清理所有 `import * as egret` 和 `import * as eui`
+### ⏳ 阶段 7: 清理和优化（第 14-15 步）【部分开始】
+
+**注意**: 完全移除 Egret 依赖目前不可行，因为：
+1. **InspectorView 依赖**: `feng3d` 的 `objectview` 库生成的组件是 Egret 组件，需要 `popupLayer` 来显示
+2. **Editor 类依赖**: 仍然需要 Egret 的 `stage`、`popupLayer`、`tooltipLayer`、`messageLayer` 等基础设施
+3. **向后兼容**: 一些旧代码可能仍在使用 Egret API
+
+**建议**: 保留 Egret 作为基础设施，但逐步减少对 Egret UI 组件的依赖。
+
+#### ⏳ 步骤 7.1: 部分清理 Egret 依赖（谨慎进行）
+- [ ] 评估是否可以移除 `index.html` 中的部分 egret 脚本（保留必要的）
+- [ ] 评估是否可以简化 `egretProperties.json` 配置
+- [ ] 清理未使用的 `import * as egret` 和 `import * as eui`（保留必要的）
+- [ ] 文档化 Egret 的保留原因和使用场景
 
 #### ⏳ 步骤 7.2: 最终优化
 - [ ] 优化 Vue 组件性能

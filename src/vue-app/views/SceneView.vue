@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, markRaw } from 'vue';
 import { Vector2, Camera, GameObject, Vector3, Matrix4x4, Stats, serialization, FPSController, Scene, RunEnvironment, loader, shortcut, globalEmitter, windowEventProxy, raycaster, ticker, PerspectiveLens, IEvent } from 'feng3d';
 import * as TWEEN from '@tweenjs/tween.js';
 import { EditorComponent } from '../../feng3d/EditorComponent';
@@ -83,22 +83,29 @@ function initScene() {
     Stats.init(document.getElementById('stats'));
     
     // 创建 EditorView
-    view.value = new EditorView(canvas.value) as any;
+    view.value = markRaw(new EditorView(canvas.value) as any);
     
-    // 创建编辑器相机
-    const camera = editorCamera.value = serialization.setValue(new GameObject(), { name: 'editorCamera' }).addComponent(Camera);
+    // 启动渲染循环（View 类需要手动启动）
+    if (view.value && typeof (view.value as any).start === 'function') {
+      (view.value as any).start();
+    }
+    
+    // 创建编辑器相机（使用 markRaw 防止 Vue 响应式包装）
+    const camera = markRaw(serialization.setValue(new GameObject(), { name: 'editorCamera' }).addComponent(Camera));
     camera.lens.far = 5000;
     camera.transform.x = 5;
     camera.transform.y = 3;
     camera.transform.z = 5;
     camera.transform.lookAt(new Vector3());
     camera.gameObject.addComponent(FPSController).auto = false;
+    editorCamera.value = camera;
+    // 确保传递给 EditorView 的 camera 也是原始对象
     view.value.camera = camera;
     
-    // 创建编辑器场景
+    // 创建编辑器场景（使用 markRaw 防止 Vue 响应式包装）
     const editorScene = serialization.setValue(new GameObject(), { name: 'editorScene' }).addComponent(Scene);
     editorScene.runEnvironment = RunEnvironment.all;
-    view.value.editorScene = editorScene;
+    view.value.editorScene = markRaw(editorScene);
     
     // 添加场景旋转工具
     const sceneRotateTool = editorScene.gameObject.addComponent(SceneRotateTool);
@@ -106,9 +113,9 @@ function initScene() {
     
     // 初始化模块
     const groundGrid = editorScene.gameObject.addComponent(GroundGrid);
-    groundGrid.editorCamera = camera;
+    groundGrid.editorCamera = camera; // 使用原始对象，不是 ref
     const mrsTool = editorScene.gameObject.addComponent(MRSTool);
-    mrsTool.editorCamera = camera;
+    mrsTool.editorCamera = camera; // 使用原始对象，不是 ref
     view.value.editorComponent = editorScene.gameObject.addComponent(EditorComponent);
     
     // 加载 Trident 对象
@@ -126,28 +133,21 @@ function initScene() {
 function updateCanvasSize() {
   if (!canvas.value || !containerRef.value) return;
   
-  canvas.value.style.display = '';
+  const rect = containerRef.value.getBoundingClientRect();
   
-  const bound = getGlobalBounds();
-  
-  const style = canvas.value.style;
-  style.position = 'absolute';
-  style.left = `${bound.x}px`;
-  style.top = `${bound.y}px`;
-  style.width = `${bound.width}px`;
-  style.height = `${bound.height}px`;
-  style.cursor = 'hand';
-  
-  // 更新 Stats 位置
-  if (Stats.instance && Stats.instance.dom) {
-    Stats.instance.dom.style.left = `${bound.x}px`;
-    Stats.instance.dom.style.top = `${bound.y}px`;
+  // 设置 canvas 大小（相对于容器）
+  if (view.value && typeof (view.value as any).setSize === 'function') {
+    (view.value as any).setSize(rect.width, rect.height);
+  } else {
+    // 如果 setSize 不可用，直接设置 canvas 尺寸
+    canvas.value.width = rect.width;
+    canvas.value.height = rect.height;
   }
   
-  // 通知 EditorView 更新大小
-  if (view.value) {
-    // EditorView 继承自 View，View 有 resize 方法
-    (view.value as any).resize?.();
+  // 更新 Stats 位置（相对于视口）
+  if (Stats.instance && Stats.instance.dom) {
+    Stats.instance.dom.style.left = `${rect.left}px`;
+    Stats.instance.dom.style.top = `${rect.top}px`;
   }
 }
 
@@ -426,9 +426,23 @@ function onAddSceneToolView(event: IEvent<any>) {
 }
 
 onMounted(async () => {
+  // 等待容器准备好
+  await nextTick();
+  
+  if (!containerRef.value) {
+    console.error('SceneView: containerRef is not available');
+    return;
+  }
+  
   // 创建 canvas
   canvas.value = document.createElement('canvas');
-  document.getElementById('app')?.appendChild(canvas.value);
+  canvas.value.style.position = 'absolute';
+  canvas.value.style.left = '0px';
+  canvas.value.style.top = '0px';
+  canvas.value.style.width = '100%';
+  canvas.value.style.height = '100%';
+  canvas.value.style.pointerEvents = 'auto';
+  containerRef.value.appendChild(canvas.value);
   
   // 初始化场景
   await nextTick();
@@ -528,6 +542,11 @@ onUnmounted(() => {
     (containerRef.value as any)._resizeObserver.disconnect();
   }
   
+  // 停止渲染循环
+  if (view.value && typeof (view.value as any).stop === 'function') {
+    (view.value as any).stop();
+  }
+  
   // 清理 canvas
   if (canvas.value) {
     canvas.value.style.display = 'none';
@@ -549,6 +568,16 @@ onUnmounted(() => {
   /* 使用 Element Plus 主题变量 */
   background-color: var(--el-bg-color, #1e1e1e);
   overflow: hidden;
+}
+
+.scene-view canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: auto;
 }
 
 .scene-back-rect {

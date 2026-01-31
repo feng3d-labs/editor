@@ -3,6 +3,28 @@ import { EditorData } from '../global/EditorData';
 import { EditorComponent } from './EditorComponent';
 import { hierarchy } from './hierarchy/Hierarchy';
 
+// 获取原始对象的辅助函数（避免 Vue Proxy 干扰 feng3d 事件系统）
+function getRawObject<T>(obj: T): T {
+    if (!obj) return obj;
+    
+    // 检查是否是 Vue Proxy（通过检查是否有 __v_raw 属性）
+    const proxy = obj as any;
+    if (proxy && typeof proxy === 'object' && '__v_raw' in proxy) {
+        return proxy.__v_raw;
+    }
+    
+    // 尝试使用全局的 toRaw（如果 Vue 已加载）
+    if (typeof (window as any).toRaw === 'function') {
+        try {
+            return (window as any).toRaw(obj);
+        } catch (e) {
+            // 忽略错误
+        }
+    }
+    
+    return obj;
+}
+
 export class EditorView extends View
 {
     wireframeColor = new Color4(125 / 255, 176 / 255, 250 / 255);
@@ -34,8 +56,8 @@ export class EditorView extends View
         }
         if (this.editorComponent)
         {
-            this.editorComponent.scene = this.scene;
-            this.editorComponent.editorCamera = this.camera;
+            this.editorComponent.scene = getRawObject(this.scene);
+            this.editorComponent.editorCamera = getRawObject(this.camera);
         }
 
         // 只有在场景已初始化时才调用 super.render()

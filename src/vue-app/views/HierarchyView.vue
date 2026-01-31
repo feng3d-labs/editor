@@ -5,6 +5,7 @@
       :data="treeData"
       :props="treeProps"
       :default-expand-all="false"
+      :default-expanded-keys="expandedKeys"
       node-key="id"
       :highlight-current="true"
       @node-click="onNodeClick"
@@ -43,6 +44,7 @@ const editorStore = useEditorStore();
 // 树数据
 const treeData = ref<any[]>([]);
 const treeRef = ref();
+const expandedKeys = ref<string[]>([]);
 const treeProps = {
   children: 'children',
   label: 'label',
@@ -81,13 +83,16 @@ function updateHierarchyTree() {
 
 // 更新展开的节点
 function updateExpandedNodes() {
-  if (!treeRef.value || !hierarchy.rootnode) return;
+  if (!hierarchy.rootnode) {
+    expandedKeys.value = [];
+    return;
+  }
   
-  const expandedKeys: string[] = [];
+  const keys: string[] = [];
   
   function collectExpandedKeys(node: HierarchyNode) {
     if (node.isOpen) {
-      expandedKeys.push(node.gameobject.uuid);
+      keys.push(node.gameobject.uuid);
     }
     
     if (node.children) {
@@ -96,9 +101,15 @@ function updateExpandedNodes() {
   }
   
   collectExpandedKeys(hierarchy.rootnode);
+  expandedKeys.value = keys;
   
-  if (expandedKeys.length > 0) {
-    treeRef.value.setExpandedKeys(expandedKeys);
+  // 如果组件已初始化，也尝试调用 setExpandedKeys（如果可用）
+  if (treeRef.value && typeof treeRef.value.setExpandedKeys === 'function') {
+    try {
+      treeRef.value.setExpandedKeys(keys);
+    } catch (error) {
+      console.warn('Failed to set expanded keys via method:', error);
+    }
   }
 }
 
@@ -268,6 +279,23 @@ watch(
     offRootNode(oldNode);
     onRootNode(newNode);
     invalidHierarchy();
+  },
+  { immediate: true }
+);
+
+// 监听 gameScene 变化，确保 hierarchy.rootnode 被初始化
+watch(
+  () => (editorStore as any).gameScene,
+  (newScene) => {
+    if (newScene && !hierarchy.rootnode) {
+      // 如果 gameScene 已设置但 rootnode 还未初始化，等待 EditorView.render() 设置
+      // 这里可以触发一次更新检查
+      setTimeout(() => {
+        if (hierarchy.rootnode) {
+          invalidHierarchy();
+        }
+      }, 100);
+    }
   },
   { immediate: true }
 );
