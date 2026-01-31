@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
 import vueDevtools from 'vite-plugin-vue-devtools';
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
 // 复制静态资源的插件
 function copyStaticAssets()
@@ -138,6 +141,13 @@ export default defineConfig(({ mode }) =>
             vue(),
             vueDevtools({
                 enabled: true,
+            }),
+            // Element Plus 按需引入
+            AutoImport({
+                resolvers: [ElementPlusResolver()],
+            }),
+            Components({
+                resolvers: [ElementPlusResolver()],
             }),
             copyStaticAssets()
         ],

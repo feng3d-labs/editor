@@ -6,6 +6,11 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import { pinia } from './pinia';
 
+// 引入 Element Plus 样式
+import 'element-plus/dist/index.css';
+// 引入自定义深色主题
+import './styles/element-plus-theme.css';
+
 // 创建 Vue 应用
 const app = createApp(App);
 

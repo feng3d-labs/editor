@@ -8,13 +8,13 @@
         @click="setActiveTab(index)"
       >
         <span class="tab-panel-tab-label">{{ tab.label }}</span>
-        <span
+        <Icon
           v-if="tabs.length > 1"
+          icon="mdi:close"
+          :size="16"
           class="tab-panel-tab-close"
           @click.stop="closeTab(index)"
-        >
-          ×
-        </span>
+        />
       </div>
     </div>
     <div class="tab-panel-content">
@@ -33,6 +33,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import type { Tab } from './TabPanel.types';
+import Icon from './Icon.vue';
 
 interface Props {
   tabs: Tab[];

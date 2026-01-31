@@ -28,7 +28,12 @@
           <span v-if="item.type !== 'separator'" class="menu-item-label">
             {{ item.label }}
           </span>
-          <span v-if="item.submenu && item.submenu.length > 0" class="menu-item-arrow">▶</span>
+          <Icon
+            v-if="item.submenu && item.submenu.length > 0"
+            icon="mdi:chevron-right"
+            :size="16"
+            class="menu-item-arrow"
+          />
           <div v-if="item.type === 'separator'" class="menu-separator"></div>
         </div>
       </div>
@@ -37,8 +42,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { globalEmitter, IEvent, windowEventProxy } from 'feng3d';
+import Icon from './Icon.vue';
 
 export interface MenuItem {
   label?: string;

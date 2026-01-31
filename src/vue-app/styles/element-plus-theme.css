@@ -1,0 +1,84 @@
+/**
+ * Element Plus 深色主题定制
+ * 与编辑器深色主题保持一致
+ */
+
+/* 覆盖 Element Plus 的 CSS 变量，适配深色主题 */
+:root {
+  /* 主色调 - 使用编辑器蓝色 */
+  --el-color-primary: #007acc;
+  --el-color-primary-light-3: #1a8cd8;
+  --el-color-primary-light-5: #3399e6;
+  --el-color-primary-light-7: #4da6f3;
+  --el-color-primary-light-8: #66b3ff;
+  --el-color-primary-light-9: #99ccff;
+  --el-color-primary-dark-2: #0066a3;
+
+  /* 背景色 - 深色主题 */
+  --el-bg-color: #1e1e1e;
+  --el-bg-color-page: #1e1e1e;
+  --el-bg-color-overlay: #2d2d2d;
+
+  /* 文本颜色 */
+  --el-text-color-primary: #cccccc;
+  --el-text-color-regular: #999999;
+  --el-text-color-secondary: #666666;
+  --el-text-color-placeholder: #555555;
+  --el-text-color-disabled: #444444;
+
+  /* 边框颜色 */
+  --el-border-color: #3d3d3d;
+  --el-border-color-light: #2d2d2d;
+  --el-border-color-lighter: #252525;
+  --el-border-color-extra-light: #1e1e1e;
+  --el-border-color-dark: #4d4d4d;
+  --el-border-color-darker: #5d5d5d;
+
+  /* 填充色 */
+  --el-fill-color: #2d2d2d;
+  --el-fill-color-light: #252525;
+  --el-fill-color-lighter: #1e1e1e;
+  --el-fill-color-extra-light: #151515;
+  --el-fill-color-dark: #3d3d3d;
+  --el-fill-color-darker: #4d4d4d;
+  --el-fill-color-blank: transparent;
+
+  /* 遮罩层 */
+  --el-mask-color: rgba(0, 0, 0, 0.8);
+  --el-mask-color-extra-light: rgba(0, 0, 0, 0.3);
+}
+
+/* 确保 Element Plus 组件在深色背景下正常显示 */
+.el-button {
+  background-color: var(--el-bg-color-overlay);
+  border-color: var(--el-border-color);
+  color: var(--el-text-color-primary);
+}
+
+.el-button:hover {
+  background-color: var(--el-fill-color-dark);
+  border-color: var(--el-border-color-dark);
+}
+
+.el-input__wrapper {
+  background-color: var(--el-bg-color-overlay);
+  border-color: var(--el-border-color);
+}
+
+.el-input__inner {
+  color: var(--el-text-color-primary);
+}
+
+.el-select-dropdown {
+  background-color: var(--el-bg-color-overlay);
+  border-color: var(--el-border-color);
+}
+
+.el-select-dropdown__item {
+  color: var(--el-text-color-primary);
+}
+
+.el-select-dropdown__item:hover {
+  background-color: var(--el-fill-color);
+}
+
