@@ -2,19 +2,19 @@
 
 ## 📊 迁移进度总览
 
-**当前阶段**: 阶段 2 已完成 ✅ | 下一步: 阶段 3 - 基础组件迁移
+**当前阶段**: 阶段 3 进行中 ⏳ (33% 完成) | Message 组件已迁移 ✅
 
 | 阶段 | 状态 | 进度 | 备注 |
 |------|------|------|------|
 | 阶段 1: 基础架构搭建 | ✅ 已完成 | 100% | Vue 3、Pinia、Vue Devtools 已配置 |
 | 阶段 2: 状态管理设置 | ✅ 已完成 | 100% | Pinia stores 已创建，EditorData 作为过渡层 |
-| 阶段 3: 基础组件迁移 | ⏳ 待开始 | 0% | Message、ToolTip、Menu 组件 |
+| 阶段 3: 基础组件迁移 | ⏳ 进行中 | 33% | Message ✅、ToolTip ⏳、Menu ⏳ |
 | 阶段 4: 主要视图迁移 | ⏳ 待开始 | 0% | ProjectView、HierarchyView、InspectorView |
 | 阶段 5: SceneView 特殊处理 | ⏳ 待开始 | 0% | 3D 场景视图包装 |
 | 阶段 6: MainView 和 Editor 迁移 | ⏳ 待开始 | 0% | 主界面和入口迁移 |
 | 阶段 7: 清理和优化 | ⏳ 待开始 | 0% | 移除 Egret 依赖 |
 
-**总体进度**: 2/7 阶段已完成 (28.6%)
+**总体进度**: 2.33/7 阶段已完成 (33.3%)
 
 ---
 
@@ -105,14 +105,21 @@
 - ✅ 应用功能不受影响，正常使用
 - ✅ 没有冗余的状态同步代码
 
-### ⏳ 阶段 3: 基础组件迁移（第 4-6 步）【进行中】
+### ⏳ 阶段 3: 基础组件迁移（第 4-6 步）【进行中 - 33% 完成】
 
-#### ⏳ 步骤 3.1: 迁移简单组件 - Message
-- [ ] 创建 `src/vue-app/components/Message.vue`
-- [ ] 创建简单的适配函数（最小化），让旧代码可以调用
-- [ ] **立即替换**: 找到所有使用 `Message` 的地方，直接替换为 Vue 组件调用
-- [ ] **移除旧代码**: 一旦替换完成，立即删除 `src/ui/components/Message.ts`
-- [ ] **验证**: Message 功能正常
+#### ✅ 步骤 3.1: 迁移简单组件 - Message【已完成】
+- [x] 创建 `src/vue-app/components/Message.vue`
+- [x] 创建简单的适配函数（最小化），让旧代码可以调用
+- [x] **集成到 App.vue**: Message 组件已在 App.vue 中挂载
+- [x] **适配器实现**: 创建 MessageAdapter 提供向后兼容接口
+- [x] **Editor.ts 更新**: 使用适配器替代旧的 Message 类
+- [ ] **移除旧代码**: 验证功能正常后，删除 `src/ui/components/Message.ts`（保留一段时间确保稳定）
+
+**实现说明**:
+- Vue Message 组件监听 `globalEmitter` 的 `message` 和 `message.error` 事件
+- 使用 TWEEN 动画实现消息上浮和淡出效果
+- 支持普通消息（白色）和错误消息（红色）
+- 适配器提供兼容接口，旧代码无需修改即可工作
 
 #### ⏳ 步骤 3.2: 迁移简单组件 - ToolTip
 - [ ] 创建 `src/vue-app/components/ToolTip.vue`

@@ -7,7 +7,6 @@ import { modules } from './Modules';
 import { mouseEventEnvironment } from './polyfill/egret/MouseEvent';
 import { Editorshortcut } from './shortcut/Editorshortcut';
 import { editorAsset } from './ui/assets/EditorAsset';
-import { Message } from './ui/components/Message';
 import { MainUI } from './ui/MainUI';
 import { MainView } from './ui/MainView';
 
@@ -38,7 +37,10 @@ export class Editor extends eui.UILayer
         editorui.stage = this.stage;
 
         //
-        modules.message = new Message();
+        // 使用 Vue Message 组件的适配器（过渡期）
+        // Vue Message 组件已在 App.vue 中挂载，这里只需要创建适配器实例
+        const { createMessageAdapter } = await import('./vue-app/components/MessageAdapter');
+        modules.message = createMessageAdapter() as any;
 
         await this.initEgret();
         await editorRS.initproject();

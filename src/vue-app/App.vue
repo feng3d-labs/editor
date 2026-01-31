@@ -2,12 +2,14 @@
   <div id="vue-app-container">
     <!-- Vue 应用占位内容，后续会逐步迁移组件到这里 -->
     <!-- 当前阶段：仅作为占位，确保 Vue 应用可以正常挂载 -->
+    
+    <!-- Message 组件：显示全局消息提示 -->
+    <Message />
   </div>
 </template>
 
 <script setup lang="ts">
-// 当前阶段：简单的占位组件
-// 后续会逐步迁移组件到这里
+import Message from './components/Message.vue';
 </script>
 
 <style scoped>

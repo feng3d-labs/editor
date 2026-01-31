@@ -94,25 +94,34 @@ else
     initQRCode(document.URL);
 }
 
-// 初始化 Egret
-egret.runEgret({ renderMode: 'webgl', audioType: 0 });
-
-// 初始化 Vue 应用（与 Egret 并行运行）
-// 延迟加载，确保 DOM 已准备好
+// 初始化 Vue 应用（必须在 Egret 之前，确保 Pinia 已激活）
+// 这样 EditorData 在使用时 Pinia 已经可用
 if (typeof window !== 'undefined')
 {
     // 等待 DOM 加载完成
     if (document.readyState === 'loading')
     {
-        document.addEventListener('DOMContentLoaded', () =>
+        document.addEventListener('DOMContentLoaded', async () =>
         {
-            import('./vue-app/main');
+            // 先挂载 Vue 应用，激活 Pinia
+            await import('./vue-app/main');
+            // 然后初始化 Egret
+            egret.runEgret({ renderMode: 'webgl', audioType: 0 });
         });
     }
     else
     {
-        import('./vue-app/main');
+        // DOM 已准备好，立即挂载 Vue 应用
+        import('./vue-app/main').then(() => {
+            // Vue 应用挂载后，初始化 Egret
+            egret.runEgret({ renderMode: 'webgl', audioType: 0 });
+        });
     }
+}
+else
+{
+    // 非浏览器环境，直接初始化 Egret
+    egret.runEgret({ renderMode: 'webgl', audioType: 0 });
 }
 
 // 导出所有内容

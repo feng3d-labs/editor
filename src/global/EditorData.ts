@@ -15,10 +15,48 @@ export { MRSToolType };
  */
 export class EditorData
 {
-    static editorData = new EditorData();
+    // 延迟初始化，确保 Pinia 已激活
+    // 使用 getter 而不是直接赋值，避免在模块加载时就创建实例
+    static get editorData(): EditorData {
+        if (!EditorData._editorData) {
+            EditorData._editorData = new EditorData();
+        }
+        return EditorData._editorData;
+    }
+    
+    private static _editorData: EditorData | null = null;
 
     private get store(): any {
-        return useEditorStore() as any;
+        try {
+            return useEditorStore() as any;
+        } catch (error) {
+            // 如果 Pinia 还未激活，返回一个临时的空对象
+            // 这应该不会发生，因为我们在 vite-entry.ts 中提前初始化了 Pinia
+            console.warn('Pinia store not available yet, using fallback', error);
+            return {
+                gameScene: null,
+                selectedObjects: [],
+                toolType: 0,
+                isBaryCenter: true,
+                isWoldCoordinate: false,
+                copyObjects: [],
+                openScript: null,
+                undoList: [],
+                selectedGameObjects: [],
+                selectedAssetNodes: [],
+                transformGameObject: null,
+                transformBox: null,
+                setGameScene: () => {},
+                setSelectedObjects: () => {},
+                clearSelectedObjects: () => {},
+                selectObject: () => {},
+                selectMultiObject: () => {},
+                setToolType: () => {},
+                setIsBaryCenter: () => {},
+                setIsWoldCoordinate: () => {},
+                getEditorAssetPath: (url: string) => url,
+            };
+        }
     }
 
     /**

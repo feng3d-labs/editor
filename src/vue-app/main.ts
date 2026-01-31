@@ -10,8 +10,12 @@ import { pinia } from './pinia';
 const app = createApp(App);
 
 // 使用已创建的 Pinia 实例
+// 这会将 Pinia 激活，使得 useEditorStore() 可以在 EditorData 中使用
 app.use(pinia);
 
 // 挂载到 DOM
 app.mount('#vue-app');
+
+// 导出 pinia 实例，确保在需要时可以访问
+export { pinia };
 
