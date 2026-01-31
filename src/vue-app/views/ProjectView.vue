@@ -124,13 +124,14 @@ const treeProps = {
 };
 
 // 为树节点添加 id 属性（el-tree 需要）
+// 注意：返回的对象是普通对象，不是 AssetNode 实例，但包含所有 AssetNode 的属性
 const processedTreeData = computed(() => {
-  function addId(nodes: AssetNode[]): any[] {
+  function addId(nodes: AssetNode[]): Array<AssetNode & { id: string }> {
     return nodes.map((node) => ({
       ...node,
       id: node.asset.assetId, // el-tree 的 node-key
       children: node.children && node.children.length > 0 ? addId(node.children) : undefined,
-    }));
+    })) as Array<AssetNode & { id: string }>;
   }
   return addId(treeData.value);
 });
@@ -156,7 +157,7 @@ const folderPath = computed(() => {
 const selectedFilePath = computed(() => {
   const selected = editorStore.selectedAssetNodes;
   if (selected.length > 0) {
-    return selected.map((v) => (v.asset.assetName || v.label) + (v.asset.extenson || '')).join(', ');
+    return selected.map((v) => (v.asset.fileName || v.label) + (v.asset.extenson || '')).join(', ');
   }
   return '';
 });
@@ -167,6 +168,28 @@ const isAreaSelecting = ref(false);
 
 // 初始化
 function initList() {
+  // 检查 editorAsset 和 rootFile 是否已初始化
+  if (!editorAsset || !editorAsset.rootFile) {
+    // 如果还未初始化，等待一下再试
+    const checkInterval = setInterval(() => {
+      if (editorAsset && editorAsset.rootFile) {
+        clearInterval(checkInterval);
+        invalidateAssetTree();
+        
+        // 监听资源变化
+        editorAsset.rootFile.on('openChanged', invalidateAssetTree);
+        editorAsset.rootFile.on('added', invalidateAssetTree);
+        editorAsset.rootFile.on('removed', invalidateAssetTree);
+      }
+    }, 100);
+    
+    // 最多等待 5 秒
+    setTimeout(() => {
+      clearInterval(checkInterval);
+    }, 5000);
+    return;
+  }
+  
   invalidateAssetTree();
   
   // 监听资源变化
@@ -177,6 +200,17 @@ function initList() {
 
 // 更新资源树
 function invalidateAssetTree() {
+  // 检查 editorAsset 和 rootFile 是否已初始化
+  if (!editorAsset || !editorAsset.rootFile) {
+    // 如果还未初始化，等待一下再试
+    setTimeout(() => {
+      if (editorAsset && editorAsset.rootFile) {
+        invalidateAssetTree();
+      }
+    }, 100);
+    return;
+  }
+  
   const folders = editorAsset.rootFile.getFolderList();
   treeData.value = folders;
   
@@ -260,17 +294,39 @@ function getFileIcon(file: AssetNode): string {
 
 // 树节点点击
 function onTreeNodeClick(data: any) {
-  // data 可能是处理后的对象，需要获取原始 AssetNode
-  const node = data as AssetNode;
-  if (node.isDirectory) {
+  // data 是 processedTreeData 返回的对象，包含所有 AssetNode 的属性
+  // 但我们需要找到原始的 AssetNode 实例
+  const node = findAssetNodeByAssetId(data.asset?.assetId || data.id);
+  if (node && node.isDirectory) {
     editorAsset.showFloder = node;
   }
+}
+
+// 根据 assetId 查找 AssetNode 实例
+function findAssetNodeByAssetId(assetId: string): AssetNode | null {
+  function search(nodes: AssetNode[]): AssetNode | null {
+    for (const node of nodes) {
+      if (node.asset.assetId === assetId) {
+        return node;
+      }
+      if (node.children && node.children.length > 0) {
+        const found = search(node.children);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+  return search(treeData.value);
 }
 
 // 树节点右键
 function onTreeNodeRightClick(event: MouseEvent, data: any) {
   event.preventDefault();
-  editorAsset.popupmenu(data);
+  // data 是 processedTreeData 返回的对象，需要找到原始的 AssetNode 实例
+  const node = findAssetNodeByAssetId(data.asset?.assetId || data.id);
+  if (node) {
+    editorAsset.popupmenu(node);
+  }
 }
 
 // 路径点击
@@ -421,23 +477,26 @@ onMounted(() => {
   
   // 注册适配器，支持旧代码调用
   registerProjectView({
-    invalidateAssettree,
+    invalidateAssettree: invalidateAssetTree, // 使用正确的函数名
   });
   
   globalEmitter.on('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.on('asset.showAsset', () => {
     // TODO: 处理显示资源
   });
-  globalEmitter.on('projectview.invalidateAssettree', invalidateAssettree);
+  globalEmitter.on('projectview.invalidateAssettree', invalidateAssetTree);
 });
 
 onUnmounted(() => {
   // 注销适配器
   unregisterProjectView();
   
-  editorAsset.rootFile.off('openChanged', invalidateAssetTree);
-  editorAsset.rootFile.off('added', invalidateAssetTree);
-  editorAsset.rootFile.off('removed', invalidateAssetTree);
+  // 移除资源变化监听
+  if (editorAsset && editorAsset.rootFile) {
+    editorAsset.rootFile.off('openChanged', invalidateAssetTree);
+    editorAsset.rootFile.off('added', invalidateAssetTree);
+    editorAsset.rootFile.off('removed', invalidateAssetTree);
+  }
   
   globalEmitter.off('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.off('asset.showAsset', () => {});

@@ -46,6 +46,11 @@ declare global
         'codeeditor.openScript': TextAsset;
 
         /**
+         * 项目视图资源树更新
+         */
+        'projectview.invalidateAssettree': undefined;
+
+        /**
          * 脚本编译
          */
         'script.compile': { onComplete?: () => void };

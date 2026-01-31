@@ -28,7 +28,7 @@ export enum MRSToolType {
 /**
  * 编辑器主状态 Store
  */
-export const useEditorStore = defineStore('editor', (): any => {
+export const useEditorStore = defineStore('editor', () => {
     // ========== 状态定义 ==========
     
     /**

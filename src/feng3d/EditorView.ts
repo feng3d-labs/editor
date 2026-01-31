@@ -38,7 +38,20 @@ export class EditorView extends View
             this.editorComponent.editorCamera = this.camera;
         }
 
-        super.render();
+        // 只有在场景已初始化时才调用 super.render()
+        // 避免 CanvasRenderer.draw() 在 null scene 上调用 getComponentsInChildren
+        if (this.scene && this.scene.gameObject) {
+            super.render();
+        } else {
+            // 场景未初始化时，只更新编辑器场景（如果有）
+            if (this.editorScene && this.camera) {
+                this.editorScene.mouseRay3D = this.mouseRay3D;
+                this.editorScene.camera = this.camera;
+                this.editorScene.update();
+                forwardRenderer.draw(this.gl, this.editorScene, this.camera);
+            }
+            return;
+        }
 
         if (this.contextLost) return;
 
