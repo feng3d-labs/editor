@@ -2,7 +2,6 @@
   "name": "feng3d-editor",
   "version": "0.6.0",
   "description": "feng3d引擎编辑器\r 编辑器UI基于[egret](https://www.egret.com/)开发。",
-  "main": "main.js",
   "module": "lib/index.es.js",
   "bundle": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -10,7 +9,6 @@
   "author": "feng",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
     "clean": "rimraf \"{lib,dist}\"",
     "build": "vite build",
     "build:prod": "cross-env NODE_ENV=production vite build && npm run build:types",
@@ -25,10 +23,7 @@
     "deploy": "npm run clean && npm run build:prod && npm run docs && node scripts/deploy.js",
     "release": "npm run clean && npm run build:prod && npm publish",
     "server": "node server/index.js",
-    "refreshTemplate": "node scripts/refreshTemplate.js",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "electron:publish": "electron-forge publish"
+    "refreshTemplate": "node scripts/refreshTemplate.js"
   },
   "repository": {
     "type": "git",
@@ -60,25 +55,18 @@
     "@feng3d-plugins/cannon": "^0.6.0",
     "@feng3d-plugins/cannon-plugin": "^0.6.0",
     "@feng3d/filesaver": "^0.0.1",
-    "electron-squirrel-startup": "^1.0.0",
     "feng3d": "^0.6.0",
     "jsonc-parser": "^3.1.0",
     "jszip": "^3.10.0",
     "loadjs": "^4.2.0"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.65",
-    "@electron-forge/maker-deb": "^6.0.0-beta.65",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.65",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.65",
-    "@electron-forge/maker-zip": "^6.0.0-beta.65",
     "@types/loadjs": "^4.0.1",
     "@types/mocha": "9.1.0",
     "@types/node": "^18.6.1",
     "@typescript-eslint/eslint-plugin": "5.17.0",
     "@typescript-eslint/parser": "5.17.0",
     "cross-env": "7.0.3",
-    "electron": "19.0.10",
     "eslint": "8.12.0",
     "fs-extra": "^10.1.0",
     "mocha": "9.2.2",
@@ -89,32 +77,5 @@
     "typedoc-plugin-sourcefile-url": "1.0.6",
     "typescript": "4.3.5",
     "vite": "^5.0.0"
-  },
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "feng3d-editor"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
   }
 }

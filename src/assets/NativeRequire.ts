@@ -1,13 +1,12 @@
 /**
  * 是否支持本地API
  */
-export const supportNative = !(typeof __dirname === 'undefined');
+export const supportNative = false;
 
 /**
  * 本地API
  */
-// eslint-disable-next-line global-require
-export const nativeAPI: NativeAPI = supportNative ? (require(`${__dirname}/native/electron_renderer.js`)) : null;
+export const nativeAPI: NativeAPI = null;
 
 /**
  * 本地API
