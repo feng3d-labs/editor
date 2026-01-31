@@ -2,6 +2,7 @@
   <div 
     class="hierarchy-view"
     @click="onTreeClick"
+    @contextmenu="onTreeRightClick"
     @keydown="onKeyDown"
     tabindex="0"
   >
