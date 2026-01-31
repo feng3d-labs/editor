@@ -1,12 +1,13 @@
 import { ProjectView } from '../ui/assets/ProjectView';
-import { MainView } from '../ui/MainView';
+// MainView 已迁移到 Vue，不再需要导入
+// import { MainView } from '../ui/MainView';
 import { invalidateAssettree } from '../vue-app/views/ProjectViewAdapter';
 
 export interface EditorUI
 {
     stage: egret.Stage;
     assetview: ProjectView | { invalidateAssettree: () => void };
-    mainview: MainView;
+    mainview: { width: number; height: number } | any; // MainView 已迁移到 Vue
     tooltipLayer: eui.UILayer;
     popupLayer: eui.UILayer;
 

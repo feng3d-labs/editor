@@ -8,7 +8,8 @@ import { mouseEventEnvironment } from './polyfill/egret/MouseEvent';
 import { Editorshortcut } from './shortcut/Editorshortcut';
 import { editorAsset } from './ui/assets/EditorAsset';
 import { MainUI } from './ui/MainUI';
-import { MainView } from './ui/MainView';
+// MainView 已迁移到 Vue，不再需要导入
+// import { MainView } from './ui/MainView';
 
 /**
  * editor的版本号
@@ -105,6 +106,8 @@ export class Editor extends eui.UILayer
         }
 
         //
+        // MainView 已迁移到 Vue，不再需要初始化 Egret 的 MainView
+        // 但需要创建一个占位对象以保持向后兼容
         this.initMainView();
         // eslint-disable-next-line no-new
         new Editorshortcut();
@@ -120,8 +123,12 @@ export class Editor extends eui.UILayer
     private initMainView()
     {
         //
-        const mainView = new MainView();
-        editorui.mainview = mainView;
-        this.stage.addChildAt(mainView, 1);
+        // MainView 已迁移到 Vue (MainLayout.vue)
+        // 创建一个占位对象以保持向后兼容
+        // 注意：不再添加到 Egret 舞台，因为 Vue 应用已经处理了布局
+        editorui.mainview = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+        } as any;
     }
 }

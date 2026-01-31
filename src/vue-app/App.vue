@@ -23,10 +23,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineAsyncComponent } from 'vue';
+import { ref, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import Message from './components/Message.vue';
 import ToolTip from './components/ToolTip.vue';
 import Menu from './components/Menu.vue';
+import { editorui } from '../global/editorui';
 
 // 使用异步组件加载，避免热更新问题
 const MainLayout = defineAsyncComponent(() => import('./layouts/MainLayout.vue'));
@@ -45,6 +46,29 @@ if (typeof window !== 'undefined') {
     showLayoutTest.value = false;
   };
 }
+
+// 窗口大小调整处理（替代 MainView 的功能）
+function handleResize() {
+  if (editorui.stage) {
+    editorui.stage.setContentSize(window.innerWidth, window.innerHeight);
+    
+    // 更新 editorui.mainview 的宽高（如果有的话）
+    if (editorui.mainview) {
+      (editorui.mainview as any).width = editorui.stage.stageWidth;
+      (editorui.mainview as any).height = editorui.stage.stageHeight;
+    }
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+  // 初始调用一次
+  handleResize();
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
 </script>
 
 <style scoped>
