@@ -31,7 +31,7 @@
     <!-- 中间工具组：Pivot/Center、Local/World -->
     <div class="tool-group tool-group-center-left">
       <button
-        :class="['tool-button', 'toggle-button', { 'is-selected': isBaryCenter }]"
+        :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': isBaryCenter }]"
         @click="onCenterClick"
         title="Pivot/Center"
       >
@@ -39,7 +39,7 @@
         <img v-else :src="getImageUrl('pivot_png')" class="button-icon" />
       </button>
       <button
-        :class="['tool-button', 'toggle-button', { 'is-selected': !isWoldCoordinate }]"
+        :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': !isWoldCoordinate }]"
         @click="onWorldClick"
         title="Local/World"
       >
@@ -52,11 +52,11 @@
     <div class="tool-group tool-group-center">
       <button
         class="tool-button play-button"
-        @click="onPlayClick"
-        @mousedown="isPlayPressed = true"
-        @mouseup="isPlayPressed = false"
+        @mousedown.stop="handlePlayMouseDown"
+        @mouseup.stop="handlePlayMouseUp"
         @mouseleave="isPlayPressed = false"
         title="播放"
+        type="button"
       >
         <img v-if="!isPlayPressed" :src="getImageUrl('play_up_png')" class="button-icon" />
         <img v-else :src="getImageUrl('play_down_png')" class="button-icon" />
@@ -91,41 +91,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { ref, computed, onUnmounted } from 'vue';
 import { globalEmitter, FS, FSType, serialization } from 'feng3d';
 import { EditorData, MRSToolType } from '../../global/EditorData';
 import { editorRS } from '../../assets/EditorRS';
 import { editorcache } from '../../caches/Editorcache';
 import { showQRCode } from '../../utils/QRCode';
 import { useEditorStore } from '../stores/editorStore';
+import { closeRunWindow, setRunWindow, getRunWindow } from '../utils/runWindowManager';
 
 const editorStore = useEditorStore();
 
-// 工具类型
-const toolType = computed(() => (editorStore as any).toolType || MRSToolType.MOVE);
-const isBaryCenter = computed(() => (editorStore as any).isBaryCenter || false);
-const isWoldCoordinate = computed(() => (editorStore as any).isWoldCoordinate || false);
+// 工具类型状态
+const toolType = computed(() => editorStore.toolType);
+const isBaryCenter = computed(() => editorStore.isBaryCenter);
+const isWoldCoordinate = computed(() => editorStore.isWoldCoordinate);
 
 // 播放按钮按下状态
 const isPlayPressed = ref(false);
-
-// 运行窗口
-let runwin: Window | null = null;
+let playButtonMouseDownTime = 0;
 
 // 获取图片 URL（从 Egret 资源系统）
 function getImageUrl(resourceName: string): string {
   // 使用 Egret RES 系统获取资源
-  // 如果资源已加载，直接返回；否则返回资源路径
   if (typeof (window as any).RES !== 'undefined') {
     const res = (window as any).RES.getRes(resourceName);
     if (res && res.texture && res.texture._bitmapData) {
-      // 如果资源是纹理，返回其数据 URL
       return res.texture._bitmapData.source;
     }
   }
   
   // 回退方案：直接使用资源路径
-  // 根据资源名称映射到实际路径
   const resourceMap: Record<string, string> = {
     'move_up_png': 'resource/assets/Button/move_up.png',
     'move_down_png': 'resource/assets/Button/move_down.png',
@@ -147,82 +143,124 @@ function getImageUrl(resourceName: string): string {
   return resourceMap[resourceName] || `resource/assets/Button/${resourceName.replace('_png', '.png').replace('_jpg', '.jpg')}`;
 }
 
-// 移动工具
+// 工具按钮点击处理
 function onMoveClick() {
-  EditorData.editorData.toolType = MRSToolType.MOVE;
-  globalEmitter.emit('editor.toolTypeChanged');
+  editorStore.setToolType(MRSToolType.MOVE);
 }
 
-// 旋转工具
 function onRotateClick() {
-  EditorData.editorData.toolType = MRSToolType.ROTATION;
-  globalEmitter.emit('editor.toolTypeChanged');
+  editorStore.setToolType(MRSToolType.ROTATION);
 }
 
-// 缩放工具
 function onScaleClick() {
-  EditorData.editorData.toolType = MRSToolType.SCALE;
-  globalEmitter.emit('editor.toolTypeChanged');
+  editorStore.setToolType(MRSToolType.SCALE);
 }
 
-// Center/Pivot 切换
 function onCenterClick() {
-  EditorData.editorData.isBaryCenter = !EditorData.editorData.isBaryCenter;
+  editorStore.setIsBaryCenter(!editorStore.isBaryCenter);
 }
 
-// World/Local 切换
 function onWorldClick() {
-  EditorData.editorData.isWoldCoordinate = !EditorData.editorData.isWoldCoordinate;
+  editorStore.setIsWoldCoordinate(!editorStore.isWoldCoordinate);
 }
 
-// 播放按钮
-function onPlayClick() {
-  globalEmitter.emit('inspector.saveShowData', async () => {
-    const obj = serialization.serialize(EditorData.editorData.gameScene.gameObject);
-    await editorRS.fs.writeObject('default.scene.json', obj);
-    if (editorRS.fs.type === FSType.indexedDB) {
-      if (runwin) runwin.close();
-      runwin = window.open(`run.html?fstype=${FS.fs.type}&project=${editorcache.projectname}`);
-      return;
+// 播放按钮事件处理
+function handlePlayMouseDown(event: MouseEvent) {
+  isPlayPressed.value = true;
+  playButtonMouseDownTime = Date.now();
+}
+
+function handlePlayMouseUp(event: MouseEvent) {
+  isPlayPressed.value = false;
+  
+  // 如果 mousedown 和 mouseup 时间间隔很短（< 500ms），认为是点击
+  const timeDiff = Date.now() - playButtonMouseDownTime;
+  if (timeDiff < 500 && timeDiff > 0) {
+    onPlayClick();
+  }
+}
+
+// 播放按钮点击处理
+async function onPlayClick() {
+  // 定义播放逻辑
+  const playAction = async () => {
+    try {
+      // 检查场景是否存在
+      if (!EditorData.editorData.gameScene || !EditorData.editorData.gameScene.gameObject) {
+        console.error('游戏场景不存在，无法播放');
+        return;
+      }
+      
+      // 序列化并保存场景
+      const obj = serialization.serialize(EditorData.editorData.gameScene.gameObject);
+      await editorRS.fs.writeObject('default.scene.json', obj);
+      
+      // 根据文件系统类型打开运行窗口
+      closeRunWindow();
+      let newWindow: Window | null = null;
+      
+      if (editorRS.fs.type === FSType.indexedDB) {
+        newWindow = window.open(`run.html?fstype=${FS.fs.type}&project=${editorcache.projectname}`);
+      } else {
+        const path = editorRS.fs.getAbsolutePath('index.html');
+        newWindow = window.open(path);
+      }
+      
+      if (newWindow) {
+        setRunWindow(newWindow);
+      } else {
+        console.error('无法打开运行窗口，可能被浏览器阻止了弹窗');
+      }
+    } catch (error) {
+      console.error('播放失败:', error);
     }
-    const path = editorRS.fs.getAbsolutePath('index.html');
-    if (runwin) runwin.close();
-    runwin = window.open(path);
-  });
+  };
+  
+  // 触发保存事件，InspectorView 会在保存完成后调用回调
+  globalEmitter.emit('inspector.saveShowData', playAction);
+  
+  // 回退机制：如果 InspectorView 没有处理事件，直接执行播放逻辑
+  setTimeout(async () => {
+    if (!getRunWindow()) {
+      await playAction();
+    }
+  }, 50);
 }
 
-// 帮助按钮
+// 帮助和设置按钮
 function onHelpClick() {
-  window.open('http://com');
+  window.open('https://feng3d.com/');
 }
 
-// 设置按钮
 function onSettingClick() {
-  window.open('http://com');
+  window.open('https://feng3d.com/');
 }
 
 // 二维码按钮
 function onQRCodeClick() {
   setTimeout(() => {
-    showQRCode();
+    const outputElement = document.getElementById('output');
+    if (outputElement) {
+      // 如果 output 元素为空，需要先初始化二维码
+      if (!outputElement.querySelector('canvas')) {
+        const url = window.location.href;
+        import('../../utils/QRCode').then(({ initQRCode }) => {
+          initQRCode(url);
+          setTimeout(() => {
+            showQRCode();
+          }, 300);
+        }).catch((error) => {
+          console.error('初始化二维码失败:', error);
+        });
+      } else {
+        showQRCode();
+      }
+    }
   }, 10);
 }
 
-// 监听工具类型变化
-function onToolTypeChanged() {
-  // 状态已通过 computed 自动更新
-}
-
-onMounted(() => {
-  globalEmitter.on('editor.toolTypeChanged', onToolTypeChanged);
-});
-
 onUnmounted(() => {
-  globalEmitter.off('editor.toolTypeChanged', onToolTypeChanged);
-  if (runwin) {
-    runwin.close();
-    runwin = null;
-  }
+  closeRunWindow();
 });
 </script>
 
@@ -230,17 +268,21 @@ onUnmounted(() => {
 .top-tool-bar {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 22px;
+  min-height: 22px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: transparent;
+  z-index: 1001;
+  pointer-events: auto;
 }
 
 .tool-group {
   display: flex;
   align-items: center;
-  gap: -1px; /* 按钮之间无间隙，与 Egret 版本一致 */
+  gap: 0;
+  flex-wrap: nowrap;
 }
 
 .tool-group-left {
@@ -262,6 +304,8 @@ onUnmounted(() => {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
+  z-index: 10000;
+  pointer-events: auto;
 }
 
 .tool-group-right {
@@ -273,19 +317,53 @@ onUnmounted(() => {
 
 .tool-button {
   position: relative;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  max-width: 22px;
+  max-height: 22px;
   padding: 0;
+  margin: 0;
   border: none;
   background: transparent;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   overflow: hidden;
+  z-index: 1002;
+  pointer-events: auto;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  line-height: 0;
+  vertical-align: top;
 }
 
-/* ToggleButton 选中状态已通过图片切换实现，无需额外样式 */
+.play-button {
+  z-index: 10001;
+  pointer-events: auto;
+  position: relative;
+}
+
+.center-world-button {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
+  max-width: 22px !important;
+  max-height: 22px !important;
+  line-height: 0 !important;
+  font-size: 0 !important;
+  display: inline-block !important;
+}
+
+.center-world-button img {
+  display: block !important;
+  width: 22px !important;
+  height: 22px !important;
+  object-fit: cover !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
 .button-icon {
   position: absolute;
@@ -293,6 +371,11 @@ onUnmounted(() => {
   height: 100%;
   object-fit: contain;
   transition: opacity 0.1s;
+  display: block;
+}
+
+.center-world-button .button-icon {
+  object-fit: cover;
 }
 
 .tool-button:hover {
@@ -302,7 +385,4 @@ onUnmounted(() => {
 .tool-button:active {
   opacity: 0.6;
 }
-
-/* 播放按钮使用默认样式 */
 </style>
-

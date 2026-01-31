@@ -332,8 +332,29 @@ function onUpdateView() {
 }
 
 // 监听保存事件
-function onSaveShowData(event: IEvent<() => void>) {
-  saveShowData().then(event.data);
+async function onSaveShowData(event: IEvent<() => void | Promise<void>>) {
+  console.log('InspectorView: 收到 saveShowData 事件', event);
+  
+  // 先保存数据（与 Egret 版本一致）
+  await saveShowData();
+  console.log('InspectorView: 数据保存完成');
+  
+  // 保存完成后执行回调（播放功能）
+  if (event.data) {
+    try {
+      console.log('InspectorView: 执行回调');
+      const result = event.data();
+      // 如果回调返回 Promise，等待它完成
+      if (result instanceof Promise) {
+        await result;
+        console.log('InspectorView: 回调执行完成');
+      }
+    } catch (error) {
+      console.error('执行回调失败:', error);
+    }
+  } else {
+    console.warn('InspectorView: 事件没有回调数据');
+  }
 }
 
 onMounted(() => {

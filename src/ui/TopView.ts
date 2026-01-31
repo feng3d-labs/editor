@@ -94,7 +94,7 @@ export class TopView extends eui.Component implements eui.UIComponent
 
 	private onHelpButtonClick()
 	{
-		window.open('http://com');
+		window.open('https://feng3d.com/');
 	}
 
 	private onButtonClick(event: egret.TouchEvent)
