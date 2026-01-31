@@ -6,6 +6,8 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import { pinia } from './pinia';
 
+// 引入全局暗色主题（必须在最前面）
+import './styles/global-dark-theme.css';
 // 引入 Element Plus 样式
 import 'element-plus/dist/index.css';
 // 引入自定义深色主题
