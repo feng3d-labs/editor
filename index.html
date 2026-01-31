@@ -20,11 +20,6 @@
 	<script src="libs/modules/eui/eui.js"></script>
 	<script src="libs/modules/assetsmanager/assetsmanager.js"></script>
 	<script src="libs/modules/tween/tween.js"></script>
-	<!--  -->
-	<script src="libs/typescriptServices.js"></script>
-	<script src="libs/jquery.js"></script>
-	<script src="libs/jquery.qrcode.js"></script>
-
 	<style>
 		html,
 		body {
@@ -39,31 +34,13 @@
 	<!--这个标签为通过egret提供的第三方库的方式生成的 javascript 文件。删除 modules_files 标签后，库文件加载列表将不会变化，请谨慎操作！-->
 
 	<!-- feng3d  -->
-	<script src="./node_modules/feng3d/dist/index.js"></script>
-	<!-- <script src="https://unpkg.com/feng3d@0.5.0/dist/index.js"></script> -->
-    <!-- plugin -->
-	<script src="./node_modules/@feng3d-plugins/cannon/dist/index.js"></script>
-	<script src="./node_modules/@feng3d-plugins/cannon-plugin/dist/index.js"></script>
-	<!-- <script src="https://unpkg.com/@feng3d-plugins/cannon@0.5.1/dist/index.js"></script> -->
-	<!-- <script src="https://unpkg.com/@feng3d-plugins/cannon-plugin@0.5.0/dist/index.js"></script> -->
-	<!--  -->
+	<!-- <script src="./node_modules/feng3d/dist/index.js"></script> -->
 	<script type="module" src="./src/vite-entry.ts"></script>
 	<!-- 合并js -->
 	<!-- <script src="index.js"></script> -->
 </head>
 
 <body>
-
-	<script>
-		$(() =>
-		{
-			$('#output').qrcode(document.URL);
-			window.addEventListener("click", () =>
-			{
-				$('#output').hide();
-			})
-		});
-	</script>
 
 	<div id="app" style="position: absolute;"> </div>
 	<div id="CameraPreviewLayer" style="position: absolute;"> </div>

@@ -4,6 +4,7 @@ import { editorcache } from '../caches/Editorcache';
 import { menuConfig } from '../configs/CommonConfig';
 import { EditorData, MRSToolType } from '../global/EditorData';
 import { menu, MenuItem } from './components/Menu';
+import { showQRCode } from '../utils/QRCode';
 
 export class TopView extends eui.Component implements eui.UIComponent
 {
@@ -135,7 +136,7 @@ export class TopView extends eui.Component implements eui.UIComponent
 			case this.qrcodeButton:
 				setTimeout(() =>
 				{
-					$('#output').show();
+					showQRCode();
 				}, 10);
 				break;
 		}
