@@ -1,10 +1,42 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
+import { resolve } from 'node:path';
+import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import vue from '@vitejs/plugin-vue';
 import vueDevtools from 'vite-plugin-vue-devtools';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+
+// 复制 Iconify JSON 文件到 public 目录的插件
+function copyIconifyJsonFiles() {
+    return {
+        name: 'copy-iconify-json',
+        buildStart() {
+            // 在构建开始时复制需要的 JSON 文件到 public 目录
+            const iconSets = ['mdi', 'material-symbols'];
+            const publicDir = resolve(process.cwd(), 'public/iconify');
+            
+            if (!existsSync(publicDir)) {
+                mkdirSync(publicDir, { recursive: true });
+            }
+
+            for (const iconSet of iconSets) {
+                const srcPath = resolve(process.cwd(), `node_modules/@iconify/json/json/${iconSet}.json`);
+                const destPath = resolve(publicDir, `${iconSet}.json`);
+                
+                if (existsSync(srcPath)) {
+                    try {
+                        copyFileSync(srcPath, destPath);
+                        console.log(`[Vite] 已复制图标集: ${iconSet}.json`);
+                    } catch (error) {
+                        console.warn(`[Vite] 复制图标集失败 ${iconSet}:`, error.message);
+                    }
+                }
+            }
+        }
+    };
+}
 
 // 复制静态资源的插件
 function copyStaticAssets()
@@ -99,7 +131,9 @@ export default defineConfig(({ mode }) =>
             fs: {
                 // 允许访问项目根目录外的文件
                 allow: ['..']
-            }
+            },
+            // 配置代理，使 @iconify/json 的 JSON 文件可以通过 HTTP 访问
+            middlewareMode: false
         },
 
         // 构建配置 - 多页面应用
@@ -149,6 +183,7 @@ export default defineConfig(({ mode }) =>
             Components({
                 resolvers: [ElementPlusResolver()],
             }),
+            copyIconifyJsonFiles(), // 复制 Iconify JSON 文件
             copyStaticAssets()
         ],
 

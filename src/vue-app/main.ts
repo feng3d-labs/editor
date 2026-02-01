@@ -6,6 +6,18 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import { pinia } from './pinia';
 
+// 配置 Iconify 完全离线模式
+// 预加载图标集，完全禁用 API 请求，避免网络连接失败
+import { configureOfflineMode, loadIconSets } from './configs/iconify-offline';
+
+// 配置完全离线模式（禁用所有 API 请求）
+configureOfflineMode();
+
+// 预加载常用的图标集（异步加载，不阻塞应用启动）
+loadIconSets().catch((error) => {
+  console.error('[Iconify] 预加载图标集失败:', error);
+});
+
 // 引入全局暗色主题（必须在最前面）
 import './styles/global-dark-theme.css';
 // 引入 Element Plus 样式
