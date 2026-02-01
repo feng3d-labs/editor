@@ -39,6 +39,110 @@ function copyIconifyJsonFiles() {
     };
 }
 
+// 配置 Cursor 编辑器的插件
+function configureCursorEditor()
+{
+    return {
+        name: 'configure-cursor-editor',
+        configureServer(server)
+        {
+            // 设置环境变量，确保使用 Cursor
+            process.env.LAUNCH_EDITOR = 'cursor';
+            
+            // 拦截 Vue DevTools 的编辑器打开请求
+            // 支持多种可能的路径格式
+            const editorPaths = ['/__open-in-editor', '/__vue-devtools__/open-in-editor'];
+            
+            editorPaths.forEach(path =>
+            {
+                server.middlewares.use(path, (req, res, next) =>
+                {
+                    // 解析 URL 参数
+                    const url = new URL(req.url || '', `http://${req.headers.host}`);
+                    const file = url.searchParams.get('file');
+                    
+                    if (file)
+                    {
+                        try
+                        {
+                            // 解码文件路径
+                            let filePath = decodeURIComponent(file);
+                            
+                            // 处理文件路径
+                            // 如果是相对路径（不以 / 或 Windows 盘符开头），转换为绝对路径
+                            if (!filePath.startsWith('/') && !filePath.match(/^[A-Za-z]:/))
+                            {
+                                filePath = resolve(process.cwd(), filePath);
+                            }
+                            // 如果是 Unix 风格的绝对路径（以 / 开头），在 Windows 上需要转换为 Windows 路径
+                            else if (filePath.startsWith('/') && process.platform === 'win32')
+                            {
+                                // 如果路径是 /src/... 这样的格式，转换为项目根目录下的路径
+                                if (!filePath.match(/^[A-Za-z]:/))
+                                {
+                                    filePath = resolve(process.cwd(), filePath.replace(/^\//, ''));
+                                }
+                            }
+                            
+                            // 使用 Cursor 在当前窗口中打开文件
+                            // --reuse-window: 在现有窗口中打开文件（而不是打开新窗口）
+                            // --goto: 跳转到指定行号和列号位置
+                            const line = url.searchParams.get('line');
+                            const column = url.searchParams.get('column');
+                            const args = ['--reuse-window'];
+                            
+                            // 如果指定了行号，使用 --goto 参数跳转到指定位置
+                            // 格式: --goto file:line:character
+                            if (line)
+                            {
+                                const position = column ? `${filePath}:${line}:${column}` : `${filePath}:${line}`;
+                                args.push('--goto', position);
+                                console.log(`[Vite] 使用 Cursor 打开文件并跳转: cursor ${args.join(' ')}`);
+                            }
+                            else
+                            {
+                                args.push(filePath);
+                                console.log(`[Vite] 使用 Cursor 打开文件: cursor ${args.join(' ')}`);
+                            }
+                            
+                            // 在 Windows 上，shell: true 可以确保正确执行命令
+                            const child = spawn('cursor', args, { 
+                                stdio: 'inherit', 
+                                shell: true,
+                                detached: true
+                            });
+                            
+                            // 监听错误事件
+                            child.on('error', (error) =>
+                            {
+                                console.error('[Vite] 执行 Cursor 命令失败:', error);
+                            });
+                            
+                            // 不等待子进程，立即返回
+                            child.unref();
+                            
+                            res.statusCode = 200;
+                            res.setHeader('Content-Type', 'text/plain');
+                            res.end('OK');
+                        }
+                        catch (error)
+                        {
+                            console.error('[Vite] 使用 Cursor 打开文件失败:', error);
+                            res.statusCode = 500;
+                            res.setHeader('Content-Type', 'text/plain');
+                            res.end(`Failed to open file: ${error.message}`);
+                        }
+                    }
+                    else
+                    {
+                        next();
+                    }
+                });
+            });
+        }
+    };
+}
+
 // 复制静态资源的插件
 function copyStaticAssets()
 {
@@ -176,9 +280,8 @@ export default defineConfig(({ mode }) =>
             vue(),
             vueDevtools({
                 enabled: true,
-                // 配置编辑器为 Cursor，使 Vue DevTools 定位后可以在 Cursor 中打开文件
-                editor: process.env.LAUNCH_EDITOR || 'cursor',
             }),
+            configureCursorEditor(), // 配置 Cursor 编辑器
             // Element Plus 按需引入
             AutoImport({
                 resolvers: [ElementPlusResolver()],

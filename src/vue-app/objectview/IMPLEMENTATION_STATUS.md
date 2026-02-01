@@ -27,6 +27,11 @@
 - ✅ OAVArray - 数组编辑器
 - ✅ OAVImage - 图片显示
 - ✅ OAVTexture2D - 纹理2D编辑器
+- ✅ OAVComponentList - 组件列表
+- ✅ OAVParticleComponentList - 粒子组件列表
+- ✅ OAVMinMaxCurve - 最小最大曲线
+- ✅ OAVMinMaxGradient - 最小最大渐变
+- ✅ OAVMinMaxCurveVector3 - 最小最大曲线向量3
 
 - ✅ OAVColorPicker - 颜色选择器
 - ✅ OAVMaterialName - 材质名称选择器
@@ -39,12 +44,7 @@
 ## ⏳ 待实现的组件
 
 ### OAV 组件
-- ⏳ OAVComponentList - 组件列表（需要与 ComponentView 集成）
-- ⏳ OAVParticleComponentList - 粒子组件列表（需要与 ParticleComponentView 集成）
 - ⏳ OAVFeng3dPreView - Feng3d 预览（需要与 Feng3dScreenShot 集成）
-- ⏳ OAVMinMaxCurve - 最小最大曲线（需要与 MinMaxCurveView 集成）
-- ⏳ OAVMinMaxCurveVector3 - 最小最大曲线向量3（需要与 MinMaxCurveView 集成）
-- ⏳ OAVMinMaxGradient - 最小最大渐变（需要与 MinMaxGradientView 集成）
 
 ## 📝 实现说明
 

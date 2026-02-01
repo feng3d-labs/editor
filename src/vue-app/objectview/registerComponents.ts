@@ -32,6 +32,11 @@ import OAVPickVue from './oav/OAVPick.vue';
 import OAVMaterialNameVue from './oav/OAVMaterialName.vue';
 import OAVAccordionObjectViewVue from './oav/OAVAccordionObjectView.vue';
 import OAVCubeMapVue from './oav/OAVCubeMap.vue';
+import OAVComponentListVue from './oav/OAVComponentList.vue';
+import OAVParticleComponentListVue from './oav/OAVParticleComponentList.vue';
+import OAVMinMaxCurveVue from './oav/OAVMinMaxCurve.vue';
+import OAVMinMaxGradientVue from './oav/OAVMinMaxGradient.vue';
+import OAVMinMaxCurveVector3Vue from './oav/OAVMinMaxCurveVector3.vue';
 
 /**
  * 注册所有 Vue 版本的 objectview 组件
@@ -164,6 +169,21 @@ export function registerObjectViewComponents()
 
     /** 立方体贴图属性视图 - 立方体贴图编辑器 */
     createOAVComponent('OAVCubeMap', OAVCubeMapVue);
+
+    /** 组件列表属性视图 - GameObject 组件列表 */
+    createOAVComponent('OAVComponentList', OAVComponentListVue);
+
+    /** 粒子组件列表属性视图 - ParticleSystem 组件列表 */
+    createOAVComponent('OAVParticleComponentList', OAVParticleComponentListVue);
+
+    /** 最小最大曲线属性视图 - 曲线编辑器 */
+    createOAVComponent('OAVMinMaxCurve', OAVMinMaxCurveVue);
+
+    /** 最小最大渐变属性视图 - 渐变编辑器 */
+    createOAVComponent('OAVMinMaxGradient', OAVMinMaxGradientVue);
+
+    /** 最小最大曲线向量3属性视图 - 三维曲线编辑器 */
+    createOAVComponent('OAVMinMaxCurveVector3', OAVMinMaxCurveVector3Vue);
 
     // ============ 配置默认视图组件 ============
 

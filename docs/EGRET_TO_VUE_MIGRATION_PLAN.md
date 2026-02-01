@@ -4,9 +4,9 @@
 
 ## 📊 迁移进度总览
 
-- **已实现**: 19 个主要视图/组件（新增 6 个第一阶段组件）
-- **待实现**: 约 19 个组件
-- **进度**: 约 50% 完成
+- **已实现**: 26 个主要视图/组件（新增 7 个第二阶段组件）
+- **待实现**: 约 12 个组件
+- **进度**: 约 68% 完成
 
 ## ✅ 已实现的 Vue 组件
 
@@ -32,6 +32,11 @@
 - ✅ **ComboBox.vue** - 下拉选择框
 - ✅ **RenameTextInput.vue** - 可编辑重命名输入
 - ✅ **Accordion.vue** - 手风琴折叠组件
+- ✅ **ComponentView.vue** - 组件视图
+- ✅ **ParticleComponentView.vue** - 粒子组件视图
+- ✅ **MinMaxCurveView.vue** - 最小最大曲线视图
+- ✅ **MinMaxCurveVector3View.vue** - 最小最大曲线向量3视图
+- ✅ **MinMaxGradientView.vue** - 最小最大渐变视图
 
 ### ObjectView 组件（已实现 20 个）
 - ✅ OVDefault, OVBaseDefault, OVFolderAsset
@@ -73,40 +78,25 @@
 
 ### 🟡 中优先级 - 编辑器组件（影响特定功能）
 
-#### 6. **ComponentView.ts** → `ComponentView.vue`
-- **用途**: 组件视图（显示 GameObject 的组件）
-- **依赖**: Accordion, ObjectView
-- **复杂度**: ⭐⭐⭐⭐
-- **预计时间**: 3-4 天
-- **说明**: Inspector 中显示组件列表，需要与 ObjectView 集成
+#### ✅ 6. **ComponentView.ts** → `ComponentView.vue` ✅
+- **状态**: 已完成
+- **说明**: 组件视图，支持 enabled 开关、操作菜单、脚本实例视图
 
-#### 7. **ParticleComponentView.ts** → `ParticleComponentView.vue`
-- **用途**: 粒子组件视图
-- **依赖**: Accordion, ObjectView
-- **复杂度**: ⭐⭐⭐
-- **预计时间**: 2-3 天
-- **说明**: 粒子系统的组件视图
+#### ✅ 7. **ParticleComponentView.ts** → `ParticleComponentView.vue` ✅
+- **状态**: 已完成
+- **说明**: 粒子组件视图
 
-#### 8. **MinMaxCurveView.ts** → `MinMaxCurveView.vue`
-- **用途**: 最小最大曲线视图
-- **依赖**: 无
-- **复杂度**: ⭐⭐⭐⭐
-- **预计时间**: 3-4 天
-- **说明**: 粒子系统中使用，需要 Canvas 绘制曲线
+#### ✅ 8. **MinMaxCurveView.ts** → `MinMaxCurveView.vue` ✅
+- **状态**: 已完成
+- **说明**: 支持常量、两个常量、曲线、两条曲线模式，使用 Canvas 绘制
 
-#### 9. **MinMaxCurveVector3View.ts** → `MinMaxCurveVector3View.vue`
-- **用途**: 最小最大曲线向量3视图
-- **依赖**: MinMaxCurveView
-- **复杂度**: ⭐⭐⭐⭐
-- **预计时间**: 2-3 天
-- **说明**: 基于 MinMaxCurveView 扩展
+#### ✅ 9. **MinMaxCurveVector3View.ts** → `MinMaxCurveVector3View.vue` ✅
+- **状态**: 已完成
+- **说明**: 包含 X、Y、Z 三个 MinMaxCurveView
 
-#### 10. **MinMaxGradientView.ts** → `MinMaxGradientView.vue`
-- **用途**: 最小最大渐变视图
-- **依赖**: GradientEditor
-- **复杂度**: ⭐⭐⭐⭐
-- **预计时间**: 3-4 天
-- **说明**: 粒子系统中使用，需要 Canvas 绘制渐变
+#### ✅ 10. **MinMaxGradientView.ts** → `MinMaxGradientView.vue` ✅
+- **状态**: 已完成
+- **说明**: 支持颜色、渐变、两个颜色、两个渐变、随机颜色模式
 
 #### 11. **GradientEditor.ts** → `GradientEditor.vue`
 - **用途**: 渐变编辑器
