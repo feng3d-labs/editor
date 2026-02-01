@@ -62,6 +62,8 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { MinMaxCurve, MinMaxCurveMode, Color4, ImageUtil, serialization, watcher } from 'feng3d';
 import { MenuAdapter } from './MenuAdapter';
 import { useI18n } from '../composables/useI18n';
+import { popupView } from './PopupView';
+import MinMaxCurveEditor from './MinMaxCurveEditor.vue';
 
 const props = withDefaults(defineProps<{
     minMaxCurve: MinMaxCurve;
@@ -204,18 +206,30 @@ function drawCurve() {
 function onCurveClick() {
     if (!props.editable) return;
     
-    // 打开曲线编辑器
-    // 由于 MinMaxCurveEditor 非常复杂，暂时使用占位
-    // 未来可以实现完整的编辑器组件
-    console.log('Open MinMaxCurveEditor - 功能待实现');
-    
-    // TODO: 实现 MinMaxCurveEditor.vue
-    // 需要实现：
-    // 1. Canvas 绘制曲线和网格
-    // 2. 关键点添加/删除/拖拽
-    // 3. 控制点编辑
-    // 4. WrapMode 设置
-    // 5. 预设曲线选择
+    // 打开曲线编辑器窗口
+    popupView.popupViewWindow(MinMaxCurveEditor, {
+        width: 600,
+        height: 500,
+        mode: true,
+        title: 'MinMax Curve Editor',
+        props: {
+            minMaxCurve: props.minMaxCurve,
+            editable: props.editable,
+            onChange: () => {
+                // 编辑器变化时刷新视图
+                nextTick(() => {
+                    drawCurve();
+                    emit('change');
+                });
+            },
+        },
+        closecallback: () => {
+            // 编辑器关闭后刷新视图
+            nextTick(() => {
+                drawCurve();
+            });
+        },
+    });
 }
 
 // 右键菜单

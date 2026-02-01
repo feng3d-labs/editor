@@ -72,18 +72,52 @@ function configureCursorEditor()
                             let filePath = decodeURIComponent(file);
                             
                             // 处理文件路径
-                            // 如果是相对路径（不以 / 或 Windows 盘符开头），转换为绝对路径
-                            if (!filePath.startsWith('/') && !filePath.match(/^[A-Za-z]:/))
+                            const cwd = process.cwd();
+                            const cwdNormalized = cwd.replace(/\\/g, '/').toLowerCase();
+                            
+                            // 标准化路径（统一使用正斜杠进行比较）
+                            let normalizedPath = filePath.replace(/\\/g, '/');
+                            
+                            // 检查路径是否已经包含完整的工作区路径（避免重复拼接）
+                            // 如果路径已经包含工作区路径，直接使用
+                            if (normalizedPath.toLowerCase().includes(cwdNormalized))
                             {
-                                filePath = resolve(process.cwd(), filePath);
+                                // 路径已经包含工作区路径，检查是否重复
+                                const cwdPattern = cwdNormalized.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                                const duplicatePattern = new RegExp(`(${cwdPattern}){2,}`, 'i');
+                                
+                                if (duplicatePattern.test(normalizedPath))
+                                {
+                                    // 路径重复了，提取正确的部分（从第一个工作区路径开始）
+                                    const firstIndex = normalizedPath.toLowerCase().indexOf(cwdNormalized);
+                                    if (firstIndex >= 0)
+                                    {
+                                        normalizedPath = normalizedPath.substring(firstIndex);
+                                    }
+                                }
+                                
+                                // 转换为 Windows 路径格式（如果需要）
+                                if (process.platform === 'win32')
+                                {
+                                    filePath = normalizedPath.replace(/\//g, '\\');
+                                }
+                                else
+                                {
+                                    filePath = normalizedPath;
+                                }
+                            }
+                            // 如果是相对路径（不以 / 或 Windows 盘符开头），转换为绝对路径
+                            else if (!normalizedPath.startsWith('/') && !normalizedPath.match(/^[A-Za-z]:/))
+                            {
+                                filePath = resolve(cwd, filePath);
                             }
                             // 如果是 Unix 风格的绝对路径（以 / 开头），在 Windows 上需要转换为 Windows 路径
-                            else if (filePath.startsWith('/') && process.platform === 'win32')
+                            else if (normalizedPath.startsWith('/') && process.platform === 'win32')
                             {
                                 // 如果路径是 /src/... 这样的格式，转换为项目根目录下的路径
-                                if (!filePath.match(/^[A-Za-z]:/))
+                                if (!normalizedPath.match(/^[A-Za-z]:/))
                                 {
-                                    filePath = resolve(process.cwd(), filePath.replace(/^\//, ''));
+                                    filePath = resolve(cwd, normalizedPath.replace(/^\//, ''));
                                 }
                             }
                             

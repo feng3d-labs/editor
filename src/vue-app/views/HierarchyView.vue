@@ -14,10 +14,17 @@
       :default-expanded-keys="expandedKeys"
       node-key="id"
       :highlight-current="true"
+      :draggable="true"
+      :allow-drop="allowDrop"
+      :allow-drag="allowDrag"
       @node-click="onNodeClick"
       @node-contextmenu="onNodeRightClick"
       @node-dblclick="onNodeDoubleClick"
       @contextmenu="onTreeRightClick"
+      @node-drag-start="onNodeDragStart"
+      @node-drag-over="onNodeDragOver"
+      @node-drag-leave="onNodeDragLeave"
+      @node-drop="onNodeDrop"
     >
       <template #default="{ node, data }">
         <div class="tree-node">
@@ -105,6 +112,7 @@ import { menuConfig } from '../../configs/CommonConfig';
 import type { MenuItem } from '../components/MenuAdapter';
 import { useI18n } from '../composables/useI18n';
 import Icon from '../components/Icon.vue';
+import { DragData } from '../../ui/drag/Drag';
 
 const editorStore = useEditorStore();
 const { t } = useI18n();
@@ -759,6 +767,94 @@ function onKeyDown(event: KeyboardEvent) {
     // 删除选中的对象
     deleteSelectedObjects();
   }
+}
+
+// 拖拽相关
+let dragData: DragData | null = null;
+let dragSourceNode: HierarchyNode | null = null;
+
+// 判断节点是否允许拖拽
+function allowDrag(node: any): boolean {
+  const hierarchyNode = node.data as HierarchyNode;
+  if (!hierarchyNode || !hierarchyNode.gameobject) {
+    return false;
+  }
+  // 场景根节点不允许拖拽
+  if (hierarchyNode.gameobject.scene && hierarchyNode.gameobject.scene.gameObject === hierarchyNode.gameobject) {
+    return false;
+  }
+  return true;
+}
+
+// 判断是否允许放置
+function allowDrop(draggingNode: any, dropNode: any, type: 'prev' | 'inner' | 'next'): boolean {
+  const sourceNode = draggingNode.data as HierarchyNode;
+  const targetNode = dropNode.data as HierarchyNode;
+  
+  if (!sourceNode || !targetNode || !sourceNode.gameobject || !targetNode.gameobject) {
+    return false;
+  }
+  
+  // 场景根节点不允许作为目标
+  if (targetNode.gameobject.scene && targetNode.gameobject.scene.gameObject === targetNode.gameobject) {
+    return false;
+  }
+  
+  // 不能拖拽到自己或自己的子节点中
+  if (sourceNode.gameobject === targetNode.gameobject || sourceNode.gameobject.contains(targetNode.gameobject)) {
+    return false;
+  }
+  
+  // 只允许拖拽到节点内部（作为子节点）
+  return type === 'inner';
+}
+
+// 节点拖拽开始
+function onNodeDragStart(node: any) {
+  const hierarchyNode = node.data as HierarchyNode;
+  if (!hierarchyNode || !hierarchyNode.gameobject) {
+    return;
+  }
+  
+  dragSourceNode = hierarchyNode;
+  dragData = new DragData();
+  hierarchyNode.setdargSource(dragData);
+}
+
+// 节点拖拽悬停
+function onNodeDragOver(node: any) {
+  // 可以在这里添加视觉反馈
+}
+
+// 节点拖拽离开
+function onNodeDragLeave(node: any) {
+  // 可以在这里移除视觉反馈
+}
+
+// 节点拖拽放置
+function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner' | 'next', event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  if (!dragData || !dropNode) {
+    return;
+  }
+  
+  const targetNode = dropNode.data as HierarchyNode;
+  if (!targetNode || !targetNode.gameobject) {
+    return;
+  }
+  
+  // 只处理拖拽到节点内部的情况
+  if (dropType === 'inner') {
+    targetNode.acceptDragDrop(dragData);
+    // 触发层级树更新
+    invalidHierarchy();
+  }
+  
+  // 清理拖拽状态
+  dragData = null;
+  dragSourceNode = null;
 }
 </script>
 

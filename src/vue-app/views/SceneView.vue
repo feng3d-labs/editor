@@ -5,6 +5,8 @@
     <div ref="backRectRef" class="scene-back-rect"></div>
     <!-- 工具视图容器 -->
     <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
+    <!-- 粒子效果控制器 -->
+    <ParticleEffectController />
     <!-- 相机预览组件（显示在场景界面右下角） -->
     <CameraPreview :parent-container="containerRef as any" />
     <!-- 区域选择矩形 -->
@@ -28,6 +30,7 @@ import { drag } from '../../ui/drag/Drag';
 import { editorui } from '../../global/editorui';
 import CameraPreview from '../components/CameraPreview.vue';
 import AreaSelectRect from '../components/AreaSelectRect.vue';
+import ParticleEffectController from '../components/ParticleEffectController.vue';
 
 const editorStore = useEditorStore();
 

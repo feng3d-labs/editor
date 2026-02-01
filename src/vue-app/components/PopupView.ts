@@ -13,6 +13,10 @@ export interface PopupviewParam<T> {
      */
     mode?: boolean;
     closecallback?: (object: T) => void;
+    /**
+     * 传递给 Vue 组件的 props
+     */
+    props?: Record<string, any>;
 }
 
 /**
@@ -216,7 +220,7 @@ class PopupViewManager {
                 contentElement.appendChild(view);
             } else if (typeof view === 'object' && 'setup' in view) {
                 // Vue 组件作为内容
-                const contentApp = createApp(view as Component);
+                const contentApp = createApp(view as Component, (param as any).props || {});
                 contentApp.mount(contentElement);
             } else if (view && typeof view === 'object' && 'dom' in view) {
                 // ObjectView 组件（有 dom 属性）

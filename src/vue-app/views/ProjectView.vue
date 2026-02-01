@@ -9,8 +9,13 @@
         :default-expand-all="false"
         node-key="id"
         :highlight-current="true"
+        :draggable="true"
+        :allow-drop="allowTreeDrop"
+        :allow-drag="allowTreeDrag"
         @node-click="onTreeNodeClick"
         @node-contextmenu="onTreeNodeRightClick"
+        @node-drag-start="onTreeNodeDragStart"
+        @node-drop="onTreeNodeDrop"
       >
         <template #default="{ node, data }">
           <div class="tree-node">
@@ -71,20 +76,25 @@
       <div
         ref="fileListRef"
         class="project-view-filelist"
+        :class="{ 'file-list-drag-over': isDragOverFileList }"
         @click="onFileListClick"
         @contextmenu="onFileListRightClick"
         @mousedown="onFileListMouseDown"
         @drop="onFileDrop"
-        @dragover.prevent
-        @dragenter.prevent
+        @dragover.prevent="onFileListDragOver"
+        @dragenter.prevent="onFileListDragEnter"
+        @dragleave="onFileListDragLeave"
       >
         <div
           v-for="(file, index) in filteredFiles"
           :key="(file as AssetNode).asset.assetId || index"
-          :class="['file-item', { 'file-item-selected': isFileSelected(file as AssetNode) }]"
-          @click.stop="onFileClick(file as AssetNode)"
+          :class="['file-item', { 'file-item-selected': isFileSelected(file as AssetNode), 'file-item-dragging': draggingFile === file }]"
+          :draggable="true"
+          @click.stop="onFileClick(file as AssetNode, $event)"
           @dblclick="onFileDoubleClick(file as AssetNode)"
           @contextmenu.stop="onFileRightClick(file as AssetNode, $event)"
+          @dragstart="onFileDragStart(file as AssetNode, $event)"
+          @dragend="onFileDragEnd"
         >
           <div class="file-item-icon">
             <Icon
@@ -112,6 +122,7 @@ import { AssetNode } from '../../ui/assets/AssetNode';
 import { useEditorStore } from '../stores/editorStore';
 import Icon from '../components/Icon.vue';
 import { registerProjectView, unregisterProjectView } from './ProjectViewAdapter';
+import { DragData } from '../../ui/drag/Drag';
 
 const editorStore = useEditorStore();
 
@@ -149,6 +160,9 @@ const fileListRef = ref<HTMLElement>();
 const filteredFiles = ref<AssetNode[]>([]);
 const includeFilter = ref('');
 const excludeFilter = ref('');
+
+// 上一次点击的文件（用于 Shift 多选）
+let preAssetFile: AssetNode | null = null;
 
 // 文件夹路径（使用 ref 以便在文件夹变化时更新）
 const folderPath = ref<AssetNode[]>([]);
@@ -354,8 +368,34 @@ function onPathClick(folder: AssetNode) {
 }
 
 // 文件点击
-function onFileClick(file: AssetNode) {
-  editorStore.selectObject(file);
+function onFileClick(file: AssetNode, event?: MouseEvent) {
+  // 处理按下 Shift 键时的多选
+  const isShift = event?.shiftKey || shortcut.keyState.getKeyState('shift');
+  if (isShift && preAssetFile) {
+    // 找到当前点击的文件和之前点击的文件之间的所有文件
+    const source = filteredFiles.value as AssetNode[];
+    let currentIndex = source.indexOf(file);
+    let preIndex = source.indexOf(preAssetFile);
+    
+    // 如果找不到之前的文件，只选择当前文件
+    if (preIndex === -1) {
+      editorStore.selectObject(file);
+      preAssetFile = file;
+      return;
+    }
+    
+    // 确定选择范围
+    let min = Math.min(currentIndex, preIndex);
+    let max = Math.max(currentIndex, preIndex);
+    
+    // 选择范围内的所有文件
+    const filesToSelect = source.slice(min, max + 1);
+    editorStore.selectMultiObject(filesToSelect, false);
+  } else {
+    // 正常选择
+    editorStore.selectObject(file);
+    preAssetFile = file;
+  }
 }
 
 // 文件双击
@@ -438,30 +478,201 @@ function onMouseUp() {
   windowEventProxy.off('mouseup', onMouseUp);
 }
 
-// 文件拖拽
-function onFileDrop(event: DragEvent) {
-  event.preventDefault();
-  event.stopPropagation();
-  
-  const dt = event.dataTransfer;
-  if (!dt) return;
-  
-  const fileList = dt.files;
-  const files: File[] = [];
-  for (let i = 0; i < fileList.length; i++) {
-    files.push(fileList[i]);
-  }
-  
-  if (files.length > 0) {
-    editorAsset.inputFiles(files);
-  }
-}
-
 // 判断文件是否被选中
 function isFileSelected(file: AssetNode): boolean {
   return editorStore.selectedAssetNodes.some(
     (node) => node.asset.assetId === file.asset.assetId
   );
+}
+
+// 树节点拖拽相关
+let treeDragData: DragData | null = null;
+let treeDragSourceNode: AssetNode | null = null;
+
+// 判断树节点是否允许拖拽
+function allowTreeDrag(node: any): boolean {
+  const assetNode = node.data as AssetNode;
+  return assetNode && assetNode.isDirectory;
+}
+
+// 判断树节点是否允许放置
+function allowTreeDrop(draggingNode: any, dropNode: any, type: 'prev' | 'inner' | 'next'): boolean {
+  const sourceNode = draggingNode.data as AssetNode;
+  const targetNode = dropNode.data as AssetNode;
+  
+  if (!sourceNode || !targetNode || !targetNode.isDirectory) {
+    return false;
+  }
+  
+  // 不能拖拽到自己或自己的子节点中
+  if (sourceNode === targetNode || sourceNode.contain(targetNode)) {
+    return false;
+  }
+  
+  // 只允许拖拽到节点内部（作为子节点）
+  return type === 'inner';
+}
+
+// 树节点拖拽开始
+function onTreeNodeDragStart(node: any) {
+  const assetNode = node.data as AssetNode;
+  if (!assetNode || !assetNode.isDirectory) {
+    return;
+  }
+  
+  treeDragSourceNode = assetNode;
+  treeDragData = new DragData();
+  assetNode.setdargSource(treeDragData);
+}
+
+// 树节点拖拽放置
+function onTreeNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner' | 'next', event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  if (!treeDragData || !dropNode) {
+    return;
+  }
+  
+  const targetNode = dropNode.data as AssetNode;
+  if (!targetNode || !targetNode.isDirectory) {
+    return;
+  }
+  
+  // 只处理拖拽到节点内部的情况
+  if (dropType === 'inner') {
+    targetNode.acceptDragDrop(treeDragData);
+    // 触发资源树更新
+    invalidateAssetTree();
+  }
+  
+  // 清理拖拽状态
+  treeDragData = null;
+  treeDragSourceNode = null;
+}
+
+// 文件列表拖拽相关
+let fileDragData: DragData | null = null;
+let draggingFile: AssetNode | null = null;
+let isDragOverFileList = ref(false);
+let dragOverFolder: AssetNode | null = null;
+
+// 文件拖拽开始
+function onFileDragStart(file: AssetNode, event: DragEvent) {
+  draggingFile = file;
+  fileDragData = new DragData();
+  file.setdargSource(fileDragData);
+  
+  // 设置拖拽效果
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+  }
+}
+
+// 文件拖拽结束
+function onFileDragEnd() {
+  draggingFile = null;
+  fileDragData = null;
+  isDragOverFileList.value = false;
+  dragOverFolder = null;
+}
+
+// 文件列表拖拽悬停
+function onFileListDragOver(event: DragEvent) {
+  event.preventDefault();
+  
+  // 如果是内部文件拖拽，检查是否悬停在文件夹上
+  if (fileDragData && fileListRef.value) {
+    // 检查是否悬停在文件夹上
+    const target = event.target as HTMLElement;
+    const fileItem = target.closest('.file-item');
+    
+    if (fileItem) {
+      // 找到对应的文件节点
+      const fileIndex = Array.from(fileListRef.value.children).indexOf(fileItem as HTMLElement);
+      if (fileIndex >= 0 && fileIndex < filteredFiles.value.length) {
+        const file = filteredFiles.value[fileIndex] as AssetNode;
+        if (file.isDirectory) {
+          dragOverFolder = file;
+          isDragOverFileList.value = true;
+          return;
+        }
+      }
+    }
+    
+    // 检查是否悬停在当前文件夹上（可以拖到当前文件夹）
+    if (editorAsset.showFloder && editorAsset.showFloder.isDirectory) {
+      dragOverFolder = editorAsset.showFloder;
+      isDragOverFileList.value = true;
+    } else {
+      dragOverFolder = null;
+      isDragOverFileList.value = false;
+    }
+  }
+  // 外部文件拖入时，允许拖入到当前文件夹
+  else if (editorAsset.showFloder && editorAsset.showFloder.isDirectory) {
+    isDragOverFileList.value = true;
+  }
+}
+
+// 文件列表拖拽进入
+function onFileListDragEnter(event: DragEvent) {
+  event.preventDefault();
+  onFileListDragOver(event);
+}
+
+// 文件列表拖拽离开
+function onFileListDragLeave(event: DragEvent) {
+  // 检查是否真的离开了文件列表区域
+  const target = event.target as HTMLElement;
+  if (!fileListRef.value || !fileListRef.value.contains(target)) {
+    isDragOverFileList.value = false;
+    dragOverFolder = null;
+  }
+}
+
+// 文件拖拽放置（更新原有的 onFileDrop）
+async function onFileDrop(event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const dt = event.dataTransfer;
+  if (!dt) {
+    onFileDragEnd();
+    return;
+  }
+  
+  // 优先处理从外部拖入的文件
+  const fileList = dt.files;
+  if (fileList.length > 0) {
+    const files: File[] = [];
+    for (let i = 0; i < fileList.length; i++) {
+      files.push(fileList[i]);
+    }
+    
+    if (files.length > 0) {
+      editorAsset.inputFiles(files);
+      onFileDragEnd();
+      return;
+    }
+  }
+  
+  // 处理内部文件拖拽（拖到文件夹）
+  if (fileDragData && dragOverFolder && draggingFile) {
+    // 不能拖到自己或自己的子文件夹中
+    if (draggingFile === dragOverFolder || draggingFile.contain(dragOverFolder)) {
+      onFileDragEnd();
+      return;
+    }
+    
+    // 调用文件夹的 acceptDragDrop 方法
+    dragOverFolder.acceptDragDrop(fileDragData);
+    
+    // 触发资源树更新
+    invalidateAssetTree();
+  }
+  
+  onFileDragEnd();
 }
 
 // 监听选中变化
@@ -611,6 +822,16 @@ onUnmounted(() => {
   /* 使用 Element Plus 主题变量 */
   background-color: var(--el-fill-color-dark, #3d3d3d);
   border-color: var(--el-color-primary, #007acc);
+}
+
+.file-item-dragging {
+  opacity: 0.5;
+  cursor: move;
+}
+
+.file-list-drag-over {
+  background-color: var(--el-fill-color-light, #2a2a2a);
+  border: 2px dashed var(--el-color-primary, #007acc);
 }
 
 .file-item-icon {

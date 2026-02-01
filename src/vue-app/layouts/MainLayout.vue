@@ -1,10 +1,7 @@
 <template>
   <div class="main-layout">
     <!-- 顶部菜单栏和工具栏 -->
-    <div class="top-bar-container">
-      <TopMenuBar />
-      <TopToolBar />
-    </div>
+    <TopView />
     
     <!-- 主布局：水平分割（左侧：Hierarchy + Scene + Project，右侧：Inspector） -->
     <div class="main-content">
@@ -35,11 +32,14 @@
             </SplitPanel>
           </template>
           
-          <!-- 下方：Project -->
+          <!-- 下方：Project + Console -->
           <template #second>
             <TabPanel :tabs="projectTabs" :default-active-index="0" @tab-change="onProjectTabChange">
               <template #tab-project>
                 <ProjectView />
+              </template>
+              <template #tab-console>
+                <ConsoleView />
               </template>
             </TabPanel>
           </template>
@@ -51,9 +51,6 @@
         <TabPanel :tabs="bottomTabs" :default-active-index="0" @tab-change="onBottomTabChange">
           <template #tab-inspector>
             <InspectorView />
-          </template>
-          <template #tab-console>
-            <ConsoleView />
           </template>
         </TabPanel>
       </template>
@@ -72,8 +69,7 @@ import HierarchyView from '../views/HierarchyView.vue';
 import InspectorView from '../views/InspectorView.vue';
 import SceneView from '../views/SceneView.vue';
 import ConsoleView from '../views/ConsoleView.vue';
-import TopMenuBar from '../components/TopMenuBar.vue';
-import TopToolBar from '../components/TopToolBar.vue';
+import TopView from '../components/TopView.vue';
 import { useI18n } from '../composables/useI18n';
 
 const { t } = useI18n();
@@ -91,12 +87,12 @@ const mainTabs = computed<Tab[]>(() => [
 // 项目标签页
 const projectTabs = computed<Tab[]>(() => [
   { id: 'project', label: t('panels.project') },
+  { id: 'console', label: t('panels.console') },
 ]);
 
 // 底部标签页
 const bottomTabs = computed<Tab[]>(() => [
   { id: 'inspector', label: t('panels.inspector') },
-  { id: 'console', label: t('panels.console') },
 ]);
 
 // 标签切换处理（可选，用于保存状态等）
@@ -129,16 +125,6 @@ function onBottomTabChange(index: number) {
   background-color: var(--el-bg-color, #1e1e1e);
 }
 
-.top-bar-container {
-  position: relative;
-  width: 100%;
-  height: 44px; /* 菜单栏 22px + 工具栏 22px */
-  flex-shrink: 0;
-  z-index: 1000;
-  background-color: var(--el-bg-color, #ffffff);
-  border-bottom: 1px solid var(--el-border-color, #e4e7ed);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
 
 .main-content {
   flex: 1;
