@@ -32,6 +32,7 @@ import ToolTip from './components/ToolTip.vue';
 import Menu from './components/Menu.vue';
 import { popupView } from './components/PopupView';
 import { editorui } from '../global/editorui';
+import { Editor } from '../Editor';
 
 // 使用异步组件加载，避免热更新问题
 const MainLayout = defineAsyncComponent(() => import('./layouts/MainLayout.vue'));
@@ -75,6 +76,19 @@ onMounted(() => {
   // 初始化 PopupView 容器
   if (popupContainerRef.value) {
     popupView.init(popupContainerRef.value);
+  }
+  
+  // 初始化编辑器（启动项目）
+  // Editor 构造函数会自动调用 onAddedToStage()，执行项目初始化流程
+  // 包括：初始化资源系统、加载场景、设置 gameScene 等
+  // 使用全局变量跟踪 Editor 实例，避免在不可扩展的 window.editor 上添加属性
+  if (!(window as any).__editorInstance) {
+    const editorInstance = new Editor();
+    // 保存实例引用到全局变量，避免重复初始化
+    (window as any).__editorInstance = editorInstance;
+    console.log('Editor: 项目初始化已启动');
+  } else {
+    console.log('Editor: 项目已初始化，跳过重复初始化');
   }
 });
 

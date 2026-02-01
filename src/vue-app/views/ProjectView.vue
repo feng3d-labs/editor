@@ -191,36 +191,46 @@ const selectedFilePath = computed(() => {
 const areaSelectStartPosition = ref<Vector2 | null>(null);
 const isAreaSelecting = ref(false);
 
+// 初始化资源树监听
+function setupAssetTreeListeners() {
+  if (editorAsset && editorAsset.rootFile) {
+    // 移除旧的监听器（如果存在）
+    editorAsset.rootFile.off('openChanged', invalidateAssetTree);
+    editorAsset.rootFile.off('added', invalidateAssetTree);
+    editorAsset.rootFile.off('removed', invalidateAssetTree);
+    
+    // 添加新的监听器
+    editorAsset.rootFile.on('openChanged', invalidateAssetTree);
+    editorAsset.rootFile.on('added', invalidateAssetTree);
+    editorAsset.rootFile.on('removed', invalidateAssetTree);
+    
+    // 立即更新资源树
+    invalidateAssetTree();
+    return true;
+  }
+  return false;
+}
+
 // 初始化
 function initList() {
   // 检查 editorAsset 和 rootFile 是否已初始化
-  if (!editorAsset || !editorAsset.rootFile) {
-    // 如果还未初始化，等待一下再试
-    const checkInterval = setInterval(() => {
-      if (editorAsset && editorAsset.rootFile) {
-        clearInterval(checkInterval);
-        invalidateAssetTree();
-        
-        // 监听资源变化
-        editorAsset.rootFile.on('openChanged', invalidateAssetTree);
-        editorAsset.rootFile.on('added', invalidateAssetTree);
-        editorAsset.rootFile.on('removed', invalidateAssetTree);
-      }
-    }, 100);
-    
-    // 最多等待 5 秒
-    setTimeout(() => {
-      clearInterval(checkInterval);
-    }, 5000);
-    return;
+  if (setupAssetTreeListeners()) {
+    return; // 已成功初始化
   }
   
-  invalidateAssetTree();
-  
-  // 监听资源变化
-  editorAsset.rootFile.on('openChanged', invalidateAssetTree);
-  editorAsset.rootFile.on('added', invalidateAssetTree);
-  editorAsset.rootFile.on('removed', invalidateAssetTree);
+  // 如果还未初始化，等待一下再试
+  let checkCount = 0;
+  const maxChecks = 50; // 最多检查 50 次（5 秒）
+  const checkInterval = setInterval(() => {
+    checkCount++;
+    if (setupAssetTreeListeners()) {
+      clearInterval(checkInterval);
+      console.log('ProjectView: editorAsset initialized after', checkCount * 100, 'ms');
+    } else if (checkCount >= maxChecks) {
+      clearInterval(checkInterval);
+      console.warn('ProjectView: editorAsset initialization timeout after 5 seconds');
+    }
+  }, 100);
 }
 
 // 更新资源树
@@ -700,6 +710,16 @@ watch([includeFilter, excludeFilter], () => {
   updateFileList();
 });
 
+// 监听项目资源树失效事件的回调函数
+function onProjectViewInvalidate() {
+  // 如果资源树监听器还未设置，尝试设置
+  if (!editorAsset || !editorAsset.rootFile) {
+    initList();
+  } else {
+    invalidateAssetTree();
+  }
+}
+
 onMounted(() => {
   initList();
   
@@ -715,10 +735,12 @@ onMounted(() => {
   globalEmitter.on('asset.showAsset', () => {
     // TODO: 处理显示资源
   });
-  globalEmitter.on('projectview.invalidateAssettree', invalidateAssetTree);
+  
+  // 监听项目资源树失效事件（当项目初始化完成或资源更新时触发）
+  globalEmitter.on('projectview.invalidateAssettree', onProjectViewInvalidate);
   
   // 初始化时显示当前文件夹内容和路径
-  if (editorAsset.showFloder) {
+  if (editorAsset && editorAsset.showFloder) {
     updateFolderPath();
     onShowFloderChanged();
   }
@@ -735,11 +757,15 @@ onUnmounted(() => {
     editorAsset.rootFile.off('removed', invalidateAssetTree);
   }
   
+  // 清理初始化检查定时器（如果有）
+  // 注意：这里无法直接清理，因为定时器在 initList 内部
+  // 但组件卸载时定时器会自动停止
+  
   // 移除事件监听
   globalEmitter.off('asset.showFloderChanged', onShowFloderChanged);
   globalEmitter.off('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.off('asset.showAsset', () => {});
-  globalEmitter.off('projectview.invalidateAssettree', invalidateAssetTree);
+  globalEmitter.off('projectview.invalidateAssettree', onProjectViewInvalidate);
   
   if (isAreaSelecting.value) {
     onMouseUp();

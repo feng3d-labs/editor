@@ -1,4 +1,4 @@
-import { serialization, View } from 'feng3d';
+import { serialization, View, globalEmitter } from 'feng3d';
 import { editorRS } from './assets/EditorRS';
 import { editorcache } from './caches/Editorcache';
 import { EditorData } from './global/EditorData';
@@ -55,6 +55,9 @@ export class Editor
         editorcache.setLastProject(editorcache.projectname);
 
         await editorAsset.initproject();
+        // 通知 ProjectView 资源树已初始化
+        globalEmitter.emit('projectview.invalidateAssettree' as any);
+        
         await editorAsset.runProjectScript();
         const scene = await editorAsset.readScene('default.scene.json');
 

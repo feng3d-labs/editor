@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, markRaw } from 'vue';
-import { Vector2, Camera, GameObject, Vector3, Matrix4x4, Stats, serialization, FPSController, Scene, RunEnvironment, loader, shortcut, globalEmitter, windowEventProxy, raycaster, ticker, PerspectiveLens, IEvent } from 'feng3d';
+import { Vector2, Camera, GameObject, Vector3, Matrix4x4, Stats, serialization, FPSController, Scene, RunEnvironment, loader, shortcut, globalEmitter, windowEventProxy, raycaster, ticker, PerspectiveLens, IEvent, watcher } from 'feng3d';
 import * as TWEEN from '@tweenjs/tween.js';
 import { EditorComponent } from '../../feng3d/EditorComponent';
 import { EditorView } from '../../feng3d/EditorView';
@@ -24,6 +24,7 @@ import { GroundGrid } from '../../feng3d/GroundGrid';
 import { hierarchy } from '../../feng3d/hierarchy/Hierarchy';
 import { MRSTool } from '../../feng3d/mrsTool/MRSTool';
 import { SceneRotateTool } from '../../feng3d/scene/SceneRotateTool';
+import { EditorData } from '../../global/EditorData';
 import { useEditorStore } from '../stores/editorStore';
 import { sceneControlConfig } from '../../shortcut/Editorshortcut';
 import { drag } from '../../ui/drag/Drag';
@@ -154,6 +155,19 @@ function initScene() {
         const trident: GameObject = serialization.deserialize(JSON.parse(content));
         editorScene.gameObject.addChild(trident);
       });
+    }
+    
+    // 如果 gameScene 已存在，立即设置 hierarchy.rootGameObject
+    // 这样层级面板就能正确显示内容
+    const gameScene = EditorData.editorData.gameScene;
+    if (gameScene && gameScene.gameObject) {
+      hierarchy.rootGameObject = gameScene.gameObject;
+      console.log('SceneView: hierarchy.rootGameObject set to gameScene.gameObject');
+    }
+    
+    // 确保 EditorView.render() 被调用一次，以同步场景状态
+    if (view.value && typeof (view.value as any).render === 'function') {
+      (view.value as any).render();
     }
     
     // 初始化成功，返回 true
@@ -498,6 +512,18 @@ function getRawObject<T>(obj: T): T {
   return obj;
 }
 
+// 监听 gameScene 变化的回调函数
+function onGameSceneChanged(newScene: any) {
+  if (newScene && newScene.gameObject && view.value) {
+    hierarchy.rootGameObject = newScene.gameObject;
+    console.log('SceneView: hierarchy.rootGameObject updated from gameScene change');
+    // 触发一次渲染以同步状态
+    if (typeof (view.value as any).render === 'function') {
+      (view.value as any).render();
+    }
+  }
+}
+
 onMounted(async () => {
   // 等待容器准备好
   await nextTick();
@@ -586,6 +612,9 @@ onMounted(async () => {
   // 全局事件
   globalEmitter.on('editor.addSceneToolView', onAddSceneToolView);
   
+  // 监听 gameScene 变化，确保 hierarchy.rootGameObject 被设置
+  watcher.watch(EditorData.editorData, 'gameScene', onGameSceneChanged);
+  
   // 拖放功能
   if (containerRef.value) {
     dragContainer = containerRef.value;
@@ -637,6 +666,9 @@ onUnmounted(() => {
   
   // 移除全局事件
   globalEmitter.off('editor.addSceneToolView', onAddSceneToolView);
+  
+  // 移除 gameScene 监听
+  watcher.unwatch(EditorData.editorData, 'gameScene', onGameSceneChanged);
   
   // 移除拖放功能
   if (dragContainer) {
