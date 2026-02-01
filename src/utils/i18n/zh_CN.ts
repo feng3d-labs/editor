@@ -49,10 +49,18 @@ export const zh_CN: LanguageResources = {
 
     // 地形
     terrain: {
-        brushes: 'Brushes',
-        settings: 'Settings',
-        brushSize: 'Brush Size',
-        opacity: 'Opacity',
+        brushes: '画笔',
+        settings: '设置',
+        brushSize: '画笔大小',
+        opacity: '透明度',
+        raiseLowerHeight: '提升/降低高度',
+        paintHeight: '绘制高度',
+        smoothHeight: '平滑高度',
+        paintTexture: '绘制纹理',
+        height: '高度',
+        targetStrength: '目标强度',
+        terrainSettings: '地形设置',
+        openSettings: '打开设置',
     },
 
     // 消息
@@ -114,5 +122,59 @@ export const zh_CN: LanguageResources = {
         twoGradients: '两个渐变',
         randomColor: '随机颜色',
         unknown: '未知',
+    },
+
+    // 快捷键设置
+    shortcut: {
+        title: '快捷键设置',
+        searchPlaceholder: '在此键入搜索按键绑定',
+        key: '快捷键',
+        command: '命令',
+        stateCommand: '状态命令',
+        when: '条件',
+        empty: '无匹配的快捷键',
+    },
+
+    // 控制台
+    console: {
+        clear: '清空',
+        clearAll: '清空日志',
+        autoScroll: '自动滚动',
+        filter: '过滤',
+        search: '搜索',
+        searchPlaceholder: '搜索日志...',
+        all: '全部',
+        error: '错误',
+        warning: '警告',
+        info: '日志',
+        empty: '暂无日志',
+        noLogs: '没有日志',
+        started: '控制台已启动',
+        showInHierarchy: '在层级中显示',
+        copy: '复制',
+        copyMessage: '复制消息',
+    },
+
+    // 动画视图
+    animation: {
+        title: '动画',
+        noAnimationComponent: '未选择包含动画组件的对象',
+        play: '播放',
+        pause: '暂停',
+        stop: '停止',
+        begin: '开始',
+        previous: '上一帧',
+        next: '下一帧',
+        end: '结束',
+        record: '录制',
+        currentTime: '当前时间',
+        currentFrame: '当前帧',
+        fps: '帧率',
+        animationClip: '动画片段',
+        noAnimationClip: '无动画片段',
+        create: '创建',
+        properties: '属性',
+        timeline: '时间轴',
+        speed: '播放速度',
     },
 };

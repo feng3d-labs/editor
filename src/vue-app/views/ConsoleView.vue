@@ -3,20 +3,20 @@
     <!-- 工具栏 -->
     <div class="console-toolbar">
       <el-button-group>
-        <el-button size="small" text @click="clearLogs" title="清空日志">
+        <el-button size="small" text @click="clearLogs" :title="t('console.clearAll')">
           <Icon icon="mdi:delete-outline" :size="16" style="margin-right: 4px" />
-          清空
+          {{ t('console.clear') }}
         </el-button>
-        <el-button size="small" text @click="toggleAutoScroll" :type="autoScroll ? 'primary' : 'default'" title="自动滚动">
+        <el-button size="small" text @click="toggleAutoScroll" :type="autoScroll ? 'primary' : 'default'" :title="t('console.autoScroll')">
           <Icon icon="mdi:arrow-down" :size="16" style="margin-right: 4px" />
-          自动滚动
+          {{ t('console.autoScroll') }}
         </el-button>
       </el-button-group>
       
       <div class="console-filter">
-        <el-checkbox v-model="showLog" size="small">日志</el-checkbox>
-        <el-checkbox v-model="showWarn" size="small">警告</el-checkbox>
-        <el-checkbox v-model="showError" size="small">错误</el-checkbox>
+        <el-checkbox v-model="showLog" size="small">{{ t('console.info') }}</el-checkbox>
+        <el-checkbox v-model="showWarn" size="small">{{ t('console.warning') }}</el-checkbox>
+        <el-checkbox v-model="showError" size="small">{{ t('console.error') }}</el-checkbox>
       </div>
     </div>
 
@@ -33,7 +33,7 @@
         <div v-if="log.stack" class="log-stack">{{ log.stack }}</div>
       </div>
       <div v-if="filteredLogs.length === 0" class="console-empty">
-        <p>暂无日志</p>
+        <p>{{ t('console.empty') }}</p>
       </div>
     </div>
   </div>
@@ -41,6 +41,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import { useI18n } from '../composables/useI18n';
 import Icon from '../components/Icon.vue';
 
 // 日志类型
@@ -53,6 +54,8 @@ interface LogItem {
   timestamp: number;
   stack?: string;
 }
+
+const { t } = useI18n();
 
 // 状态
 const logs = ref<LogItem[]>([]);
@@ -203,7 +206,7 @@ onMounted(() => {
   setupConsoleInterception();
   
   // 添加欢迎信息
-  addLog('info', '控制台已启动');
+  addLog('info', t('console.started'));
 });
 
 onUnmounted(() => {

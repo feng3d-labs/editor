@@ -7,6 +7,8 @@
     <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
     <!-- 相机预览组件（显示在场景界面右下角） -->
     <CameraPreview :parent-container="containerRef as any" />
+    <!-- 区域选择矩形 -->
+    <AreaSelectRect ref="areaSelectRectRef" />
   </div>
 </template>
 
@@ -22,10 +24,10 @@ import { MRSTool } from '../../feng3d/mrsTool/MRSTool';
 import { SceneRotateTool } from '../../feng3d/scene/SceneRotateTool';
 import { useEditorStore } from '../stores/editorStore';
 import { sceneControlConfig } from '../../shortcut/Editorshortcut';
-import { AreaSelectRect } from '../../ui/components/AreaSelectRect';
 import { drag } from '../../ui/drag/Drag';
 import { editorui } from '../../global/editorui';
 import CameraPreview from '../components/CameraPreview.vue';
+import AreaSelectRect from '../components/AreaSelectRect.vue';
 
 const editorStore = useEditorStore();
 
@@ -38,7 +40,7 @@ const toolViewContainerRef = ref<HTMLElement>();
 const canvas = ref<HTMLCanvasElement | null>(null);
 const view = ref<any>(null); // EditorView
 const editorCamera = ref<Camera | null>(null);
-const areaSelectRect = ref<AreaSelectRect | null>(null);
+const areaSelectRectRef = ref<InstanceType<typeof AreaSelectRect> | null>(null);
 const areaSelectStartPosition = ref<Vector2 | null>(null);
 
 // Egret 容器用于拖放注册（drag.register 需要 egret.DisplayObject）
@@ -284,10 +286,12 @@ function onAreaSelect() {
   const rectangle = getGlobalBounds();
   areaSelectEndPosition = rectangle.clampPoint(areaSelectEndPosition);
   
-  if (!areaSelectRect.value) {
-    areaSelectRect.value = new AreaSelectRect();
+  if (areaSelectRectRef.value) {
+    areaSelectRectRef.value.show(
+      { x: areaSelectStartPosition.value.x, y: areaSelectStartPosition.value.y },
+      { x: areaSelectEndPosition.x, y: areaSelectEndPosition.y }
+    );
   }
-  areaSelectRect.value.show(areaSelectStartPosition.value, areaSelectEndPosition);
   
   const gs = view.value.getObjectsInGlobalArea(areaSelectStartPosition.value, areaSelectEndPosition);
   const gs0 = gs.filter((g) => !!hierarchy.getNode(g)) as any as GameObject[];
@@ -297,8 +301,8 @@ function onAreaSelect() {
 // 区域选择结束
 function onAreaSelectEnd() {
   areaSelectStartPosition.value = null;
-  if (areaSelectRect.value) {
-    areaSelectRect.value.hide();
+  if (areaSelectRectRef.value) {
+    areaSelectRectRef.value.hide();
   }
 }
 
