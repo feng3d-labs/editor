@@ -7,21 +7,21 @@
         <button
           :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.MOVE }]"
           @click="onMoveClick"
-          title="移动 (W)"
+          :title="t('toolbar.move')"
         >
           <Icon icon="mdi:cursor-move" :size="18" />
         </button>
         <button
           :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.ROTATION }]"
           @click="onRotateClick"
-          title="旋转 (E)"
+          :title="t('toolbar.rotate')"
         >
           <Icon icon="mdi:rotate-3d-variant" :size="18" />
         </button>
         <button
           :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.SCALE }]"
           @click="onScaleClick"
-          title="缩放 (R)"
+          :title="t('toolbar.scale')"
         >
           <Icon icon="mdi:arrow-expand-all" :size="18" />
         </button>
@@ -35,7 +35,7 @@
         <button
           :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': isBaryCenter }]"
           @click="onCenterClick"
-          title="Pivot/Center"
+          :title="t('toolbar.pivotCenter')"
         >
           <Icon v-if="!isBaryCenter" icon="mdi:crosshairs-gps" :size="18" />
           <Icon v-else icon="mdi:vector-point" :size="18" />
@@ -43,7 +43,7 @@
         <button
           :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': !isWoldCoordinate }]"
           @click="onWorldClick"
-          title="Local/World"
+          :title="t('toolbar.localWorld')"
         >
           <Icon v-if="isWoldCoordinate" icon="mdi:earth" :size="18" />
           <Icon v-else icon="mdi:axis-arrow" :size="18" />
@@ -59,7 +59,7 @@
           @mousedown.stop="handlePlayMouseDown"
           @mouseup.stop="handlePlayMouseUp"
           @mouseleave="isPlayPressed = false"
-          title="播放"
+          :title="t('toolbar.play')"
           type="button"
         >
           <Icon icon="mdi:play" :size="18" />
@@ -74,21 +74,21 @@
         <button
           class="tool-button"
           @click="onHelpClick"
-          title="帮助"
+          :title="t('toolbar.help')"
         >
           <Icon icon="mdi:help-circle" :size="18" />
         </button>
         <button
           class="tool-button"
           @click="onQRCodeClick"
-          title="二维码"
+          :title="t('toolbar.qrcode')"
         >
           <Icon icon="mdi:qrcode" :size="18" />
         </button>
         <button
           class="tool-button"
           @click="onSettingClick"
-          title="设置"
+          :title="t('toolbar.settings')"
         >
           <Icon icon="mdi:cog" :size="18" />
         </button>
@@ -109,10 +109,12 @@ import { editorcache } from '../../caches/Editorcache';
 import { showQRCode } from '../../utils/QRCode';
 import { useEditorStore } from '../stores/editorStore';
 import { closeRunWindow, setRunWindow, getRunWindow } from '../utils/runWindowManager';
+import { useI18n } from '../composables/useI18n';
 import Icon from './Icon.vue';
 import SettingsDialog from './SettingsDialog.vue';
 
 const editorStore = useEditorStore();
+const { t } = useI18n();
 
 // 工具类型状态
 const toolType = computed(() => editorStore.toolType);
@@ -170,7 +172,7 @@ async function onPlayClick() {
     try {
       // 检查场景是否存在
       if (!EditorData.editorData.gameScene || !EditorData.editorData.gameScene.gameObject) {
-        console.error('游戏场景不存在，无法播放');
+        console.error(t('message.gameSceneNotFound'));
         return;
       }
       
@@ -192,10 +194,10 @@ async function onPlayClick() {
       if (newWindow) {
         setRunWindow(newWindow);
       } else {
-        console.error('无法打开运行窗口，可能被浏览器阻止了弹窗');
+        console.error(t('message.cannotOpenRunWindow'));
       }
     } catch (error) {
-      console.error('播放失败:', error);
+      console.error(t('message.playFailed'), error);
     }
   };
   

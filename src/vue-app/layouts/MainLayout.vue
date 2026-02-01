@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import SplitPanel from '../components/SplitPanel.vue';
 import TabPanel from '../components/TabPanel.vue';
 import type { Tab } from '../components/TabPanel.types';
@@ -74,26 +74,29 @@ import SceneView from '../views/SceneView.vue';
 import ConsoleView from '../views/ConsoleView.vue';
 import TopMenuBar from '../components/TopMenuBar.vue';
 import TopToolBar from '../components/TopToolBar.vue';
+import { useI18n } from '../composables/useI18n';
+
+const { t } = useI18n();
 
 // 层级标签页
-const hierarchyTabs = ref<Tab[]>([
-  { id: 'hierarchy', label: '层级' },
+const hierarchyTabs = computed<Tab[]>(() => [
+  { id: 'hierarchy', label: t('panels.hierarchy') },
 ]);
 
 // 场景标签页
-const mainTabs = ref<Tab[]>([
-  { id: 'scene', label: '场景' },
+const mainTabs = computed<Tab[]>(() => [
+  { id: 'scene', label: t('panels.scene') },
 ]);
 
 // 项目标签页
-const projectTabs = ref<Tab[]>([
-  { id: 'project', label: '项目' },
+const projectTabs = computed<Tab[]>(() => [
+  { id: 'project', label: t('panels.project') },
 ]);
 
 // 底部标签页
-const bottomTabs = ref<Tab[]>([
-  { id: 'inspector', label: '检查器' },
-  { id: 'console', label: '控制台' },
+const bottomTabs = computed<Tab[]>(() => [
+  { id: 'inspector', label: t('panels.inspector') },
+  { id: 'console', label: t('panels.console') },
 ]);
 
 // 标签切换处理（可选，用于保存状态等）

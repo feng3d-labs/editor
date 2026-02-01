@@ -50,6 +50,7 @@ import { QuestionFilled, MoreFilled } from '@element-plus/icons-vue';
 import Accordion from './Accordion.vue';
 import Icon from './Icon.vue';
 import { MenuAdapter } from './MenuAdapter';
+import { useI18n } from '../composables/useI18n';
 
 // 组件图标映射
 const componentIconMap = new Map<any, string>();
@@ -111,8 +112,9 @@ function onOperationClick() {
     const menus: any[] = [];
     
     if (!isTransform.value) {
+        const { t } = useI18n();
         menus.push({
-            label: '移除组件',
+            label: t('contextMenu.removeComponent'),
             click: () => {
                 if (props.component.gameObject) {
                     props.component.gameObject.removeComponent(props.component);

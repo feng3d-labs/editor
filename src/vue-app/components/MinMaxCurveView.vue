@@ -61,6 +61,7 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
 import { MinMaxCurve, MinMaxCurveMode, Color4, ImageUtil, serialization, watcher } from 'feng3d';
 import { MenuAdapter } from './MenuAdapter';
+import { useI18n } from '../composables/useI18n';
 
 const props = withDefaults(defineProps<{
     minMaxCurve: MinMaxCurve;
@@ -227,18 +228,20 @@ function onRightClick(event: MouseEvent) {
         return;
     }
     
+    const { t } = useI18n();
+    
     const menus: any[] = [{
-        label: '复制',
+        label: t('contextMenu.copy'),
         click: () => {
             copyCurve = serialization.clone(props.minMaxCurve);
         },
     }];
-    
+
     if (copyCurve && 
         props.minMaxCurve.mode === copyCurve.mode && 
         copyCurve.between0And1 === props.minMaxCurve.between0And1) {
         menus.push({
-            label: '粘贴',
+            label: t('contextMenu.paste'),
             click: () => {
                 if (copyCurve.mode === MinMaxCurveMode.Curve) {
                     props.minMaxCurve.curve = serialization.clone(copyCurve.curve);

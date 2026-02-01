@@ -7,14 +7,14 @@
         size="small"
         text
         @click="onBackButton"
-        title="返回上一个对象"
+        :title="t('inspector.backToPrevious')"
       >
         <Icon icon="mdi:arrow-left" :size="16" style="margin-right: 4px" />
-        返回
+        {{ t('inspector.back') }}
       </el-button>
       <div class="inspector-title">
         <span v-if="viewData" class="type-name">{{ typeName }}</span>
-        <span v-else class="empty-label">未选择对象</span>
+        <span v-else class="empty-label">{{ t('inspector.noObjectSelected') }}</span>
       </div>
     </div>
 
@@ -34,9 +34,11 @@ import { AssetNode } from '../../ui/assets/AssetNode';
 import { useEditorStore } from '../stores/editorStore';
 import { inspectorMultiObject } from '../../ui/inspector/InspectorMultiObject';
 import { ObjectViewEvent } from '../../objectview/events/ObjectViewEvent';
+import { useI18n } from '../composables/useI18n';
 import Icon from '../components/Icon.vue';
 
 const editorStore = useEditorStore();
+const { t } = useI18n();
 
 // DOM 引用
 const contentRef = ref<HTMLElement>();

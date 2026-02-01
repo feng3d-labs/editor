@@ -86,9 +86,10 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { MinMaxGradient, MinMaxGradientMode, Color4, ImageUtil, serialization, watcher } from 'feng3d';
+import { MinMaxGradient, MinMaxGradientMode, Color4, ImageUtil, serialization, watcher, Gradient } from 'feng3d';
 import { MenuAdapter } from './MenuAdapter';
 import { popupView } from './PopupView';
+import { useI18n } from '../composables/useI18n';
 
 const props = withDefaults(defineProps<{
     minMaxGradient: MinMaxGradient;
@@ -100,6 +101,8 @@ const props = withDefaults(defineProps<{
 const emit = defineEmits<{
     change: [];
 }>();
+
+const { t } = useI18n();
 
 const colorGroup0Ref = ref<HTMLElement | null>(null);
 const colorGroup1Ref = ref<HTMLElement | null>(null);
@@ -114,13 +117,13 @@ const mode = computed(() => props.minMaxGradient.mode);
 // 模式标签
 const modeLabel = computed(() => {
     const modeNames: Record<MinMaxGradientMode, string> = {
-        [MinMaxGradientMode.Color]: '颜色',
-        [MinMaxGradientMode.Gradient]: '渐变',
-        [MinMaxGradientMode.TwoColors]: '两个颜色',
-        [MinMaxGradientMode.TwoGradients]: '两个渐变',
-        [MinMaxGradientMode.RandomColor]: '随机颜色',
+        [MinMaxGradientMode.Color]: t('gradient.color'),
+        [MinMaxGradientMode.Gradient]: t('gradient.gradient'),
+        [MinMaxGradientMode.TwoColors]: t('gradient.twoColors'),
+        [MinMaxGradientMode.TwoGradients]: t('gradient.twoGradients'),
+        [MinMaxGradientMode.RandomColor]: t('gradient.randomColor'),
     };
-    return modeNames[mode.value] || '未知';
+    return modeNames[mode.value] || t('gradient.unknown');
 });
 
 // 颜色0的十六进制值
@@ -225,13 +228,13 @@ function onModeClick() {
 // 获取模式名称
 function getModeName(modeValue: MinMaxGradientMode): string {
     const names: Record<MinMaxGradientMode, string> = {
-        [MinMaxGradientMode.Color]: '颜色',
-        [MinMaxGradientMode.Gradient]: '渐变',
-        [MinMaxGradientMode.TwoColors]: '两个颜色',
-        [MinMaxGradientMode.TwoGradients]: '两个渐变',
-        [MinMaxGradientMode.RandomColor]: '随机颜色',
+        [MinMaxGradientMode.Color]: t('gradient.color'),
+        [MinMaxGradientMode.Gradient]: t('gradient.gradient'),
+        [MinMaxGradientMode.TwoColors]: t('gradient.twoColors'),
+        [MinMaxGradientMode.TwoGradients]: t('gradient.twoGradients'),
+        [MinMaxGradientMode.RandomColor]: t('gradient.randomColor'),
     };
-    return names[modeValue] || '未知';
+    return names[modeValue] || t('gradient.unknown');
 }
 
 // 颜色0点击
@@ -252,16 +255,54 @@ function onColor1Click() {
 // 渐变0点击
 function onGradient0Click() {
     if (!props.editable) return;
-    // TODO: 打开渐变编辑器
-    // 需要实现 GradientEditor.vue
-    console.log('Open gradient editor for gradient0 - 功能待实现');
+    openGradientEditor(props.minMaxGradient.gradient);
 }
 
 // 渐变1点击
 function onGradient1Click() {
     if (!props.editable) return;
-    // TODO: 打开渐变编辑器
-    console.log('Open gradient editor for gradient1 - 功能待实现');
+    if (props.minMaxGradient.gradientMin) {
+        openGradientEditor(props.minMaxGradient.gradientMin);
+    }
+}
+
+// 打开渐变编辑器
+async function openGradientEditor(gradient: Gradient) {
+    const module = await import('./GradientEditor.vue');
+    const GradientEditor = module.default;
+    
+    // 创建容器
+    const container = document.createElement('div');
+    container.style.width = '450px';
+    container.style.height = '300px';
+    
+    // 创建 Vue 应用实例
+    const { createApp, h } = await import('vue');
+    const app = createApp({
+        render: () => h(GradientEditor, {
+            gradient: gradient,
+            editable: true,
+            onChange: () => {
+                emit('change');
+            },
+        }),
+    });
+    
+    app.mount(container);
+    
+    const rect = gradientGroup0Ref.value?.getBoundingClientRect();
+    const pos = rect ? { x: rect.left - 318, y: rect.top } : { x: 100, y: 100 };
+    
+    // 使用 popupView 而不是 popupViewWindow
+    popupView.popupView(container as any, {
+        x: pos.x,
+        y: pos.y,
+        width: 450,
+        height: 300,
+        closecallback: () => {
+            app.unmount();
+        },
+    });
 }
 
 // 右键菜单
@@ -271,7 +312,7 @@ function onRightClick(event: MouseEvent) {
     if (!props.editable) return;
     
     const menus: any[] = [{
-        label: '复制',
+        label: t('contextMenu.copy'),
         click: () => {
             copyGradient = serialization.clone(props.minMaxGradient);
         },
@@ -279,7 +320,7 @@ function onRightClick(event: MouseEvent) {
     
     if (copyGradient && props.minMaxGradient.mode === copyGradient.mode) {
         menus.push({
-            label: '粘贴',
+            label: t('contextMenu.paste'),
             click: () => {
                 if (copyGradient.mode === MinMaxGradientMode.Color) {
                     props.minMaxGradient.color = serialization.clone(copyGradient.color);

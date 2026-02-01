@@ -103,9 +103,11 @@ import { HierarchyNode } from '../../feng3d/hierarchy/HierarchyNode';
 import { useEditorStore } from '../stores/editorStore';
 import { menuConfig } from '../../configs/CommonConfig';
 import type { MenuItem } from '../components/MenuAdapter';
+import { useI18n } from '../composables/useI18n';
 import Icon from '../components/Icon.vue';
 
 const editorStore = useEditorStore();
+const { t } = useI18n();
 
 // 树数据
 const treeData = ref<any[]>([]);
@@ -455,14 +457,14 @@ function onNodeRightClick(event: MouseEvent, data: any) {
   if (node.gameobject.scene.gameObject !== node.gameobject) {
     menus.push(
       {
-        label: '复制',
+        label: t('contextMenu.copy'),
         click: () => {
           const objects = editorStore.selectedGameObjects;
           editorStore.copyObjects = objects;
         },
       },
       {
-        label: '粘贴',
+        label: t('contextMenu.paste'),
         click: () => {
           const undoSelectedObjects = editorStore.selectedObjects;
           const objects = editorStore.copyObjects.filter((v) => v instanceof GameObject);
@@ -485,7 +487,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
       },
       { type: 'separator' },
       {
-        label: '副本',
+        label: t('contextMenu.duplicate'),
         click: () => {
           const undoSelectedObjects = [...editorStore.selectedObjects] as any;
           const objects = editorStore.selectedGameObjects;
@@ -506,7 +508,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
         },
       },
       {
-        label: '删除',
+        label: t('contextMenu.delete'),
         click: () => {
           node.gameobject.parent.removeChild(node.gameobject);
           const index = editorStore.selectedObjects.indexOf(node.gameobject);

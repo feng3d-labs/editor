@@ -2,6 +2,7 @@
 import { computed, reactive } from 'vue';
 import { GameObject } from 'feng3d';
 import { ObjectViewEvent } from '../../../objectview/events/ObjectViewEvent';
+import { useI18n } from '../../composables/useI18n';
 
 const props = defineProps<{
     name: string;
@@ -15,6 +16,7 @@ const r_owner = reactive(props.owner);
 
 // 获取 GameObject
 const gameObject = computed(() => r_owner as unknown as GameObject);
+const { t } = useI18n();
 
 // 格式化标签名
 const label = computed(() => {
@@ -83,7 +85,7 @@ function onMouseEnabledChange(newValue: boolean) {
 <template>
     <div class="oav-gameobject-name">
         <div class="oav-row">
-            <label class="oav-label">名称</label>
+            <label class="oav-label">{{ t('object.name') }}</label>
             <div class="oav-value">
                 <el-input
                     :model-value="objectName"
@@ -95,7 +97,7 @@ function onMouseEnabledChange(newValue: boolean) {
             </div>
         </div>
         <div class="oav-row">
-            <label class="oav-label">可见</label>
+            <label class="oav-label">{{ t('object.visible') }}</label>
             <div class="oav-value">
                 <el-switch
                     :model-value="visible"
@@ -105,7 +107,7 @@ function onMouseEnabledChange(newValue: boolean) {
             </div>
         </div>
         <div class="oav-row">
-            <label class="oav-label">鼠标启用</label>
+            <label class="oav-label">{{ t('object.mouseEnabled') }}</label>
             <div class="oav-value">
                 <el-switch
                     :model-value="mouseEnabled"

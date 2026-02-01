@@ -48,6 +48,11 @@ const themeStore = useThemeStore();
 // 确保主题在应用挂载后正确应用
 themeStore.applyTheme(themeStore.currentTheme);
 
+// 初始化国际化 Store
+import { useI18nStore } from './stores/i18nStore';
+const i18nStore = useI18nStore();
+i18nStore.initialize();
+
 // 导出 pinia 实例，确保在需要时可以访问
 export { pinia };
 
