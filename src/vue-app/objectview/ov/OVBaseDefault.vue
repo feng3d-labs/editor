@@ -6,7 +6,9 @@ const props = defineProps<{
     objectViewInfo?: any;
 }>();
 
-const displayValue = computed(() => {
+type DisplayValue = { type: 'image'; src: string } | { type: 'text'; text: string } | '';
+
+const displayValue = computed<DisplayValue>(() => {
     const value = props.owner;
     if (!value) return '';
     
@@ -24,8 +26,8 @@ const displayValue = computed(() => {
 
 <template>
     <div class="ov-base-default">
-        <img v-if="displayValue.type === 'image'" :src="displayValue.src" class="ov-image" />
-        <div v-else class="ov-text">{{ displayValue.text }}</div>
+        <img v-if="displayValue !== '' && displayValue.type === 'image'" :src="displayValue.src" class="ov-image" />
+        <div v-else-if="displayValue !== '' && displayValue.type === 'text'" class="ov-text">{{ displayValue.text }}</div>
     </div>
 </template>
 

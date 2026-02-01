@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import { resolve } from 'node:path';
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
+import { spawn } from 'node:child_process';
 import vue from '@vitejs/plugin-vue';
 import vueDevtools from 'vite-plugin-vue-devtools';
 import AutoImport from 'unplugin-auto-import/vite';
@@ -175,6 +176,8 @@ export default defineConfig(({ mode }) =>
             vue(),
             vueDevtools({
                 enabled: true,
+                // 配置编辑器为 Cursor，使 Vue DevTools 定位后可以在 Cursor 中打开文件
+                editor: process.env.LAUNCH_EDITOR || 'cursor',
             }),
             // Element Plus 按需引入
             AutoImport({

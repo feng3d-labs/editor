@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { useOAVNumber, type OAVNumberProps } from './useOAVNumber';
 
-const props = defineProps<OAVNumberProps>();
-const { label, value, onChange, onKeyDown } = useOAVNumber(props);
+const props = defineProps<OAVNumberProps & {
+    step?: number;
+    stepDownup?: number;
+    minValue?: number;
+    maxValue?: number;
+}>();
+
+const { label, value, onChange, onKeyDown, precision } = useOAVNumber(props);
 </script>
 
 <template>
@@ -12,9 +18,9 @@ const { label, value, onChange, onKeyDown } = useOAVNumber(props);
             <el-input-number
                 :model-value="value"
                 :disabled="!props.editable"
-                :step="step"
-                :min="minValue"
-                :max="maxValue"
+                :step="props.step || 0.001"
+                :min="props.minValue"
+                :max="props.maxValue"
                 :precision="precision"
                 size="small"
                 @update:model-value="onChange"
@@ -23,18 +29,6 @@ const { label, value, onChange, onKeyDown } = useOAVNumber(props);
         </div>
     </div>
 </template>
-
-<script lang="ts">
-export default {
-    name: 'OAVNumber',
-    props: {
-        step: { type: Number, default: 0.001 },
-        stepDownup: { type: Number, default: 0.001 },
-        minValue: { type: Number, default: undefined },
-        maxValue: { type: Number, default: undefined },
-    },
-};
-</script>
 
 <style scoped>
 .oav-row {

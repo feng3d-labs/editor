@@ -12,6 +12,9 @@
     <!-- Menu 组件：显示右键菜单 -->
     <Menu />
     
+    <!-- PopupView 容器：用于显示弹出窗口 -->
+    <div ref="popupContainerRef" id="popup-container"></div>
+    
     <!-- 主布局容器 -->
     <!-- 当前阶段：占位，后续会逐步迁移视图到这里 -->
     <MainLayout v-if="!showLayoutTest" />
@@ -27,6 +30,7 @@ import { ref, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
 import Message from './components/Message.vue';
 import ToolTip from './components/ToolTip.vue';
 import Menu from './components/Menu.vue';
+import { popupView } from './components/PopupView';
 import { editorui } from '../global/editorui';
 
 // 使用异步组件加载，避免热更新问题
@@ -36,6 +40,9 @@ const LayoutTest = defineAsyncComponent(() => import('./pages/LayoutTest.vue'));
 // 控制布局测试页面的显示
 // 可以通过浏览器控制台设置 window.__showLayoutTest() 来显示测试页面
 const showLayoutTest = ref(false);
+
+// PopupView 容器引用
+const popupContainerRef = ref<HTMLElement | null>(null);
 
 // 监听全局变量，方便在控制台切换
 if (typeof window !== 'undefined') {
@@ -64,6 +71,11 @@ onMounted(() => {
   window.addEventListener('resize', handleResize);
   // 初始调用一次
   handleResize();
+  
+  // 初始化 PopupView 容器
+  if (popupContainerRef.value) {
+    popupView.init(popupContainerRef.value);
+  }
 });
 
 onUnmounted(() => {
@@ -89,6 +101,16 @@ onUnmounted(() => {
 #vue-app-container :deep(.main-layout),
 #vue-app-container :deep(.layout-test-page) {
   pointer-events: auto;
+}
+
+#popup-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
 }
 </style>
 

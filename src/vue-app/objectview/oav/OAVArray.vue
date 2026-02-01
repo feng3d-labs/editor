@@ -22,8 +22,7 @@ const label = computed(() => {
             <Icon
                 icon="mdi:chevron-right"
                 :size="16"
-                class="oav-array-icon"
-                :class="{ 'oav-array-icon-expanded': isExpanded }"
+                :class="`oav-array-icon ${isExpanded ? 'oav-array-icon-expanded' : ''}`"
             />
             <label class="oav-label" :title="props.name">{{ label }}</label>
             <div class="oav-array-size">

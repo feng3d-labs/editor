@@ -13,8 +13,7 @@ const { isExpanded, toggleExpanded, showTitle } = useOBVDefault(props);
             <Icon
                 icon="mdi:chevron-right"
                 :size="16"
-                class="obv-icon"
-                :class="{ 'obv-icon-expanded': isExpanded }"
+                :class="`obv-icon ${isExpanded ? 'obv-icon-expanded' : ''}`"
             />
             <span class="obv-title">{{ props.name }}</span>
         </div>

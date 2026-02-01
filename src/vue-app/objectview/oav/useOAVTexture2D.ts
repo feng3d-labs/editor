@@ -77,7 +77,7 @@ export function useOAVTexture2D(props: OAVTexture2DProps)
     {
         const texture = r_owner[props.name];
         if (texture && typeof texture === 'object') {
-            editorStore.selectObject(texture);
+            editorStore.selectObject(texture as any);
         }
     }
 

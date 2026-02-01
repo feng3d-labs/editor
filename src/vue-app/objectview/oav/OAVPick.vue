@@ -157,7 +157,7 @@ function triggerValueChange() {
 function onDoubleClick() {
     const value = attributeValue.value;
     if (value && typeof value === 'object') {
-        editorStore.selectObject(value);
+        editorStore.selectObject(value as any);
     }
 }
 </script>

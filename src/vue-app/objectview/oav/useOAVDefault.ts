@@ -100,7 +100,7 @@ export function useOAVDefault(props: OAVDefaultProps)
     {
         const value = r_owner[props.name];
         if (value && typeof value === 'object') {
-            editorStore.selectObject(value);
+            editorStore.selectObject(value as any);
         }
     }
 

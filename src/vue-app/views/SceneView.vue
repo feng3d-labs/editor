@@ -6,7 +6,7 @@
     <!-- 工具视图容器 -->
     <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
     <!-- 相机预览组件（显示在场景界面右下角） -->
-    <CameraPreview :parent-container="containerRef" />
+    <CameraPreview :parent-container="containerRef as any" />
   </div>
 </template>
 
