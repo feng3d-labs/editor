@@ -12,6 +12,10 @@ export interface PopupviewParam<T> {
      * 默认为true
      */
     mode?: boolean;
+    /**
+     * 窗口标题
+     */
+    title?: string;
     closecallback?: (object: T) => void;
     /**
      * 传递给 Vue 组件的 props

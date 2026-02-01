@@ -17,22 +17,35 @@ console.log(`editor version ${version}`);
 
 /**
  * 编辑器
+ * @deprecated Egret UI 已迁移到 Vue，此类仅保留初始化逻辑
  */
-export class Editor extends eui.UILayer
+export class Editor
 {
+    private stage: egret.Stage;
+
     constructor()
     {
-        super();
         // giteeOauth.oauth();
         // 关闭右键默认菜单
         document.body.oncontextmenu = function () { return false; };
 
-        this.addEventListener(egret.Event.ADDED_TO_STAGE, this.onAddedToStage, this);
+        // 获取 Egret 舞台（如果存在）
+        const egretStage = (global as any).egret?.Stage?.getInstance?.();
+        if (egretStage) {
+            this.stage = egretStage;
+            editorui.stage = this.stage;
+            this.onAddedToStage();
+        } else {
+            // 如果没有 Egret 舞台，直接初始化
+            this.onAddedToStage();
+        }
     }
 
     private async onAddedToStage()
     {
-        editorui.stage = this.stage;
+        if (this.stage) {
+            editorui.stage = this.stage;
+        }
 
         //
         // 使用 Vue Message 组件的适配器（过渡期）
@@ -45,8 +58,6 @@ export class Editor extends eui.UILayer
         await this.init();
 
         console.log(`初始化完成。`);
-        // 移除无效入口类显示对象
-        this.parent && this.parent.removeChild(this);
     }
 
     /**
@@ -55,21 +66,28 @@ export class Editor extends eui.UILayer
      */
     private async initEgret()
     {
-        // Egret UI 层已迁移到 Vue，这里只创建必要的 Egret 层用于兼容
-        const tooltipLayer = new eui.UILayer();
-        tooltipLayer.touchEnabled = false;
-        this.stage.addChild(tooltipLayer);
-        editorui.tooltipLayer = tooltipLayer;
-        //
-        const popupLayer = new eui.UILayer();
-        popupLayer.touchEnabled = false;
-        this.stage.addChild(popupLayer);
-        editorui.popupLayer = popupLayer;
-        //
-        const messageLayer = new eui.UILayer();
-        messageLayer.touchEnabled = false;
-        this.stage.addChild(messageLayer);
-        editorui.messageLayer = messageLayer;
+        // Egret UI 层已迁移到 Vue，创建占位对象以保持向后兼容
+        if (this.stage) {
+            const tooltipLayer = new eui.UILayer();
+            tooltipLayer.touchEnabled = false;
+            this.stage.addChild(tooltipLayer);
+            editorui.tooltipLayer = tooltipLayer;
+            //
+            const popupLayer = new eui.UILayer();
+            popupLayer.touchEnabled = false;
+            this.stage.addChild(popupLayer);
+            editorui.popupLayer = popupLayer;
+            //
+            const messageLayer = new eui.UILayer();
+            messageLayer.touchEnabled = false;
+            this.stage.addChild(messageLayer);
+            editorui.messageLayer = messageLayer;
+        } else {
+            // 如果没有 Egret 舞台，创建占位对象
+            editorui.tooltipLayer = {} as any;
+            editorui.popupLayer = {} as any;
+            editorui.messageLayer = {} as any;
+        }
         //
         editorcache.projectname = editorcache.projectname || 'newproject';
     }

@@ -11,13 +11,13 @@ export class OAVComponentList extends OAVBase
 	declare protected _space: GameObject;
 
 	//
-	group: eui.Group;
-	addComponentButton: eui.Button;
+	// TODO: 迁移到 Vue 组件
+	group: any;
+	addComponentButton: any;
 
 	constructor(attributeViewInfo: AttributeViewInfo)
 	{
 		super(attributeViewInfo);
-		this.skinName = 'OAVComponentListSkin';
 	}
 
 	private onAddComponentButtonClick()
@@ -102,9 +102,11 @@ export class OAVComponentList extends OAVBase
 			return;
 		}
 
-		const displayObject = new ComponentView(component);
-		displayObject.percentWidth = 100;
-		this.group.addChild(displayObject);
+		// TODO: 迁移到 Vue 组件
+		// const displayObject = new ComponentView(component);
+		// displayObject.percentWidth = 100;
+		// this.group.addChild(displayObject);
+		console.warn('OAVComponentList.addComponentView 需要迁移到 Vue 组件');
 	}
 
 	/**
@@ -112,26 +114,30 @@ export class OAVComponentList extends OAVBase
 	 */
 	updateView(): void
 	{
-		for (let i = 0, n = this.group.numChildren; i < n; i++)
-		{
-			const child = this.group.getChildAt(i);
-			if (child instanceof ComponentView)
-			{
-				child.updateView();
-			}
-		}
+		// TODO: 迁移到 Vue 组件
+		// for (let i = 0, n = this.group.numChildren; i < n; i++)
+		// {
+		//     const child = this.group.getChildAt(i);
+		//     if (child instanceof ComponentView)
+		//     {
+		//         child.updateView();
+		//     }
+		// }
+		console.warn('OAVComponentList.updateView 需要迁移到 Vue 组件');
 	}
 
 	private removedComponentView(component: Components)
 	{
-		for (let i = this.group.numChildren - 1; i >= 0; i--)
-		{
-			const displayObject = this.group.getChildAt(i);
-			if (displayObject instanceof ComponentView && displayObject.component === component)
-			{
-				this.group.removeChild(displayObject);
-			}
-		}
+		// TODO: 迁移到 Vue 组件
+		// for (let i = this.group.numChildren - 1; i >= 0; i--)
+		// {
+		//     const displayObject = this.group.getChildAt(i);
+		//     if (displayObject instanceof ComponentView && displayObject.component === component)
+		//     {
+		//         this.group.removeChild(displayObject);
+		//     }
+		// }
+		console.warn('OAVComponentList.removedComponentView 需要迁移到 Vue 组件');
 	}
 
 	private onAddCompont(event: IEvent<{ gameobject: GameObject; component: Component; }>)

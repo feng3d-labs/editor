@@ -1,38 +1,41 @@
 import { OAVComponent, AttributeViewInfo } from 'feng3d';
-import { MinMaxCurveVector3View } from '../../ui/components/MinMaxCurveVector3View';
+// MinMaxCurveVector3View 已迁移到 Vue，暂时使用 any 类型
+// import { MinMaxCurveVector3View } from '../../ui/components/MinMaxCurveVector3View';
 import { OAVBase } from './OAVBase';
 
 @OAVComponent()
 export class OAVMinMaxCurveVector3 extends OAVBase
 {
-declare public labelLab: eui.Label;
-    public minMaxCurveVector3View: MinMaxCurveVector3View;
+declare public labelLab: any;
+    // TODO: 迁移到 Vue 组件
+    public minMaxCurveVector3View: any;
 
     constructor(attributeViewInfo: AttributeViewInfo)
     {
         super(attributeViewInfo);
-
-        this.skinName = 'OAVMinMaxCurveVector3';
     }
 
     initView()
     {
-        if (this._attributeViewInfo.editable)
-        {
-            this.minMaxCurveVector3View.addEventListener(egret.Event.CHANGE, this.onChange, this);
-        }
-
-        this.minMaxCurveVector3View.minMaxCurveVector3 = this.attributeValue;
-
-        this.minMaxCurveVector3View.touchEnabled = this.minMaxCurveVector3View.touchChildren = this._attributeViewInfo.editable;
+        // TODO: 迁移到 Vue 组件
+        // if (this._attributeViewInfo.editable && this.minMaxCurveVector3View)
+        // {
+        //     this.minMaxCurveVector3View.addEventListener(egret.Event.CHANGE, this.onChange, this);
+        // }
+        //
+        // if (this.minMaxCurveVector3View) {
+        //     this.minMaxCurveVector3View.minMaxCurveVector3 = this.attributeValue;
+        //     this.minMaxCurveVector3View.touchEnabled = this.minMaxCurveVector3View.touchChildren = this._attributeViewInfo.editable;
+        // }
     }
 
     dispose()
     {
-        if (this._attributeViewInfo.editable)
-        {
-            this.minMaxCurveVector3View.removeEventListener(egret.Event.CHANGE, this.onChange, this);
-        }
+        // TODO: 迁移到 Vue 组件
+        // if (this._attributeViewInfo.editable && this.minMaxCurveVector3View)
+        // {
+        //     this.minMaxCurveVector3View.removeEventListener(egret.Event.CHANGE, this.onChange, this);
+        // }
     }
 
     updateView()

@@ -9,14 +9,13 @@ import { OAVBase } from './OAVBase';
 @OAVComponent()
 export class OAVDefault extends OAVBase
 {
-	declare public labelLab: eui.Label;
-	public text: eui.TextInput;
+	declare public labelLab: any;
+	// TODO: 迁移到 Vue 组件
+	public text: any;
 
 	constructor(attributeViewInfo: AttributeViewInfo)
 	{
 		super(attributeViewInfo);
-
-		this.skinName = 'OAVDefault';
 	}
 
 	// eslint-disable-next-line accessor-pairs

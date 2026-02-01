@@ -235,7 +235,7 @@ function formatTime(ms: number): string {
 }
 
 // 获取属性名称
-function getPropertyName(propertyClip: PropertyClip): string {
+function getPropertyName(propertyClip: any): string {
     const path = propertyClip.path;
     if (path && path.length > 0) {
         const lastItem = path[path.length - 1];

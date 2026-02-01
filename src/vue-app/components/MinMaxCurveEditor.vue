@@ -238,13 +238,13 @@ const postWrapModeBtnVisible = computed(() => {
 
 const preWrapModeBtnStyle = computed(() => {
     if (!selectTimeline.value || !curveRect.value) {
-        return { display: 'none' };
+        return { display: 'none' } as any;
     }
     const firstKey = selectTimeline.value.keys[0];
-    if (!firstKey) return { display: 'none' };
+    if (!firstKey) return { display: 'none' } as any;
     const pos = curveToUIPos(firstKey.time, firstKey.value);
     return {
-        position: 'absolute',
+        position: 'absolute' as const,
         left: `${pos.x - 60}px`,
         top: `${pos.y}px`,
     };
@@ -252,13 +252,13 @@ const preWrapModeBtnStyle = computed(() => {
 
 const postWrapModeBtnStyle = computed(() => {
     if (!selectTimeline.value || !curveRect.value) {
-        return { display: 'none' };
+        return { display: 'none' } as any;
     }
     const lastKey = selectTimeline.value.keys[selectTimeline.value.keys.length - 1];
-    if (!lastKey) return { display: 'none' };
+    if (!lastKey) return { display: 'none' } as any;
     const pos = curveToUIPos(lastKey.time, lastKey.value);
     return {
-        position: 'absolute',
+        position: 'absolute' as const,
         left: `${pos.x + 15}px`,
         top: `${pos.y}px`,
     };
@@ -271,11 +271,11 @@ const keyPosLabelVisible = computed(() => {
 
 const keyPosLabelStyle = computed(() => {
     if (!editKey.value || !curveRect.value) {
-        return { display: 'none' };
+        return { display: 'none' } as any;
     }
     const pos = curveToUIPos(editKey.value.time, editKey.value.value);
     return {
-        position: 'absolute',
+        position: 'absolute' as const,
         left: `${pos.x}px`,
         top: `${pos.y - 25}px`,
     };
@@ -290,8 +290,8 @@ const keyPosLabelText = computed(() => {
 const sampleImages = ref<HTMLCanvasElement[]>([]);
 
 // 设置样本 Canvas ref
-function setSampleCanvasRef(el: HTMLCanvasElement | null, index: number) {
-    if (el) {
+function setSampleCanvasRef(el: any, index: number) {
+    if (el && el instanceof HTMLCanvasElement) {
         sampleCanvasRefs.value[index] = el;
     }
 }
@@ -719,7 +719,7 @@ function onDoubleClick(event: MouseEvent) {
     // 没有选中关键点时，检查是否点击到曲线，添加新关键点
     let newKey = timeline.value.addKeyAtCurve(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
     if (newKey) {
-        selectedKey.value = newKey;
+        selectedKey.value = newKey as AnimationCurveKeyframe;
         selectTimeline.value = timeline.value;
         updateView();
         emit('change');
@@ -729,7 +729,7 @@ function onDoubleClick(event: MouseEvent) {
     if (timeline1.value) {
         newKey = timeline1.value.addKeyAtCurve(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
         if (newKey) {
-            selectedKey.value = newKey;
+            selectedKey.value = newKey as AnimationCurveKeyframe;
             selectTimeline.value = timeline1.value;
             updateView();
             emit('change');
@@ -769,10 +769,12 @@ function onMultiplierChange(value: number | undefined) {
 
 // WrapMode 名称
 function getWrapModeName(wrapMode: WrapMode): string {
-    const names: Record<WrapMode, string> = {
+    const names: Partial<Record<WrapMode, string>> = {
         [WrapMode.Clamp]: 'Clamp',
         [WrapMode.Loop]: 'Loop',
         [WrapMode.PingPong]: 'PingPong',
+        [WrapMode.Once]: 'Once',
+        [WrapMode.Default]: 'Default',
     };
     return names[wrapMode] || 'Unknown';
 }

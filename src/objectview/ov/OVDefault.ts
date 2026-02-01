@@ -2,9 +2,10 @@ import { IObjectBlockView, IObjectView, objectview, ObjectViewInfo, OVComponent 
 
 declare global
 {
-	export interface MixinsIObjectView extends eui.Component { }
-	export interface MixinsIObjectBlockView extends eui.Component { }
-	export interface MixinsIObjectAttributeView extends eui.Component { }
+	// @deprecated Egret UI 已迁移到 Vue，这些接口不再扩展 eui.Component
+	export interface MixinsIObjectView { }
+	export interface MixinsIObjectBlockView { }
+	export interface MixinsIObjectAttributeView { }
 }
 
 /**

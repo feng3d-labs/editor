@@ -5,12 +5,12 @@ import { OAVBase } from './OAVBase';
 @OAVComponent()
 export class OAVString extends OAVBase
 {
-    public txtInput: eui.TextInput;
+    // TODO: 迁移到 Vue 组件
+    public txtInput: any;
 
     constructor(attributeViewInfo: AttributeViewInfo)
     {
         super(attributeViewInfo);
-        this.skinName = 'OAVString';
     }
 
     initView()

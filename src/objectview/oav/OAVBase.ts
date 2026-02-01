@@ -1,15 +1,21 @@
-import { IObjectAttributeView, AttributeViewInfo, IObjectView, IObjectBlockView } from 'feng3d';
+import { IObjectAttributeView, AttributeViewInfo, IObjectView, IObjectBlockView, EventEmitter } from 'feng3d';
 import { toolTip } from '../../ui/components/ToolTip';
 import { ObjectViewEvent } from '../events/ObjectViewEvent';
 
-export class OAVBase extends eui.Component implements IObjectAttributeView
+/**
+ * OAV 基类
+ * @deprecated Egret UI 已迁移到 Vue，此类仅保留基础结构用于兼容
+ */
+// @ts-ignore - MixinsIObjectAttributeView 已不再扩展 eui.Component，但类型定义可能未更新
+export class OAVBase extends EventEmitter implements IObjectAttributeView
 {
     declare protected _space: any;
     protected _attributeName: string;
     protected _attributeType: string;
     protected _attributeViewInfo: AttributeViewInfo;
     //
-    labelLab: eui.Label;
+    // TODO: 迁移到 Vue 组件后移除
+    labelLab: any;
 
     /**
      * 对象属性界面
@@ -27,8 +33,6 @@ export class OAVBase extends eui.Component implements IObjectAttributeView
         this._attributeName = attributeViewInfo.name;
         this._attributeType = attributeViewInfo.type;
         this._attributeViewInfo = attributeViewInfo;
-
-        if (!this._attributeViewInfo.editable) this.alpha = 0.8;
     }
 
     get space(): any
@@ -47,10 +51,12 @@ export class OAVBase extends eui.Component implements IObjectAttributeView
     // 占用，避免出现label命名的组件
     private label = '';
 
-    $onAddToStage(stage: egret.Stage, nestLevel: number)
+    /**
+     * 初始化组件（替代 Egret 的 $onAddToStage）
+     * @deprecated Egret UI 已迁移到 Vue
+     */
+    initComponent()
     {
-        super.$onAddToStage(stage, nestLevel);
-
         const componentParam = this._attributeViewInfo.componentParam;
         if (componentParam)
         {
@@ -69,18 +75,22 @@ export class OAVBase extends eui.Component implements IObjectAttributeView
             else
                 { this.labelLab.text = this._attributeName; }
         }
-        if (this._attributeViewInfo.tooltip)
+        if (this._attributeViewInfo.tooltip && this.labelLab)
             { toolTip.register(this.labelLab, this._attributeViewInfo.tooltip); }
 
         this.initView();
         this.updateView();
     }
 
-    $onRemoveFromStage()
+    /**
+     * 销毁组件（替代 Egret 的 $onRemoveFromStage）
+     * @deprecated Egret UI 已迁移到 Vue
+     */
+    destroyComponent()
     {
-        toolTip.unregister(this.labelLab);
-
-        super.$onRemoveFromStage();
+        if (this.labelLab) {
+            toolTip.unregister(this.labelLab);
+        }
         this.dispose();
     }
 
@@ -127,8 +137,9 @@ export class OAVBase extends eui.Component implements IObjectAttributeView
             objectViewEvent.space = this._space;
             objectViewEvent.attributeName = this._attributeName;
             objectViewEvent.attributeValue = this.attributeValue;
-            this.dispatchEvent(objectViewEvent);
+            this.emit('valueChange', objectViewEvent);
+            // 使用 requestAnimationFrame 替代 egret.Event.ENTER_FRAME
+            requestAnimationFrame(() => this.updateView());
         }
-        this.once(egret.Event.ENTER_FRAME, this.updateView, this);
     }
 }

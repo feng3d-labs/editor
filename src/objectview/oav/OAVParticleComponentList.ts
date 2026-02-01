@@ -8,12 +8,12 @@ export class OAVParticleComponentList extends OAVBase
     declare protected _space: ParticleSystem;
 
     //
-    group: eui.Group;
+    // TODO: 迁移到 Vue 组件
+    group: any;
 
     constructor(attributeViewInfo: AttributeViewInfo)
     {
         super(attributeViewInfo);
-        this.skinName = 'OAVParticleComponentList';
     }
 
     get space()
@@ -49,7 +49,10 @@ export class OAVParticleComponentList extends OAVBase
 
     initView(): void
     {
-        (<eui.VerticalLayout> this.group.layout).gap = -1;
+        // TODO: 迁移到 Vue 组件
+        // if (this.group?.layout) {
+        //     (<eui.VerticalLayout> this.group.layout).gap = -1;
+        // }
 
         const components = <any> this.attributeValue;
         for (let i = 0; i < components.length; i++)
@@ -72,30 +75,36 @@ export class OAVParticleComponentList extends OAVBase
      */
     updateView(): void
     {
-        for (let i = 0, n = this.group.numChildren; i < n; i++)
-        {
-            const child = this.group.getChildAt(i);
-            if (child instanceof ParticleComponentView)
-                { child.updateView(); }
-        }
+        // TODO: 迁移到 Vue 组件
+        // for (let i = 0, n = this.group.numChildren; i < n; i++)
+        // {
+        //     const child = this.group.getChildAt(i);
+        //     if (child instanceof ParticleComponentView)
+        //         { child.updateView(); }
+        // }
+        console.warn('OAVParticleComponentList.updateView 需要迁移到 Vue 组件');
     }
 
     private addComponentView(component: ParticleModule)
     {
-        const displayObject = new ParticleComponentView(component);
-        displayObject.percentWidth = 100;
-        this.group.addChild(displayObject);
+        // TODO: 迁移到 Vue 组件
+        // const displayObject = new ParticleComponentView(component);
+        // displayObject.percentWidth = 100;
+        // this.group.addChild(displayObject);
+        console.warn('OAVParticleComponentList.addComponentView 需要迁移到 Vue 组件');
     }
 
     private removedComponentView(component: ParticleModule)
     {
-        for (let i = this.group.numChildren - 1; i >= 0; i--)
-        {
-            const displayObject = this.group.getChildAt(i);
-            if (displayObject instanceof ParticleComponentView && displayObject.component === component)
-            {
-                this.group.removeChild(displayObject);
-            }
-        }
+        // TODO: 迁移到 Vue 组件
+        // for (let i = this.group.numChildren - 1; i >= 0; i--)
+        // {
+        //     const displayObject = this.group.getChildAt(i);
+        //     if (displayObject instanceof ParticleComponentView && displayObject.component === component)
+        //     {
+        //         this.group.removeChild(displayObject);
+        //     }
+        // }
+        console.warn('OAVParticleComponentList.removedComponentView 需要迁移到 Vue 组件');
     }
 }
