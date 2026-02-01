@@ -1,7 +1,7 @@
 # Egret 到 Vue 迁移进度
 
 > **最后更新**: 2024-12-19  
-> **总体进度**: 78% 完成（核心功能 100%）
+> **总体进度**: 80% 完成（核心功能 100%）
 
 ## 📊 进度总览
 
@@ -10,13 +10,13 @@
 | **核心 UI 组件** | 6 | 6 | 0 | 0 | 100% |
 | **ObjectView 组件** | 27 | 27 | 0 | 0 | 100% |
 | **视图组件** | 5 | 5 | 0 | 0 | 100% |
-| **高级编辑器** | 3 | 0 | 0 | 3 | 0% |
+| **高级编辑器** | 3 | 1 | 0 | 2 | 33% |
 | **辅助组件** | 8 | 0 | 0 | 8 | 0% |
-| **总计** | 49 | 38 | 0 | 11 | 78% |
+| **总计** | 49 | 39 | 0 | 10 | 80% |
 
 ---
 
-## ✅ 已完成组件（38/49）
+## ✅ 已完成组件（39/49）
 
 ### 核心 UI 组件（6/6）✅
 
@@ -97,27 +97,28 @@
 
 ---
 
-## ⏳ 待实现组件（11/49）
+## ⏳ 待实现组件（10/49）
 
-### 🔴 高优先级 - 高级编辑器（3个）
+### 🔴 高优先级 - 高级编辑器（2个）
 
 > **注意**: 这些编辑器组件属于高级功能，不影响核心 objectview 功能。核心功能已完成 100%。
 
-#### 1. ColorPickerView
+#### 1. ColorPickerView ✅
 - **文件**: `src/ui/components/ColorPickerView.ts`
-- **Vue 实现**: `src/vue-app/components/ColorPickerView.vue` ⏳
+- **Vue 实现**: `src/vue-app/components/ColorPickerView.vue` ✅
 - **复杂度**: ⭐⭐⭐
 - **预计时间**: 2-3 天
 - **功能需求**:
-  - Canvas 绘制色相环和饱和度/亮度选择器
-  - RGB/Hex 输入框
-  - Alpha 通道支持（Color4）
-  - 颜色预览
+  - Canvas 绘制色相条和饱和度/亮度选择器 ✅
+  - RGB/Hex 输入框 ✅
+  - Alpha 通道支持（Color4） ✅
+  - 颜色预览 ✅
+  - 鼠标拖拽选择颜色 ✅
 - **依赖**: 无
-- **状态**: ⏳ 待实现
-- **说明**: OAVColorPicker 已使用 Element Plus 的 el-color-picker，但完整的 ColorPickerView（弹出式颜色选择器）还未实现
+- **状态**: ✅ 已完成
+- **说明**: 完整的弹出式颜色选择器，支持色相条和颜色矩形选择，RGB/Hex 输入，Alpha 支持
 
-#### 2. MinMaxCurveEditor
+#### 1. MinMaxCurveEditor
 - **文件**: `src/ui/components/MinMaxCurveEditor.ts`
 - **Vue 实现**: `src/vue-app/components/MinMaxCurveEditor.vue` ⏳
 - **复杂度**: ⭐⭐⭐⭐⭐
@@ -132,7 +133,7 @@
 - **依赖**: MinMaxCurveView（已完成）
 - **状态**: ⏳ 待实现
 
-#### 3. GradientEditor
+#### 2. GradientEditor
 - **文件**: `src/ui/components/GradientEditor.ts`
 - **Vue 实现**: `src/vue-app/components/GradientEditor.vue` ⏳
 - **复杂度**: ⭐⭐⭐⭐
@@ -217,7 +218,7 @@
 ## 📋 实现计划
 
 ### 第一阶段：高级编辑器（优先级最高）
-1. ⏳ ColorPickerView - 颜色选择器（弹出式）
+1. ✅ ColorPickerView - 颜色选择器（弹出式）
 2. ⏳ MinMaxCurveEditor - 曲线编辑器
 3. ⏳ GradientEditor - 渐变编辑器
 
@@ -298,7 +299,8 @@
 - ✅ 完成所有核心 ObjectView 组件（27个）
 - ✅ 完成 OAVFeng3dPreView - 3D预览组件
 - ✅ 完成 MinMaxCurveView、MinMaxGradientView、MinMaxCurveVector3View
-- ⏳ 高级编辑器组件（ColorPickerView、MinMaxCurveEditor、GradientEditor）标记为待实现
+- ✅ 完成 ColorPickerView - 弹出式颜色选择器
+- ⏳ 高级编辑器组件（MinMaxCurveEditor、GradientEditor）待实现
 - 📝 统一迁移进度文档，简化文档结构
 
 ### 2024-12-18
