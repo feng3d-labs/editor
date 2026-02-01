@@ -1,0 +1,11 @@
+Design a complete Unity-style web editor interface with:
+1. Top menu bar (File, Edit, Assets, GameObject, Component, Window)
+2. Toolbar (Move, Rotate, Scale tools, Play control buttons)
+3. Left hierarchy panel (Hierarchy, tree structure)
+4. Center 3D scene viewport (with tabs: Scene, Game)
+5. Bottom console panel (Console, Project, with log list)
+6. Right inspector panel (Inspector, property editor)
+
+Use dark theme, dark gray background (#141414), blue accent color (#409EFF).
+All components use Element Plus component library.
+Layout uses resizable split panels.
