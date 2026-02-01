@@ -92,8 +92,6 @@ export * from './ui/assets/ProjectView';
 export * from './ui/assets/AssetFileTemplates';
 export * from './ui/TopView';
 export * from './ui/NavigationView';
-export * from './ui/MainSplitView';
-export * from './ui/MainView';
 export * from './ui/AssetAdapter';
 export * from './ui/LoadingUI';
 export * from './ui/MainUI';

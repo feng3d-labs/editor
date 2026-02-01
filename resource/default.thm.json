@@ -31,9 +31,7 @@
         "editor.MinMaxCurveVector3View": "resource/custom_skins/MinMaxCurveVector3View.exml",
         "editor.RenameTextInput": "resource/custom_skins/RenameTextInput.exml",
         "editor.ComboBox": "resource/custom_skins/ComboBox.exml",
-        "editor.TabView": "resource/custom_skins/TabView.exml",
-        "editor.MainSplitView": "resource/custom_skins/MainSplitView.exml",
-        "editor.MainView": "resource/custom_skins/MainView.exml"
+        "editor.TabView": "resource/custom_skins/TabView.exml"
     },
     "autoGenerateExmlsList": true,
     "exmls": [
@@ -118,8 +116,6 @@
         "resource/custom_skins/NavigationView.exml",
         "resource/custom_skins/ShortCutSetting.exml",
         "resource/custom_skins/ShortCutSettingItemRenderer.exml",
-        "resource/custom_skins/OVFolderAsset.exml",
-        "resource/custom_skins/MainSplitView.exml",
-        "resource/custom_skins/MainView.exml"
+        "resource/custom_skins/OVFolderAsset.exml"
     ]
 }
