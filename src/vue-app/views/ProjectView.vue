@@ -33,7 +33,7 @@
           <el-breadcrumb-item
             v-for="(folder, index) in folderPath"
             :key="folder.asset.assetId"
-            @click="onPathClick(folder)"
+            @click="onPathClick(folder as AssetNode)"
             style="cursor: pointer"
           >
             {{ folder.label }}
@@ -125,13 +125,21 @@ const treeProps = {
 
 // 为树节点添加 id 属性（el-tree 需要）
 // 注意：返回的对象是普通对象，不是 AssetNode 实例，但包含所有 AssetNode 的属性
+// 左边栏仅显示文件夹，过滤掉文件
 const processedTreeData = computed(() => {
   function addId(nodes: AssetNode[]): any[] {
-    return nodes.map((node) => ({
-      ...node,
-      id: node.asset.assetId, // el-tree 的 node-key
-      children: node.children && node.children.length > 0 ? addId(node.children as AssetNode[]) : undefined,
-    }));
+    return nodes.map((node) => {
+      // 只处理文件夹的子节点，过滤掉文件
+      const folderChildren = node.children 
+        ? (node.children as AssetNode[]).filter((child) => child.isDirectory)
+        : [];
+      
+      return {
+        ...node,
+        id: node.asset.assetId, // el-tree 的 node-key
+        children: folderChildren.length > 0 ? addId(folderChildren) : undefined,
+      };
+    });
   }
   return addId(treeData.value as AssetNode[]);
 });
@@ -142,16 +150,19 @@ const filteredFiles = ref<AssetNode[]>([]);
 const includeFilter = ref('');
 const excludeFilter = ref('');
 
-// 文件夹路径
-const folderPath = computed(() => {
+// 文件夹路径（使用 ref 以便在文件夹变化时更新）
+const folderPath = ref<AssetNode[]>([]);
+
+// 更新文件夹路径
+function updateFolderPath() {
   const path: AssetNode[] = [];
   let folder = editorAsset.showFloder;
   while (folder) {
     path.unshift(folder);
     folder = folder.parent;
   }
-  return path;
-});
+  folderPath.value = path;
+}
 
 // 选中的文件路径
 const selectedFilePath = computed(() => {
@@ -211,8 +222,9 @@ function invalidateAssetTree() {
     return;
   }
   
-  const folders = editorAsset.rootFile.getFolderList();
-  treeData.value = folders;
+  // 直接使用根文件夹构建树形结构，避免使用 getFolderList() 导致的扁平化重复显示
+  // processedTreeData 会递归处理并过滤掉文件，只保留文件夹
+  treeData.value = [editorAsset.rootFile];
   
   // 更新当前文件夹的文件列表
   updateFileList();
@@ -295,9 +307,13 @@ function getFileIcon(file: AssetNode): string {
 // 树节点点击
 function onTreeNodeClick(data: any) {
   // data 是 processedTreeData 返回的对象，包含所有 AssetNode 的属性
-  // 但我们需要找到原始的 AssetNode 实例
-  const node = findAssetNodeByAssetId(data.asset?.assetId || data.id);
+  // 使用 editorAsset.getAssetByID 直接获取 AssetNode 实例
+  const assetId = data.asset?.assetId || data.id;
+  if (!assetId) return;
+  
+  const node = editorAsset.getAssetByID(assetId);
   if (node && node.isDirectory) {
+    // 设置显示文件夹，这会触发 watch 更新右侧文件列表
     editorAsset.showFloder = node;
   }
 }
@@ -322,8 +338,11 @@ function findAssetNodeByAssetId(assetId: string): AssetNode | null {
 // 树节点右键
 function onTreeNodeRightClick(event: MouseEvent, data: any) {
   event.preventDefault();
-  // data 是 processedTreeData 返回的对象，需要找到原始的 AssetNode 实例
-  const node = findAssetNodeByAssetId(data.asset?.assetId || data.id);
+  // 使用 editorAsset.getAssetByID 直接获取 AssetNode 实例
+  const assetId = data.asset?.assetId || data.id;
+  if (!assetId) return;
+  
+  const node = editorAsset.getAssetByID(assetId);
   if (node) {
     editorAsset.popupmenu(node);
   }
@@ -451,21 +470,19 @@ function onSelectedObjectsChanged() {
   // 已通过 computed 自动更新
 }
 
-// 监听显示文件夹变化
-watch(
-  () => editorAsset.showFloder,
-  () => {
+// 处理显示文件夹变化
+function onShowFloderChanged() {
+  // 使用 nextTick 确保 editorAsset.showFloder 已经更新
+  nextTick(() => {
+    updateFolderPath(); // 更新文件夹路径
     updateFileList();
     // 更新树节点选中状态
-    nextTick(() => {
-      if (treeRef.value && editorAsset.showFloder) {
-        // 使用 assetId 作为 node-key
-        treeRef.value.setCurrentKey(editorAsset.showFloder.asset.assetId);
-      }
-    });
-  },
-  { immediate: true }
-);
+    if (treeRef.value && editorAsset.showFloder) {
+      // 使用 assetId 作为 node-key
+      treeRef.value.setCurrentKey(editorAsset.showFloder.asset.assetId);
+    }
+  });
+}
 
 // 监听过滤变化
 watch([includeFilter, excludeFilter], () => {
@@ -480,11 +497,20 @@ onMounted(() => {
     invalidateAssettree: invalidateAssetTree, // 使用正确的函数名
   });
   
+  // 监听显示文件夹变化事件（editorAsset.showFloder 不是响应式对象，需要使用事件监听）
+  globalEmitter.on('asset.showFloderChanged', onShowFloderChanged);
+  
   globalEmitter.on('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.on('asset.showAsset', () => {
     // TODO: 处理显示资源
   });
   globalEmitter.on('projectview.invalidateAssettree', invalidateAssetTree);
+  
+  // 初始化时显示当前文件夹内容和路径
+  if (editorAsset.showFloder) {
+    updateFolderPath();
+    onShowFloderChanged();
+  }
 });
 
 onUnmounted(() => {
@@ -498,6 +524,8 @@ onUnmounted(() => {
     editorAsset.rootFile.off('removed', invalidateAssetTree);
   }
   
+  // 移除事件监听
+  globalEmitter.off('asset.showFloderChanged', onShowFloderChanged);
   globalEmitter.off('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.off('asset.showAsset', () => {});
   globalEmitter.off('projectview.invalidateAssettree', invalidateAssetTree);
