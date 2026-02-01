@@ -4,7 +4,7 @@
  */
 
 /* 覆盖 Element Plus 的 CSS 变量，适配深色主题 */
-:root {
+:root[data-theme="dark"] {
   /* 主色调 - 使用编辑器蓝色 */
   --el-color-primary: #007acc;
   --el-color-primary-light-3: #1a8cd8;
@@ -49,150 +49,150 @@
 }
 
 /* 确保 Element Plus 组件在深色背景下正常显示 */
-.el-button {
+html[data-theme="dark"] .el-button {
   background-color: var(--el-bg-color-overlay);
   border-color: var(--el-border-color);
   color: var(--el-text-color-primary);
 }
 
-.el-button:hover {
+html[data-theme="dark"] .el-button:hover {
   background-color: var(--el-fill-color-dark);
   border-color: var(--el-border-color-dark);
 }
 
-.el-input__wrapper {
+html[data-theme="dark"] .el-input__wrapper {
   background-color: var(--el-bg-color-overlay);
   border-color: var(--el-border-color);
 }
 
-.el-input__inner {
+html[data-theme="dark"] .el-input__inner {
   color: var(--el-text-color-primary);
 }
 
-.el-select-dropdown {
+html[data-theme="dark"] .el-select-dropdown {
   background-color: var(--el-bg-color-overlay);
   border-color: var(--el-border-color);
 }
 
-.el-select-dropdown__item {
+html[data-theme="dark"] .el-select-dropdown__item {
   color: var(--el-text-color-primary);
 }
 
-.el-select-dropdown__item:hover {
+html[data-theme="dark"] .el-select-dropdown__item:hover {
   background-color: var(--el-fill-color);
 }
 
 /* 更多 Element Plus 组件的暗色主题样式 */
-.el-tree {
+html[data-theme="dark"] .el-tree {
   background-color: var(--el-bg-color);
   color: var(--el-text-color-primary);
 }
 
-.el-tree-node__content {
+html[data-theme="dark"] .el-tree-node__content {
   color: var(--el-text-color-primary);
 }
 
-.el-tree-node__content:hover {
+html[data-theme="dark"] .el-tree-node__content:hover {
   background-color: var(--el-fill-color);
 }
 
-.el-dialog {
+html[data-theme="dark"] .el-dialog {
   background-color: var(--el-bg-color-overlay);
   border: 1px solid var(--el-border-color);
 }
 
-.el-dialog__header {
+html[data-theme="dark"] .el-dialog__header {
   border-bottom: 1px solid var(--el-border-color);
   color: var(--el-text-color-primary);
 }
 
-.el-dialog__body {
+html[data-theme="dark"] .el-dialog__body {
   color: var(--el-text-color-primary);
 }
 
-.el-drawer {
+html[data-theme="dark"] .el-drawer {
   background-color: var(--el-bg-color-overlay);
 }
 
-.el-drawer__header {
+html[data-theme="dark"] .el-drawer__header {
   border-bottom: 1px solid var(--el-border-color);
   color: var(--el-text-color-primary);
 }
 
-.el-drawer__body {
+html[data-theme="dark"] .el-drawer__body {
   color: var(--el-text-color-primary);
 }
 
-.el-popover {
+html[data-theme="dark"] .el-popover {
   background-color: var(--el-bg-color-overlay);
   border-color: var(--el-border-color);
   color: var(--el-text-color-primary);
 }
 
-.el-tooltip__popper {
+html[data-theme="dark"] .el-tooltip__popper {
   background-color: var(--el-bg-color-overlay);
   color: var(--el-text-color-primary);
   border-color: var(--el-border-color);
 }
 
-.el-message {
+html[data-theme="dark"] .el-message {
   background-color: var(--el-bg-color-overlay);
   border-color: var(--el-border-color);
   color: var(--el-text-color-primary);
 }
 
-.el-notification {
+html[data-theme="dark"] .el-notification {
   background-color: var(--el-bg-color-overlay);
   border-color: var(--el-border-color);
   color: var(--el-text-color-primary);
 }
 
-.el-table {
+html[data-theme="dark"] .el-table {
   background-color: var(--el-bg-color);
   color: var(--el-text-color-primary);
 }
 
-.el-table th {
+html[data-theme="dark"] .el-table th {
   background-color: var(--el-bg-color-overlay);
   color: var(--el-text-color-primary);
   border-color: var(--el-border-color);
 }
 
-.el-table td {
+html[data-theme="dark"] .el-table td {
   border-color: var(--el-border-color);
 }
 
-.el-table--striped .el-table__body tr.el-table__row--striped td {
+html[data-theme="dark"] .el-table--striped .el-table__body tr.el-table__row--striped td {
   background-color: var(--el-fill-color-light);
 }
 
-.el-table--enable-row-hover .el-table__body tr:hover > td {
+html[data-theme="dark"] .el-table--enable-row-hover .el-table__body tr:hover > td {
   background-color: var(--el-fill-color);
 }
 
-.el-menu {
+html[data-theme="dark"] .el-menu {
   background-color: var(--el-bg-color);
   border-color: var(--el-border-color);
 }
 
-.el-menu-item {
+html[data-theme="dark"] .el-menu-item {
   color: var(--el-text-color-primary);
 }
 
-.el-menu-item:hover {
+html[data-theme="dark"] .el-menu-item:hover {
   background-color: var(--el-fill-color);
 }
 
-.el-menu-item.is-active {
+html[data-theme="dark"] .el-menu-item.is-active {
   color: var(--el-color-primary);
   background-color: var(--el-fill-color-dark);
 }
 
-.el-submenu__title {
+html[data-theme="dark"] .el-submenu__title {
   color: var(--el-text-color-primary);
 }
 
-.el-submenu__title:hover {
+html[data-theme="dark"] .el-submenu__title:hover {
   background-color: var(--el-fill-color);
 }
 

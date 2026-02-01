@@ -94,6 +94,9 @@
         </button>
       </div>
     </div>
+    
+    <!-- 设置对话框 -->
+    <SettingsDialog v-model="settingsDialogVisible" />
   </div>
 </template>
 
@@ -107,6 +110,7 @@ import { showQRCode } from '../../utils/QRCode';
 import { useEditorStore } from '../stores/editorStore';
 import { closeRunWindow, setRunWindow, getRunWindow } from '../utils/runWindowManager';
 import Icon from './Icon.vue';
+import SettingsDialog from './SettingsDialog.vue';
 
 const editorStore = useEditorStore();
 
@@ -114,6 +118,9 @@ const editorStore = useEditorStore();
 const toolType = computed(() => editorStore.toolType);
 const isBaryCenter = computed(() => editorStore.isBaryCenter);
 const isWoldCoordinate = computed(() => editorStore.isWoldCoordinate);
+
+// 设置对话框显示状态
+const settingsDialogVisible = ref(false);
 
 // 播放按钮按下状态
 const isPlayPressed = ref(false);
@@ -209,7 +216,7 @@ function onHelpClick() {
 }
 
 function onSettingClick() {
-  window.open('https://feng3d.com/');
+  settingsDialogVisible.value = true;
 }
 
 // 二维码按钮

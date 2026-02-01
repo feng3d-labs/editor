@@ -18,12 +18,14 @@ loadIconSets().catch((error) => {
   console.error('[Iconify] 预加载图标集失败:', error);
 });
 
-// 引入全局暗色主题（必须在最前面）
+// 引入全局主题样式（暗色和亮色）
 import './styles/global-dark-theme.css';
+import './styles/global-light-theme.css';
 // 引入 Element Plus 样式
 import 'element-plus/dist/index.css';
-// 引入自定义深色主题
+// 引入 Element Plus 主题样式（暗色和亮色）
 import './styles/element-plus-theme.css';
+import './styles/element-plus-light-theme.css';
 
 // 注册 Vue 版本的 objectview 组件
 import { registerObjectViewComponents } from './objectview/registerComponents';
@@ -38,6 +40,13 @@ app.use(pinia);
 
 // 挂载到 DOM
 app.mount('#vue-app');
+
+// 初始化主题 Store，应用保存的主题或默认主题
+// 在应用挂载后应用主题，确保 DOM 已准备好
+import { useThemeStore } from './stores/themeStore';
+const themeStore = useThemeStore();
+// 确保主题在应用挂载后正确应用
+themeStore.applyTheme(themeStore.currentTheme);
 
 // 导出 pinia 实例，确保在需要时可以访问
 export { pinia };
