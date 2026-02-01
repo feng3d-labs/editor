@@ -40,25 +40,25 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 
-/* 选择文本样式 - 亮色主题 */
+/* 选择文本样式 - 亮色主题（使用设计令牌主色） */
 html[data-theme="light"] ::selection {
-  background-color: #007acc;
+  background-color: #409EFF;
   color: #ffffff;
 }
 
 html[data-theme="light"] ::-moz-selection {
-  background-color: #007acc;
+  background-color: #409EFF;
   color: #ffffff;
 }
 
-/* 链接样式 - 亮色主题 */
+/* 链接样式 - 亮色主题（使用设计令牌主色） */
 html[data-theme="light"] a {
-  color: #007acc;
+  color: #409EFF;
   text-decoration: none;
 }
 
 html[data-theme="light"] a:hover {
-  color: #005a9e;
+  color: #66b1ff;
   text-decoration: underline;
 }
 
@@ -74,8 +74,8 @@ html[data-theme="light"] select {
 html[data-theme="light"] input:focus,
 html[data-theme="light"] textarea:focus,
 html[data-theme="light"] select:focus {
-  outline: 1px solid #007acc;
-  border-color: #007acc;
+  outline: 1px solid #409EFF;
+  border-color: #409EFF;
 }
 
 /* 确保所有容器默认使用亮色背景 */

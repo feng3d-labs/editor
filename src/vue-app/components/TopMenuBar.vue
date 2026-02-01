@@ -1,20 +1,21 @@
 <template>
   <div class="top-menu-bar">
-    <!-- 菜单项列表 -->
-    <div class="menu-items">
-      <div
+    <!-- 使用 Element Plus Menu 组件 -->
+    <el-menu
+      mode="horizontal"
+      :default-active="activeMenuIndex >= 0 ? String(activeMenuIndex) : ''"
+      class="top-menu-bar-menu"
+      @select="handleMenuSelect"
+    >
+      <el-menu-item
         v-for="(item, index) in menuItems"
         :key="index"
-        :class="['menu-item', {
-          'menu-item-active': activeMenuIndex === index
-        }]"
+        :index="String(index)"
         @click="onMenuItemClick(item, index, $event)"
-        @mouseenter="onMenuItemMouseEnter(index)"
-        @mouseleave="onMenuItemMouseLeave"
       >
         <span class="menu-item-label">{{ item.label }}</span>
-      </div>
-    </div>
+      </el-menu-item>
+    </el-menu>
     
     <!-- 项目名称（居中显示） -->
     <div class="project-name">
@@ -79,14 +80,10 @@ function onMenuItemClick(item: MenuItem, index: number, event: MouseEvent) {
   activeMenuIndex.value = index;
 }
 
-// 菜单项鼠标进入
-function onMenuItemMouseEnter(index: number) {
-  // 可以在这里添加悬停效果
-}
-
-// 菜单项鼠标离开
-function onMenuItemMouseLeave() {
-  // 可以在这里移除悬停效果
+// Element Plus Menu 选择处理
+function handleMenuSelect(index: string) {
+  // Element Plus Menu 会自动处理选中状态
+  // 这里可以添加额外的逻辑
 }
 
 // 监听菜单关闭事件
@@ -122,7 +119,7 @@ onUnmounted(() => {
 .top-menu-bar {
   position: relative;
   width: 100%;
-  height: 22px;
+  height: 32px;
   background-color: transparent;
   display: flex;
   align-items: center;
@@ -131,36 +128,33 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
-.menu-items {
-  display: flex;
-  align-items: center;
+/* Element Plus Menu 样式覆盖 */
+.top-menu-bar-menu {
+  background-color: transparent;
+  border-bottom: none;
   height: 100%;
-  gap: 0;
 }
 
-.menu-item {
-  position: relative;
+.top-menu-bar-menu :deep(.el-menu-item) {
+  height: 32px;
+  line-height: 32px;
   padding: 0 12px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  user-select: none;
-  color: var(--el-text-color-primary, #000000);
   font-size: 12px;
-  min-width: 40px;
-  transition: background-color 0.15s ease;
-  border-radius: 2px;
-  margin: 0 2px;
+  color: var(--el-text-color-primary);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
 }
 
-.menu-item:hover {
-  background-color: var(--el-fill-color-light, #f5f7fa);
+.top-menu-bar-menu :deep(.el-menu-item:hover) {
+  background-color: transparent;
+  color: var(--el-color-primary);
+  border-bottom-color: var(--el-color-primary);
 }
 
-.menu-item-active {
-  background-color: var(--el-color-primary-light-9, #ecf5ff);
+.top-menu-bar-menu :deep(.el-menu-item.is-active) {
+  color: var(--el-color-primary);
+  border-bottom-color: var(--el-color-primary);
+  background-color: transparent;
 }
 
 .menu-item-label {
@@ -172,7 +166,7 @@ onUnmounted(() => {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--el-text-color-primary, #000000);
+  color: var(--el-text-color-primary);
   font-size: 12px;
   pointer-events: none;
   user-select: none;

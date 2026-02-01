@@ -1,98 +1,137 @@
 <template>
   <div class="top-tool-bar">
-    <!-- 左侧：工具组 -->
+    <!-- 左侧：工具组 - 使用 Element Plus ButtonGroup -->
     <div class="tool-section tool-section-left">
       <!-- 工具组：移动、旋转、缩放 -->
-      <div class="tool-group">
-        <button
-          :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.MOVE }]"
+      <el-button-group>
+        <el-button
+          :type="toolType === MRSToolType.MOVE ? 'primary' : 'default'"
+          :plain="toolType !== MRSToolType.MOVE"
+          size="small"
           @click="onMoveClick"
           :title="t('toolbar.move')"
+          class="tool-button"
         >
-          <Icon icon="mdi:cursor-move" :size="18" />
-        </button>
-        <button
-          :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.ROTATION }]"
+          <Icon icon="mdi:cursor-move" :size="16" />
+        </el-button>
+        <el-button
+          :type="toolType === MRSToolType.ROTATION ? 'primary' : 'default'"
+          :plain="toolType !== MRSToolType.ROTATION"
+          size="small"
           @click="onRotateClick"
           :title="t('toolbar.rotate')"
+          class="tool-button"
         >
-          <Icon icon="mdi:rotate-3d-variant" :size="18" />
-        </button>
-        <button
-          :class="['tool-button', 'toggle-button', { 'is-selected': toolType === MRSToolType.SCALE }]"
+          <Icon icon="mdi:rotate-3d-variant" :size="16" />
+        </el-button>
+        <el-button
+          :type="toolType === MRSToolType.SCALE ? 'primary' : 'default'"
+          :plain="toolType !== MRSToolType.SCALE"
+          size="small"
           @click="onScaleClick"
           :title="t('toolbar.scale')"
+          class="tool-button"
         >
-          <Icon icon="mdi:arrow-expand-all" :size="18" />
-        </button>
-      </div>
+          <Icon icon="mdi:arrow-expand-all" :size="16" />
+        </el-button>
+      </el-button-group>
       
       <!-- 分隔线 -->
-      <div class="divider"></div>
+      <el-divider direction="vertical" class="divider" />
       
       <!-- 工具组：Pivot/Center、Local/World -->
-      <div class="tool-group">
-        <button
-          :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': isBaryCenter }]"
+      <el-button-group>
+        <el-button
+          :type="isBaryCenter ? 'primary' : 'default'"
+          :plain="!isBaryCenter"
+          size="small"
           @click="onCenterClick"
           :title="t('toolbar.pivotCenter')"
+          class="tool-button"
         >
-          <Icon v-if="!isBaryCenter" icon="mdi:crosshairs-gps" :size="18" />
-          <Icon v-else icon="mdi:vector-point" :size="18" />
-        </button>
-        <button
-          :class="['tool-button', 'toggle-button', 'center-world-button', { 'is-selected': !isWoldCoordinate }]"
+          <Icon v-if="!isBaryCenter" icon="mdi:crosshairs-gps" :size="16" />
+          <Icon v-else icon="mdi:vector-point" :size="16" />
+        </el-button>
+        <el-button
+          :type="!isWoldCoordinate ? 'primary' : 'default'"
+          :plain="isWoldCoordinate"
+          size="small"
           @click="onWorldClick"
           :title="t('toolbar.localWorld')"
+          class="tool-button"
         >
-          <Icon v-if="isWoldCoordinate" icon="mdi:earth" :size="18" />
-          <Icon v-else icon="mdi:axis-arrow" :size="18" />
-        </button>
-      </div>
+          <Icon v-if="isWoldCoordinate" icon="mdi:earth" :size="16" />
+          <Icon v-else icon="mdi:axis-arrow" :size="16" />
+        </el-button>
+      </el-button-group>
     </div>
 
-    <!-- 中间：播放按钮 -->
+    <!-- 中间：播放按钮 - 使用 Element Plus Button -->
     <div class="tool-section tool-section-center">
       <div class="play-button-container">
-        <button
-          class="tool-button play-button"
+        <el-button
+          type="primary"
+          size="small"
           @mousedown.stop="handlePlayMouseDown"
           @mouseup.stop="handlePlayMouseUp"
           @mouseleave="isPlayPressed = false"
           :title="t('toolbar.play')"
-          type="button"
+          class="play-button"
         >
-          <Icon icon="mdi:play" :size="18" />
-        </button>
+          <Icon icon="mdi:play" :size="16" style="margin-right: 4px;" />
+          <span>{{ t('toolbar.play') }}</span>
+        </el-button>
+        <el-button
+          size="small"
+          @click="onPauseClick"
+          :title="t('toolbar.pause')"
+          class="tool-button"
+        >
+          <Icon icon="mdi:pause" :size="16" />
+        </el-button>
+        <el-button
+          size="small"
+          @click="onStepClick"
+          :title="t('toolbar.step')"
+          class="tool-button"
+        >
+          <Icon icon="mdi:step-forward" :size="16" />
+        </el-button>
       </div>
     </div>
 
-    <!-- 右侧：工具按钮 -->
+    <!-- 右侧：工具按钮 - 使用 Element Plus Button -->
     <div class="tool-section tool-section-right">
       <!-- 工具组：帮助、二维码、设置 -->
-      <div class="tool-group">
-        <button
-          class="tool-button"
+      <el-button-group>
+        <el-button
+          size="small"
+          :icon="null"
           @click="onHelpClick"
           :title="t('toolbar.help')"
-        >
-          <Icon icon="mdi:help-circle" :size="18" />
-        </button>
-        <button
           class="tool-button"
+        >
+          <Icon icon="mdi:help-circle" :size="16" />
+        </el-button>
+        <el-button
+          size="small"
+          :icon="null"
           @click="onQRCodeClick"
           :title="t('toolbar.qrcode')"
-        >
-          <Icon icon="mdi:qrcode" :size="18" />
-        </button>
-        <button
           class="tool-button"
+        >
+          <Icon icon="mdi:qrcode" :size="16" />
+        </el-button>
+        <el-button
+          size="small"
+          :icon="null"
           @click="onSettingClick"
           :title="t('toolbar.settings')"
+          class="tool-button"
         >
-          <Icon icon="mdi:cog" :size="18" />
-        </button>
-      </div>
+          <Icon icon="mdi:cog" :size="16" />
+        </el-button>
+      </el-button-group>
     </div>
     
     <!-- 设置对话框 -->
@@ -212,6 +251,17 @@ async function onPlayClick() {
   }, 50);
 }
 
+// 暂停和步进按钮（新增）
+function onPauseClick() {
+  // TODO: 实现暂停功能
+  console.log('Pause clicked');
+}
+
+function onStepClick() {
+  // TODO: 实现步进功能
+  console.log('Step clicked');
+}
+
 // 帮助和设置按钮
 function onHelpClick() {
   window.open('https://feng3d.com/');
@@ -287,20 +337,10 @@ onUnmounted(() => {
   justify-content: flex-end;
 }
 
-/* 分隔线 */
+/* Element Plus Divider 样式覆盖 */
 .divider {
-  width: 1px;
   height: 16px;
-  background-color: var(--el-border-color, #e4e7ed);
-  flex-shrink: 0;
-}
-
-/* 工具组 */
-.tool-group {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  flex-wrap: nowrap;
+  margin: 0 8px;
 }
 
 /* 播放按钮容器 */
@@ -308,40 +348,21 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
 }
 
-/* 工具按钮 */
+/* Element Plus Button 样式覆盖 */
 .tool-button {
-  position: relative;
-  min-width: 22px;
-  min-height: 22px;
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 4px 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-  z-index: 1002;
-  pointer-events: auto;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  border-radius: 2px;
-  transition: background-color 0.15s ease;
 }
 
-.tool-button:hover {
-  background-color: var(--el-fill-color-light, #f5f7fa);
-}
-
-.tool-button:active {
-  background-color: var(--el-fill-color, #e4e7ed);
-}
-
-.tool-button.is-selected {
-  background-color: var(--el-color-primary-light-9, #ecf5ff);
+.tool-button :deep(.el-icon) {
+  margin: 0;
 }
 
 .play-button {
@@ -350,26 +371,23 @@ onUnmounted(() => {
   position: relative;
 }
 
-.center-world-button {
-  display: inline-flex !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  vertical-align: top !important;
+/* Element Plus ButtonGroup 样式 */
+.tool-section :deep(.el-button-group) {
+  display: inline-flex;
+  gap: 0;
 }
 
-/* 图标样式 */
-.tool-button :deep(svg) {
-  width: 100%;
-  height: 100%;
-  display: block;
-  transition: color 0.15s ease;
+.tool-section :deep(.el-button-group .el-button) {
+  border-radius: 0;
 }
 
-.tool-button:hover :deep(svg) {
-  color: var(--el-color-primary, #409eff);
+.tool-section :deep(.el-button-group .el-button:first-child) {
+  border-top-left-radius: var(--el-border-radius-base);
+  border-bottom-left-radius: var(--el-border-radius-base);
 }
 
-.tool-button.is-selected :deep(svg) {
-  color: var(--el-color-primary, #409eff);
+.tool-section :deep(.el-button-group .el-button:last-child) {
+  border-top-right-radius: var(--el-border-radius-base);
+  border-bottom-right-radius: var(--el-border-radius-base);
 }
 </style>

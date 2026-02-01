@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "projectName": "feng3d-editor",
-  "projectId": "3ae2cbec-1ed8-4014-ba02-122e154bd698",
-  "projectUrl": "https://app.superdesign.dev/teams/1a3049b7-7316-4ff4-b35e-e4608e105e60/projects/3ae2cbec-1ed8-4014-ba02-122e154bd698",
+  "projectId": "0b00d6da-2227-4999-8956-90d15b69e0b2",
+  "projectUrl": "https://app.superdesign.dev/teams/1a3049b7-7316-4ff4-b35e-e4608e105e60/projects/0b00d6da-2227-4999-8956-90d15b69e0b2",
   "designSystem": {
     "name": "feng3d-editor-design",
     "version": "0.6.0"
@@ -40,5 +40,13 @@
     "format": "vue",
     "includeStyles": true,
     "includeTypes": true
+  },
+  "currentDesign": {
+    "draftId": "cb2337ab-df4d-4033-aa46-f94e1dcb5dcb",
+    "title": "Unity Web Editor",
+    "description": "A professional web-based Unity editor interface featuring a dark theme with blue accents",
+    "previewUrl": "https://p.superdesign.dev/draft/cb2337ab-df4d-4033-aa46-f94e1dcb5dcb",
+    "applied": true,
+    "appliedDate": "2026-02-01"
   }
 }
