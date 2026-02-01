@@ -1,0 +1,14 @@
+# SuperDesign 生成的设计文件
+# 保留配置文件，但忽略自动生成的设计文件
+designs/*
+!designs/.gitkeep
+components/*
+!components/.gitkeep
+assets/*
+!assets/.gitkeep
+
+# 临时文件
+*.tmp
+*.bak
+*.swp
+*~

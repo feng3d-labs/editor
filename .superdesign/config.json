@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "projectName": "feng3d-editor",
+  "projectId": "3ae2cbec-1ed8-4014-ba02-122e154bd698",
+  "projectUrl": "https://app.superdesign.dev/teams/1a3049b7-7316-4ff4-b35e-e4608e105e60/projects/3ae2cbec-1ed8-4014-ba02-122e154bd698",
+  "designSystem": {
+    "name": "feng3d-editor-design",
+    "version": "0.6.0"
+  },
+  "uiFramework": "vue3",
+  "componentLibrary": "element-plus",
+  "theme": {
+    "default": "dark",
+    "availableThemes": ["dark", "light"]
+  },
+  "paths": {
+    "components": "src/vue-app/components",
+    "layouts": "src/vue-app/layouts",
+    "views": "src/vue-app/views",
+    "styles": "src/vue-app/styles"
+  },
+  "designTokens": {
+    "colors": {
+      "primary": "#409EFF",
+      "success": "#67C23A",
+      "warning": "#E6A23C",
+      "danger": "#F56C6C",
+      "info": "#909399"
+    },
+    "spacing": {
+      "unit": 8,
+      "scale": [4, 8, 12, 16, 24, 32, 48, 64]
+    },
+    "typography": {
+      "fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "fontSizes": [12, 14, 16, 18, 20, 24, 28, 32]
+    }
+  },
+  "export": {
+    "format": "vue",
+    "includeStyles": true,
+    "includeTypes": true
+  }
+}

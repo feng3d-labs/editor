@@ -157,3 +157,23 @@
 - 没有正确修复问题时重新让修复时，尽量还原上次修改的内容后再进行修复
 - 每次完成代码修改后，必须检查并处理编译错误（使用 ReadLints 工具或运行测试）
 - 确保所有测试通过后再告知用户任务完成
+
+## SuperDesign 设计规范
+
+- **设计工具**: 使用 SuperDesign (https://app.superdesign.dev/) 进行 UI 设计
+- **设计文件位置**: 所有 SuperDesign 生成的设计文件保存在 `.superdesign/` 目录
+- **组件导出**: SuperDesign 生成的组件应导出到对应的项目目录：
+  - 组件 → `src/vue-app/components/`
+  - 布局 → `src/vue-app/layouts/`
+  - 视图 → `src/vue-app/views/`
+  - 样式 → `src/vue-app/styles/`
+- **设计规范**:
+  - 遵循项目的设计系统配置（`.superdesign/config.json`）
+  - 使用 Element Plus 组件库
+  - 支持暗色和亮色主题
+  - 遵循项目的颜色、间距、字体系统
+- **代码集成**:
+  - 导出的组件必须遵循项目的代码规范
+  - 确保组件与现有代码库兼容
+  - 导出的代码需要经过代码审查
+  - 样式需要适配项目的主题系统
