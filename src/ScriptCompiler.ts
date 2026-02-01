@@ -3,6 +3,7 @@
 
 import { globalEmitter, IEvent, ScriptAsset, TextAsset, ticker } from 'feng3d';
 import { parse } from 'jsonc-parser';
+import { ElMessage } from 'element-plus';
 import { editorRS } from './assets/EditorRS';
 import { nativeAPI } from './assets/NativeRequire';
 import { EditorData } from './global/EditorData';
@@ -126,7 +127,7 @@ export class ScriptCompiler
             console.log(`Error from compilation: ${e}  ${e.stack || ''}`);
         }
 
-        globalEmitter.emit('message', `编译完成！`);
+        ElMessage({ message: '编译完成！', type: 'info' });
 
         return output;
     }

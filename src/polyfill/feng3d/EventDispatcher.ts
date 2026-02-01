@@ -61,16 +61,6 @@ declare global
         'script.gettslibs': { callback: (tslibs: { path: string, code: string }[]) => void }
 
         /**
-         * 提示信息
-         */
-        'message': string;
-
-        /**
-         * 错误信息
-         */
-        'message.error': string;
-
-        /**
          * 显示工具提示
          */
         'tooltip.show': { text: string; x: number; y: number };
