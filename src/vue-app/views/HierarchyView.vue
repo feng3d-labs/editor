@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onUnmounted, nextTick, Teleport } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted, nextTick, Teleport, toRaw } from 'vue';
 import { globalEmitter, watcher, shortcut, GameObject, serialization, windowEventProxy } from 'feng3d';
 import { hierarchy } from '../../feng3d/hierarchy/Hierarchy';
 import { HierarchyNode } from '../../feng3d/hierarchy/HierarchyNode';
@@ -147,6 +147,25 @@ const submenuVisible = ref(false);
 const currentSubmenu = ref<ContextMenuItem[]>([]);
 const submenuPosition = ref({ x: 0, y: 0 });
 const submenuTimer = ref<number | null>(null);
+
+// 获取原始对象的辅助函数（避免 Vue Proxy 干扰）
+function getRawObject<T>(obj: T): T {
+  if (!obj) return obj;
+  
+  // 检查是否是 Vue Proxy（通过检查是否有 __v_raw 属性）
+  const proxy = obj as any;
+  if (proxy && typeof proxy === 'object' && '__v_raw' in proxy) {
+    return proxy.__v_raw;
+  }
+  
+  // 使用 Vue 的 toRaw 函数
+  try {
+    return toRaw(obj);
+  } catch (e) {
+    // 如果 toRaw 失败，返回原对象
+    return obj;
+  }
+}
 
 // 更新层级树
 function updateHierarchyTree() {
@@ -433,36 +452,45 @@ function getNodeIcon(data: any): string {
 
 // 树节点点击
 function onNodeClick(data: any) {
-  const node = data as HierarchyNode;
-  if (node && node.gameobject) {
-    editorStore.selectObject(node.gameobject);
+  try {
+    // data 可能是转换后的对象，需要通过 gameobject 获取真正的节点
+    if (data && data.gameobject) {
+      editorStore.selectObject(data.gameobject);
+    }
+  } catch (error) {
+    console.error('HierarchyView: 节点点击失败', error);
   }
 }
 
 // 树节点双击
 function onNodeDoubleClick(data: any) {
-  const node = data as HierarchyNode;
-  if (node && node.gameobject) {
-    shortcut.emit('lookToSelectedGameObject');
+  try {
+    // data 可能是转换后的对象，需要通过 gameobject 获取真正的节点
+    if (data && data.gameobject) {
+      shortcut.emit('lookToSelectedGameObject');
+    }
+  } catch (error) {
+    console.error('HierarchyView: 节点双击失败', error);
   }
 }
 
 // 树节点右键
 function onNodeRightClick(event: MouseEvent, data: any) {
-  event.preventDefault();
-  event.stopPropagation();
-  
-  const node = data as HierarchyNode;
-  if (!node || !node.gameobject) return;
-  
-  // 选中节点
-  editorStore.selectObject(node.gameobject);
+  try {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // data 可能是转换后的对象，需要通过 gameobject 获取真正的节点
+    if (!data || !data.gameobject) return;
+    
+    // 选中节点
+    editorStore.selectObject(data.gameobject);
   
   // 构建右键菜单
   const menus: any[] = [];
   
   // scene 无法删除
-  if (node.gameobject.scene.gameObject !== node.gameobject) {
+  if (data.gameobject.scene.gameObject !== data.gameobject) {
     menus.push(
       {
         label: t('contextMenu.copy'),
@@ -480,7 +508,7 @@ function onNodeRightClick(event: MouseEvent, data: any) {
           
           const newGameObjects = objects.map((v) => serialization.clone(v));
           newGameObjects.forEach((v) => {
-            node.gameobject.parent.addChild(v);
+            data.gameobject.parent.addChild(v);
           });
           editorStore.selectMultiObject(newGameObjects);
           
@@ -518,8 +546,8 @@ function onNodeRightClick(event: MouseEvent, data: any) {
       {
         label: t('contextMenu.delete'),
         click: () => {
-          node.gameobject.parent.removeChild(node.gameobject);
-          const index = editorStore.selectedObjects.indexOf(node.gameobject);
+          data.gameobject.parent.removeChild(data.gameobject);
+          const index = editorStore.selectedObjects.indexOf(data.gameobject);
           if (index !== -1) {
             const selectedObjects = [...editorStore.selectedObjects];
             selectedObjects.splice(index, 1);
@@ -552,6 +580,9 @@ function onNodeRightClick(event: MouseEvent, data: any) {
       console.warn('菜单项为空，不显示菜单');
     }
   });
+  } catch (error) {
+    console.error('HierarchyView: 节点右键失败', error);
+  }
 }
 
 // 树列表点击（空白处）
@@ -775,12 +806,12 @@ let dragSourceNode: HierarchyNode | null = null;
 
 // 判断节点是否允许拖拽
 function allowDrag(node: any): boolean {
-  const hierarchyNode = node.data as HierarchyNode;
-  if (!hierarchyNode || !hierarchyNode.gameobject) {
+  const data = node.data;
+  if (!data || !data.gameobject) {
     return false;
   }
   // 场景根节点不允许拖拽
-  if (hierarchyNode.gameobject.scene && hierarchyNode.gameobject.scene.gameObject === hierarchyNode.gameobject) {
+  if (data.gameobject.scene && data.gameobject.scene.gameObject === data.gameobject) {
     return false;
   }
   return true;
@@ -788,20 +819,20 @@ function allowDrag(node: any): boolean {
 
 // 判断是否允许放置
 function allowDrop(draggingNode: any, dropNode: any, type: 'prev' | 'inner' | 'next'): boolean {
-  const sourceNode = draggingNode.data as HierarchyNode;
-  const targetNode = dropNode.data as HierarchyNode;
+  const sourceData = draggingNode.data;
+  const targetData = dropNode.data;
   
-  if (!sourceNode || !targetNode || !sourceNode.gameobject || !targetNode.gameobject) {
+  if (!sourceData || !targetData || !sourceData.gameobject || !targetData.gameobject) {
     return false;
   }
   
   // 场景根节点不允许作为目标
-  if (targetNode.gameobject.scene && targetNode.gameobject.scene.gameObject === targetNode.gameobject) {
+  if (targetData.gameobject.scene && targetData.gameobject.scene.gameObject === targetData.gameobject) {
     return false;
   }
   
   // 不能拖拽到自己或自己的子节点中
-  if (sourceNode.gameobject === targetNode.gameobject || sourceNode.gameobject.contains(targetNode.gameobject)) {
+  if (sourceData.gameobject === targetData.gameobject || sourceData.gameobject.contains(targetData.gameobject)) {
     return false;
   }
   
@@ -811,14 +842,32 @@ function allowDrop(draggingNode: any, dropNode: any, type: 'prev' | 'inner' | 'n
 
 // 节点拖拽开始
 function onNodeDragStart(node: any) {
-  const hierarchyNode = node.data as HierarchyNode;
-  if (!hierarchyNode || !hierarchyNode.gameobject) {
-    return;
+  try {
+    const data = node.data;
+    if (!data || !data.gameobject) {
+      return;
+    }
+    
+    // 获取原始 gameobject（不是 Vue Proxy）
+    const rawGameObject = getRawObject(data.gameobject);
+    
+    // 通过 gameobject 获取真正的 HierarchyNode 实例
+    // 因为 convertNode 创建的是普通对象，方法会丢失
+    const hierarchyNode = hierarchy.getNode(rawGameObject);
+    if (!hierarchyNode) {
+      console.warn('HierarchyView: 无法找到 HierarchyNode 实例', rawGameObject);
+      return;
+    }
+    
+    dragSourceNode = hierarchyNode;
+    dragData = new DragData();
+    hierarchyNode.setdargSource(dragData);
+  } catch (error) {
+    console.error('HierarchyView: 拖拽开始失败', error);
+    // 清理状态，避免后续操作出错
+    dragSourceNode = null;
+    dragData = null;
   }
-  
-  dragSourceNode = hierarchyNode;
-  dragData = new DragData();
-  hierarchyNode.setdargSource(dragData);
 }
 
 // 节点拖拽悬停
@@ -833,28 +882,42 @@ function onNodeDragLeave(node: any) {
 
 // 节点拖拽放置
 function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner' | 'next', event: DragEvent) {
-  event.preventDefault();
-  event.stopPropagation();
-  
-  if (!dragData || !dropNode) {
-    return;
+  try {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (!dragData || !dropNode) {
+      return;
+    }
+    
+    const targetData = dropNode.data;
+    if (!targetData || !targetData.gameobject) {
+      return;
+    }
+    
+    // 获取原始 gameobject（不是 Vue Proxy）
+    const rawGameObject = getRawObject(targetData.gameobject);
+    
+    // 通过 gameobject 获取真正的 HierarchyNode 实例
+    const targetNode = hierarchy.getNode(rawGameObject);
+    if (!targetNode) {
+      console.warn('HierarchyView: 无法找到目标 HierarchyNode 实例', rawGameObject);
+      return;
+    }
+    
+    // 只处理拖拽到节点内部的情况
+    if (dropType === 'inner') {
+      targetNode.acceptDragDrop(dragData);
+      // 触发层级树更新
+      invalidHierarchy();
+    }
+  } catch (error) {
+    console.error('HierarchyView: 拖拽放置失败', error);
+  } finally {
+    // 清理拖拽状态
+    dragData = null;
+    dragSourceNode = null;
   }
-  
-  const targetNode = dropNode.data as HierarchyNode;
-  if (!targetNode || !targetNode.gameobject) {
-    return;
-  }
-  
-  // 只处理拖拽到节点内部的情况
-  if (dropType === 'inner') {
-    targetNode.acceptDragDrop(dragData);
-    // 触发层级树更新
-    invalidHierarchy();
-  }
-  
-  // 清理拖拽状态
-  dragData = null;
-  dragSourceNode = null;
 }
 </script>
 

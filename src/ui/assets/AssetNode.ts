@@ -273,6 +273,25 @@ export class AssetNode<T extends AssetNodeEventMap = AssetNodeEventMap> extends 
 
         dragdata.getDragData('assetNodes').forEach(async (v) =>
         {
+            // 确保资源的 meta 对象存在，避免在 write 时出错
+            if (!v.asset.meta) {
+                // 如果 meta 不存在，尝试读取资源以初始化 meta
+                try {
+                    await editorRS.readAsset(v.asset.assetId);
+                } catch (error) {
+                    console.error('AssetNode: 读取资源失败', error);
+                    // 如果读取失败，初始化一个基本的 meta 对象
+                    if (!v.asset.meta) {
+                        v.asset.meta = {
+                            guid: v.asset.assetId,
+                            mtimeMs: Date.now(),
+                            birthtimeMs: Date.now(),
+                            assetType: v.asset.assetType
+                        } as any;
+                    }
+                }
+            }
+            
             await editorRS.moveAsset(v.asset, folder);
             this.addChild(v);
         });

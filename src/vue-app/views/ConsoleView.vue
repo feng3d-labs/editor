@@ -7,12 +7,13 @@
           <Icon icon="mdi:delete-outline" :size="16" style="margin-right: 4px" />
           {{ t('console.clear') }}
         </el-button>
-        <el-button size="small" text @click="toggleAutoScroll" :type="autoScroll ? 'primary' : 'default'" :title="t('console.autoScroll')">
+        <el-button size="small" text @click="toggleAutoScroll" :type="autoScroll ? 'primary' : 'default'"
+          :title="t('console.autoScroll')">
           <Icon icon="mdi:arrow-down" :size="16" style="margin-right: 4px" />
           {{ t('console.autoScroll') }}
         </el-button>
       </el-button-group>
-      
+
       <div class="console-filter">
         <el-checkbox v-model="showLog" size="small">{{ t('console.info') }}</el-checkbox>
         <el-checkbox v-model="showWarn" size="small">{{ t('console.warning') }}</el-checkbox>
@@ -22,11 +23,7 @@
 
     <!-- 日志内容区域 -->
     <div ref="logContainerRef" class="console-content" @scroll="onScroll">
-      <div
-        v-for="(log, index) in filteredLogs"
-        :key="index"
-        :class="['console-log-item', `log-${log.type}`]"
-      >
+      <div v-for="(log, index) in filteredLogs" :key="index" :class="['console-log-item', `log-${log.type}`]">
         <span class="log-time">{{ formatTime(log.timestamp) }}</span>
         <span class="log-type">{{ log.type.toUpperCase() }}</span>
         <span class="log-message">{{ log.message }}</span>
@@ -40,15 +37,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue';
-import { useI18n } from '../composables/useI18n';
+import { serialization } from 'feng3d';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import Icon from '../components/Icon.vue';
+import { useI18n } from '../composables/useI18n';
 
 // 日志类型
 type LogType = 'log' | 'warn' | 'error' | 'info';
 
 // 日志项接口
-interface LogItem {
+interface LogItem
+{
   type: LogType;
   message: string;
   timestamp: number;
@@ -66,8 +65,10 @@ const showError = ref(true);
 const logContainerRef = ref<HTMLElement>();
 
 // 过滤后的日志
-const filteredLogs = computed(() => {
-  return logs.value.filter(log => {
+const filteredLogs = computed(() =>
+{
+  return logs.value.filter(log =>
+  {
     if (log.type === 'log' || log.type === 'info') return showLog.value;
     if (log.type === 'warn') return showWarn.value;
     if (log.type === 'error') return showError.value;
@@ -76,71 +77,131 @@ const filteredLogs = computed(() => {
 });
 
 // 添加日志
-function addLog(type: LogType, message: string, stack?: string) {
+function addLog(type: LogType, message: string, stack?: string)
+{
   logs.value.push({
     type,
     message: String(message),
     timestamp: Date.now(),
     stack,
   });
-  
+
   // 限制日志数量，避免内存溢出
-  if (logs.value.length > 1000) {
+  if (logs.value.length > 1000)
+  {
     logs.value.shift();
   }
-  
+
   // 自动滚动到底部
-  if (autoScroll.value) {
-    nextTick(() => {
+  if (autoScroll.value)
+  {
+    nextTick(() =>
+    {
       scrollToBottom();
     });
   }
 }
 
 // 清空日志
-function clearLogs() {
+function clearLogs()
+{
   logs.value = [];
 }
 
 // 切换自动滚动
-function toggleAutoScroll() {
+function toggleAutoScroll()
+{
   autoScroll.value = !autoScroll.value;
-  if (autoScroll.value) {
+  if (autoScroll.value)
+  {
     scrollToBottom();
   }
 }
 
 // 滚动到底部
-function scrollToBottom() {
-  if (logContainerRef.value) {
+function scrollToBottom()
+{
+  if (logContainerRef.value)
+  {
     logContainerRef.value.scrollTop = logContainerRef.value.scrollHeight;
   }
 }
 
 // 滚动事件处理
-function onScroll() {
+function onScroll()
+{
   if (!logContainerRef.value) return;
-  
+
   const container = logContainerRef.value;
   const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 10;
-  
+
   // 如果用户手动滚动到底部，恢复自动滚动
-  if (isAtBottom && !autoScroll.value) {
+  if (isAtBottom && !autoScroll.value)
+  {
     autoScroll.value = true;
-  } else if (!isAtBottom && autoScroll.value) {
+  } else if (!isAtBottom && autoScroll.value)
+  {
     // 如果用户向上滚动，暂停自动滚动
     autoScroll.value = false;
   }
 }
 
 // 格式化时间
-function formatTime(timestamp: number): string {
+function formatTime(timestamp: number): string
+{
   const date = new Date(timestamp);
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
   const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
   return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+}
+
+// 安全地序列化对象，处理循环引用
+function safeStringify(obj: any, indent = 2): string
+{
+  if (obj === null || obj === undefined) {
+    return String(obj);
+  }
+  
+  // 处理 Error 对象
+  if (obj instanceof Error) {
+    return `Error: ${obj.message}${obj.stack ? '\n' + obj.stack : ''}`;
+  }
+  
+  // 处理基本类型
+  if (typeof obj !== 'object') {
+    return String(obj);
+  }
+  
+  // 处理循环引用
+  const seen = new WeakSet();
+  
+  try {
+    return JSON.stringify(obj, (key, value) => {
+      // 跳过函数和 undefined
+      if (typeof value === 'function' || value === undefined) {
+        return '[Function]';
+      }
+      
+      // 检查循环引用
+      if (typeof value === 'object' && value !== null) {
+        if (seen.has(value)) {
+          return '[Circular]';
+        }
+        seen.add(value);
+      }
+      
+      return value;
+    }, indent);
+  } catch (error) {
+    // 如果 JSON.stringify 仍然失败，尝试使用 toString
+    try {
+      return String(obj);
+    } catch {
+      return '[Object]';
+    }
+  }
 }
 
 // 拦截 console 方法
@@ -152,41 +213,40 @@ const originalConsole = {
 };
 
 // 重写 console 方法
-function setupConsoleInterception() {
-  console.log = (...args: any[]) => {
+function setupConsoleInterception()
+{
+  console.log = (...args: any[]) =>
+  {
     originalConsole.log(...args);
-    addLog('log', args.map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-    ).join(' '));
+    addLog('log', args.map(arg => safeStringify(arg)).join(' '));
   };
-  
-  console.warn = (...args: any[]) => {
+
+  console.warn = (...args: any[]) =>
+  {
     originalConsole.warn(...args);
-    addLog('warn', args.map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-    ).join(' '));
+    addLog('warn', args.map(arg => safeStringify(arg)).join(' '));
   };
-  
-  console.error = (...args: any[]) => {
+
+  console.error = (...args: any[]) =>
+  {
     originalConsole.error(...args);
     const error = args.find(arg => arg instanceof Error);
     const stack = error ? error.stack : undefined;
-    addLog('error', args.map(arg => 
-      arg instanceof Error ? arg.message : 
-      typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+    addLog('error', args.map(arg =>
+      arg instanceof Error ? arg.message : safeStringify(arg)
     ).join(' '), stack);
   };
-  
-  console.info = (...args: any[]) => {
+
+  console.info = (...args: any[]) =>
+  {
     originalConsole.info(...args);
-    addLog('info', args.map(arg => 
-      typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-    ).join(' '));
+    addLog('info', args.map(arg => safeStringify(arg)).join(' '));
   };
 }
 
 // 恢复原始 console 方法
-function restoreConsole() {
+function restoreConsole()
+{
   console.log = originalConsole.log;
   console.warn = originalConsole.warn;
   console.error = originalConsole.error;
@@ -194,22 +254,27 @@ function restoreConsole() {
 }
 
 // 监听日志变化，自动滚动
-watch(filteredLogs, () => {
-  if (autoScroll.value) {
-    nextTick(() => {
+watch(filteredLogs, () =>
+{
+  if (autoScroll.value)
+  {
+    nextTick(() =>
+    {
       scrollToBottom();
     });
   }
 });
 
-onMounted(() => {
+onMounted(() =>
+{
   setupConsoleInterception();
-  
+
   // 添加欢迎信息
   addLog('info', t('console.started'));
 });
 
-onUnmounted(() => {
+onUnmounted(() =>
+{
   restoreConsole();
 });
 </script>
@@ -339,4 +404,3 @@ onUnmounted(() => {
   background: var(--el-fill-color-darker, #4d4d4d);
 }
 </style>
-

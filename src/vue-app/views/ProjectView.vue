@@ -18,7 +18,10 @@
         @node-drop="onTreeNodeDrop"
       >
         <template #default="{ node, data }">
-          <div class="tree-node">
+          <div 
+            class="tree-node"
+            :class="{ 'tree-node-drag-over': dragOverTreeNode.value === data }"
+          >
             <Icon
               :icon="data.isDirectory ? 'material-symbols:folder' : getFileIcon(data)"
               :size="16"
@@ -88,13 +91,21 @@
         <div
           v-for="(file, index) in filteredFiles"
           :key="(file as AssetNode).asset.assetId || index"
-          :class="['file-item', { 'file-item-selected': isFileSelected(file as AssetNode), 'file-item-dragging': draggingFile === file }]"
+          :class="['file-item', { 
+            'file-item-selected': isFileSelected(file as AssetNode), 
+            'file-item-dragging': draggingFile === file,
+            'file-item-drag-over': dragOverFolder === file && file.isDirectory
+          }]"
           :draggable="true"
           @click.stop="onFileClick(file as AssetNode, $event)"
           @dblclick="onFileDoubleClick(file as AssetNode)"
           @contextmenu.stop="onFileRightClick(file as AssetNode, $event)"
           @dragstart="onFileDragStart(file as AssetNode, $event)"
           @dragend="onFileDragEnd"
+          @dragover.prevent="onFileItemDragOver(file as AssetNode, $event)"
+          @dragenter.prevent="onFileItemDragEnter(file as AssetNode, $event)"
+          @dragleave="onFileItemDragLeave(file as AssetNode, $event)"
+          @drop.prevent="onFileItemDrop(file as AssetNode, $event)"
         >
           <div class="file-item-icon">
             <Icon
@@ -498,6 +509,7 @@ function isFileSelected(file: AssetNode): boolean {
 // 树节点拖拽相关
 let treeDragData: DragData | null = null;
 let treeDragSourceNode: AssetNode | null = null;
+const dragOverTreeNode = ref<any>(null); // 当前拖拽悬停的树节点（响应式）
 
 // 判断树节点是否允许拖拽
 function allowTreeDrag(node: any): boolean {
@@ -510,17 +522,48 @@ function allowTreeDrop(draggingNode: any, dropNode: any, type: 'prev' | 'inner' 
   const sourceNode = draggingNode.data as AssetNode;
   const targetNode = dropNode.data as AssetNode;
   
-  if (!sourceNode || !targetNode || !targetNode.isDirectory) {
+  if (!targetNode || !targetNode.isDirectory) {
+    // 更新高亮状态
+    dragOverTreeNode.value = null;
     return false;
   }
   
-  // 不能拖拽到自己或自己的子节点中
-  if (sourceNode === targetNode || sourceNode.contain(targetNode)) {
+  // 检查是否是从树节点拖拽
+  if (sourceNode) {
+    // 不能拖拽到自己或自己的子节点中
+    if (sourceNode === targetNode || sourceNode.contain(targetNode)) {
+      dragOverTreeNode.value = null;
+      return false;
+    }
+    
+    // 只允许拖拽到节点内部（作为子节点）
+    if (type === 'inner') {
+      dragOverTreeNode.value = dropNode.data; // 更新高亮状态
+      return true;
+    }
+    dragOverTreeNode.value = null;
     return false;
   }
   
-  // 只允许拖拽到节点内部（作为子节点）
-  return type === 'inner';
+  // 检查是否是从文件列表拖拽
+  if (fileDragData && draggingFile) {
+    // 不能拖拽到自己或自己的子文件夹中
+    if (draggingFile === targetNode || draggingFile.contain(targetNode)) {
+      dragOverTreeNode.value = null;
+      return false;
+    }
+    
+    // 只允许拖拽到节点内部（作为子节点）
+    if (type === 'inner') {
+      dragOverTreeNode.value = dropNode.data; // 更新高亮状态
+      return true;
+    }
+    dragOverTreeNode.value = null;
+    return false;
+  }
+  
+  dragOverTreeNode.value = null;
+  return false;
 }
 
 // 树节点拖拽开始
@@ -533,6 +576,46 @@ function onTreeNodeDragStart(node: any) {
   treeDragSourceNode = assetNode;
   treeDragData = new DragData();
   assetNode.setdargSource(treeDragData);
+  dragOverTreeNode.value = null; // 重置拖拽悬停状态
+}
+
+// 树节点拖拽悬停
+function onTreeNodeDragOver(draggingNode: any, dropNode: any, event: DragEvent) {
+  if (!treeDragData || !dropNode) {
+    return;
+  }
+  
+  const sourceNode = draggingNode.data as AssetNode;
+  const targetNode = dropNode.data as AssetNode;
+  
+  // 检查是否允许放置（只允许拖拽到节点内部）
+  if (sourceNode && targetNode && targetNode.isDirectory) {
+    // 不能拖拽到自己或自己的子节点中
+    if (sourceNode !== targetNode && !sourceNode.contain(targetNode)) {
+      dragOverTreeNode.value = dropNode.data;
+      return;
+    }
+  }
+  
+  // 如果是从文件列表拖拽过来的
+  if (fileDragData && targetNode && targetNode.isDirectory) {
+    if (draggingFile && draggingFile !== targetNode && !draggingFile.contain(targetNode)) {
+      dragOverTreeNode.value = dropNode.data;
+      return;
+    }
+  }
+  
+  dragOverTreeNode.value = null;
+}
+
+// 树节点拖拽离开
+function onTreeNodeDragLeave(draggingNode: any, dropNode: any, event: DragEvent) {
+  // 检查是否真的离开了节点
+  const target = event.target as HTMLElement;
+  const treeElement = treeRef.value?.$el;
+  if (treeElement && !treeElement.contains(target)) {
+    dragOverTreeNode.value = null;
+  }
 }
 
 // 树节点拖拽放置
@@ -540,25 +623,48 @@ function onTreeNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'in
   event.preventDefault();
   event.stopPropagation();
   
-  if (!treeDragData || !dropNode) {
+  if (!dropNode) {
+    dragOverTreeNode.value = null;
     return;
   }
   
-  const targetNode = dropNode.data as AssetNode;
-  if (!targetNode || !targetNode.isDirectory) {
-    return;
+  // 处理树节点拖拽
+  if (treeDragData) {
+    const targetNode = dropNode.data as AssetNode;
+    if (!targetNode || !targetNode.isDirectory) {
+      dragOverTreeNode.value = null;
+      return;
+    }
+    
+    // 只处理拖拽到节点内部的情况
+    if (dropType === 'inner') {
+      targetNode.acceptDragDrop(treeDragData);
+      // 触发资源树更新
+      invalidateAssetTree();
+    }
+    
+    // 清理拖拽状态
+    treeDragData = null;
+    treeDragSourceNode = null;
   }
   
-  // 只处理拖拽到节点内部的情况
-  if (dropType === 'inner') {
-    targetNode.acceptDragDrop(treeDragData);
-    // 触发资源树更新
-    invalidateAssetTree();
+  // 处理文件列表拖拽到树节点
+  if (fileDragData && draggingFile) {
+    const targetNode = dropNode.data as AssetNode;
+    if (targetNode && targetNode.isDirectory && dropType === 'inner') {
+      // 不能拖到自己或自己的子文件夹中
+      if (draggingFile !== targetNode && !draggingFile.contain(targetNode)) {
+        targetNode.acceptDragDrop(fileDragData);
+        // 触发资源树更新
+        invalidateAssetTree();
+      }
+    }
+    
+    // 清理文件拖拽状态
+    onFileDragEnd();
   }
   
-  // 清理拖拽状态
-  treeDragData = null;
-  treeDragSourceNode = null;
+  dragOverTreeNode.value = null;
 }
 
 // 文件列表拖拽相关
@@ -585,38 +691,126 @@ function onFileDragEnd() {
   fileDragData = null;
   isDragOverFileList.value = false;
   dragOverFolder = null;
+  dragOverTreeNode.value = null; // 清理树节点拖拽悬停状态
 }
 
-// 文件列表拖拽悬停
-function onFileListDragOver(event: DragEvent) {
+// 文件项拖拽悬停
+function onFileItemDragOver(file: AssetNode, event: DragEvent) {
   event.preventDefault();
+  event.stopPropagation();
   
-  // 如果是内部文件拖拽，检查是否悬停在文件夹上
-  if (fileDragData && fileListRef.value) {
-    // 检查是否悬停在文件夹上
-    const target = event.target as HTMLElement;
-    const fileItem = target.closest('.file-item');
-    
-    if (fileItem) {
-      // 找到对应的文件节点
-      const fileIndex = Array.from(fileListRef.value.children).indexOf(fileItem as HTMLElement);
-      if (fileIndex >= 0 && fileIndex < filteredFiles.value.length) {
-        const file = filteredFiles.value[fileIndex] as AssetNode;
-        if (file.isDirectory) {
-          dragOverFolder = file;
-          isDragOverFileList.value = true;
-          return;
-        }
-      }
-    }
-    
-    // 检查是否悬停在当前文件夹上（可以拖到当前文件夹）
-    if (editorAsset.showFloder && editorAsset.showFloder.isDirectory) {
-      dragOverFolder = editorAsset.showFloder;
+  // 如果是内部文件拖拽，且目标是文件夹
+  if (fileDragData && file.isDirectory && draggingFile) {
+    // 不能拖到自己或自己的子文件夹中
+    if (draggingFile !== file && !draggingFile.contain(file)) {
+      dragOverFolder = file;
       isDragOverFileList.value = true;
     } else {
       dragOverFolder = null;
+    }
+  }
+  // 如果是树节点拖拽到文件列表
+  else if (treeDragData && treeDragSourceNode && file.isDirectory) {
+    // 不能拖到自己或自己的子文件夹中
+    if (treeDragSourceNode !== file && !treeDragSourceNode.contain(file)) {
+      dragOverFolder = file;
+      isDragOverFileList.value = true;
+    } else {
+      dragOverFolder = null;
+    }
+  }
+}
+
+// 文件项拖拽进入
+function onFileItemDragEnter(file: AssetNode, event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+  onFileItemDragOver(file, event);
+}
+
+// 文件项拖拽离开
+function onFileItemDragLeave(file: AssetNode, event: DragEvent) {
+  // 检查是否真的离开了文件项
+  const target = event.target as HTMLElement;
+  const fileItem = event.currentTarget as HTMLElement;
+  if (!fileItem.contains(target)) {
+    if (dragOverFolder === file) {
+      dragOverFolder = null;
       isDragOverFileList.value = false;
+    }
+  }
+}
+
+// 文件项拖拽放置
+async function onFileItemDrop(file: AssetNode, event: DragEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  // 如果是内部文件拖拽，且目标是文件夹
+  if (fileDragData && file.isDirectory && draggingFile) {
+    try {
+      // 不能拖到自己或自己的子文件夹中
+      if (draggingFile === file || draggingFile.contain(file)) {
+        onFileDragEnd();
+        return;
+      }
+      
+      // 调用文件夹的 acceptDragDrop 方法
+      file.acceptDragDrop(fileDragData);
+      
+      // 等待异步操作完成
+      await nextTick();
+      
+      // 触发资源树更新
+      invalidateAssetTree();
+    } catch (error) {
+      console.error('ProjectView: 文件拖拽放置失败', error);
+    } finally {
+      onFileDragEnd();
+    }
+  }
+  // 如果是树节点拖拽到文件列表
+  else if (treeDragData && treeDragSourceNode && file.isDirectory) {
+    try {
+      // 不能拖到自己或自己的子文件夹中
+      if (treeDragSourceNode === file || treeDragSourceNode.contain(file)) {
+        treeDragData = null;
+        treeDragSourceNode = null;
+        dragOverTreeNode.value = null;
+        return;
+      }
+      
+      // 调用文件夹的 acceptDragDrop 方法
+      file.acceptDragDrop(treeDragData);
+      
+      // 等待异步操作完成
+      await nextTick();
+      
+      // 触发资源树更新
+      invalidateAssetTree();
+    } catch (error) {
+      console.error('ProjectView: 树节点拖拽到文件列表失败', error);
+    } finally {
+      treeDragData = null;
+      treeDragSourceNode = null;
+      dragOverTreeNode.value = null;
+    }
+  }
+}
+
+// 文件列表拖拽悬停（用于拖拽到空白区域）
+function onFileListDragOver(event: DragEvent) {
+  event.preventDefault();
+  
+  // 如果是内部文件拖拽，检查是否悬停在当前文件夹上（可以拖到当前文件夹）
+  if (fileDragData && editorAsset.showFloder && editorAsset.showFloder.isDirectory) {
+    // 检查是否悬停在文件项上（如果悬停在文件项上，由 onFileItemDragOver 处理）
+    const target = event.target as HTMLElement;
+    const fileItem = target.closest('.file-item');
+    if (!fileItem) {
+      // 悬停在空白区域，可以拖到当前文件夹
+      dragOverFolder = editorAsset.showFloder;
+      isDragOverFileList.value = true;
     }
   }
   // 外部文件拖入时，允许拖入到当前文件夹
@@ -641,7 +835,7 @@ function onFileListDragLeave(event: DragEvent) {
   }
 }
 
-// 文件拖拽放置（更新原有的 onFileDrop）
+// 文件拖拽放置（更新原有的 onFileDrop，用于拖拽到空白区域）
 async function onFileDrop(event: DragEvent) {
   event.preventDefault();
   event.stopPropagation();
@@ -667,7 +861,7 @@ async function onFileDrop(event: DragEvent) {
     }
   }
   
-  // 处理内部文件拖拽（拖到文件夹）
+  // 处理内部文件拖拽（拖到当前文件夹的空白区域）
   if (fileDragData && dragOverFolder && draggingFile) {
     // 不能拖到自己或自己的子文件夹中
     if (draggingFile === dragOverFolder || draggingFile.contain(dragOverFolder)) {
@@ -855,6 +1049,12 @@ onUnmounted(() => {
   cursor: move;
 }
 
+.file-item-drag-over {
+  background-color: var(--el-color-primary-light-9, #1e3a5f) !important;
+  border-color: var(--el-color-primary, #007acc) !important;
+  border-style: dashed !important;
+}
+
 .file-list-drag-over {
   background-color: var(--el-fill-color-light, #2a2a2a);
   border: 2px dashed var(--el-color-primary, #007acc);
@@ -888,6 +1088,12 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   flex: 1;
+}
+
+.tree-node-drag-over {
+  background-color: var(--el-color-primary-light-9, #1e3a5f) !important;
+  border-radius: 4px;
+  padding: 2px 4px;
 }
 
 /* Element Plus Tree 样式覆盖 */
