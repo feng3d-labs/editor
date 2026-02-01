@@ -1,45 +1,90 @@
 <!--
   TabPanel 组件
-  使用 Element Plus 的 Tag 组件优化标签显示
-  每个标签支持图标和关闭功能
+  使用 Element Plus 的 Tabs 组件，采用卡片风格
+  支持图标、关闭和拖拽排序功能
 -->
 <template>
   <div class="tab-panel">
-    <div class="tab-panel-tabs">
-      <el-tag
-        v-for="(tab, index) in tabs"
-        :key="tab.id"
-        :type="index === activeIndex ? 'primary' : 'info'"
-        :effect="index === activeIndex ? 'dark' : 'plain'"
-        :closable="tabs.length > 1"
-        :class="['tab-panel-tag', { 'tab-panel-tag-active': index === activeIndex }]"
-        @click="setActiveTab(index)"
-        @close="closeTab(index)"
-      >
-        <Icon
-          v-if="getTabIcon(tab)"
-          :icon="getTabIcon(tab)"
-          :size="14"
-          class="tab-panel-tag-icon"
-        />
-        <span class="tab-panel-tag-label">{{ tab.label }}</span>
-      </el-tag>
-    </div>
-    <div class="tab-panel-content">
-      <template
-        v-for="(tab, index) in tabs"
-        :key="tab.id"
-      >
-        <div v-show="index === activeIndex" class="tab-panel-content-item">
-          <slot :name="`tab-${tab.id}`"></slot>
-        </div>
+    <el-tabs
+      v-model="activeName"
+      type="card"
+      :editable="availableTabTypes && availableTabTypes.length > 0"
+      :closable="tabs.length > 1"
+      class="tab-panel-tabs"
+      @tab-click="handleTabClick"
+      @tab-remove="handleTabRemove"
+      @tab-add="handleTabAdd"
+    >
+      <template #add-icon>
+        <el-dropdown
+          v-if="availableTabTypes && availableTabTypes.length > 0"
+          trigger="click"
+          placement="bottom-end"
+          @command="handleAddTab"
+          @click.stop
+        >
+          <el-icon class="el-tabs__new-tab" @click.stop>
+            <Plus />
+          </el-icon>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="tabType in availableTabTypes"
+                :key="tabType.id"
+                :command="tabType"
+                :disabled="isTabTypeExists(tabType.id)"
+              >
+                <Icon
+                  v-if="getTabIcon(tabType)"
+                  :icon="getTabIcon(tabType)"
+                  :size="14"
+                  style="margin-right: 6px; vertical-align: middle;"
+                />
+                {{ tabType.label }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </template>
-    </div>
+      <el-tab-pane
+        v-for="(tab, index) in tabs"
+        :key="tab.id"
+        :name="tab.id"
+        :closable="tabs.length > 1"
+        :class="{
+          'tab-pane-dragging': draggedIndex === index,
+          'tab-pane-drag-over': dragOverIndex === index && draggedIndex !== index,
+        }"
+      >
+        <template #label>
+          <span
+            class="tab-label"
+            :draggable="true"
+            @dragstart="handleDragStart(index, $event)"
+            @dragover="handleDragOver(index, $event)"
+            @dragleave="handleDragLeave(index)"
+            @drop="handleDrop(index, $event)"
+            @dragend="handleDragEnd"
+            @click.stop="handleLabelClick(index)"
+          >
+            <Icon
+              v-if="getTabIcon(tab)"
+              :icon="getTabIcon(tab)"
+              :size="14"
+              class="tab-label-icon"
+            />
+            <span class="tab-label-text">{{ tab.label }}</span>
+          </span>
+        </template>
+        <slot :name="`tab-${tab.id}`"></slot>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import { Plus } from '@element-plus/icons-vue';
 import type { Tab } from './TabPanel.types';
 import Icon from './Icon.vue';
 
@@ -95,6 +140,8 @@ function getTabIcon(tab: Tab): string | undefined {
 interface Props {
   tabs: Tab[];
   defaultActiveIndex?: number;
+  /** 可添加的标签类型列表，用于+按钮显示 */
+  availableTabTypes?: Tab[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -104,51 +151,232 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'tab-change': [index: number];
   'tab-close': [index: number];
+  'tab-reorder': [fromIndex: number, toIndex: number];
+  'tab-add': [tabType: Tab];
 }>();
 
-const activeIndex = ref(props.defaultActiveIndex);
+// 使用 tab.id 作为 activeName，而不是索引
+const activeName = ref<string>(
+  props.tabs.length > 0 && props.defaultActiveIndex >= 0 && props.defaultActiveIndex < props.tabs.length
+    ? props.tabs[props.defaultActiveIndex].id
+    : props.tabs.length > 0
+      ? props.tabs[0].id
+      : ''
+);
 
-// 监听 props 变化，更新 activeIndex
+// 拖拽相关状态
+const draggedIndex = ref<number | null>(null);
+const dragOverIndex = ref<number | null>(null);
+const isDragging = ref(false);
+
+// 监听 props 变化，更新 activeName
 watch(() => props.defaultActiveIndex, (newIndex) => {
   if (newIndex !== undefined && newIndex >= 0 && newIndex < props.tabs.length) {
-    activeIndex.value = newIndex;
+    activeName.value = props.tabs[newIndex].id;
   }
 });
 
-// 设置活动标签
-function setActiveTab(index: number) {
+// 监听 tabs 变化，确保 activeName 有效
+watch(() => props.tabs, (newTabs) => {
+  if (newTabs.length > 0) {
+    const currentTab = newTabs.find(tab => tab.id === activeName.value);
+    if (!currentTab) {
+      // 如果当前活动的标签不存在了，切换到第一个
+      activeName.value = newTabs[0].id;
+    }
+  }
+}, { deep: true });
+
+// 标签点击处理
+function handleTabClick(tab: any) {
+  if (isDragging.value) {
+    return;
+  }
+  const index = props.tabs.findIndex(t => t.id === tab.paneName);
+  if (index >= 0) {
+    emit('tab-change', index);
+  }
+}
+
+// 标签点击处理（点击标签文本时）
+function handleLabelClick(index: number) {
+  if (isDragging.value) {
+    return;
+  }
   if (index >= 0 && index < props.tabs.length) {
-    activeIndex.value = index;
+    activeName.value = props.tabs[index].id;
     emit('tab-change', index);
   }
 }
 
 // 关闭标签
-function closeTab(index: number) {
-  if (props.tabs.length <= 1) return; // 至少保留一个标签
+function handleTabRemove(tabName: string) {
+  const index = props.tabs.findIndex(t => t.id === tabName);
+  if (index < 0 || props.tabs.length <= 1) return; // 至少保留一个标签
+  
+  // 在发出事件之前确定要切换到的标签（因为父组件删除后数组会立即更新）
+  let newActiveName: string | null = null;
+  if (tabName === activeName.value) {
+    if (index === props.tabs.length - 1) {
+      // 关闭的是最后一个，切换到前一个
+      if (index > 0 && props.tabs[index - 1]) {
+        newActiveName = props.tabs[index - 1].id;
+      }
+    } else {
+      // 切换到下一个
+      if (props.tabs[index + 1]) {
+        newActiveName = props.tabs[index + 1].id;
+      } else if (index > 0 && props.tabs[index - 1]) {
+        // 如果没有下一个，切换到前一个
+        newActiveName = props.tabs[index - 1].id;
+      }
+    }
+  }
   
   emit('tab-close', index);
   
-  // 如果关闭的是当前活动标签，切换到其他标签
-  if (index === activeIndex.value) {
-    if (index === props.tabs.length - 1) {
-      // 关闭的是最后一个，切换到前一个
-      setActiveTab(index - 1);
-    } else {
-      // 切换到下一个
-      setActiveTab(index);
-    }
-  } else if (index < activeIndex.value) {
-    // 关闭的标签在当前标签之前，活动索引需要减1
-    activeIndex.value--;
+  // 更新活动标签（如果有新的活动标签）
+  if (newActiveName) {
+    activeName.value = newActiveName;
   }
+}
+
+// 设置活动标签（供外部调用）
+function setActiveTab(index: number) {
+  if (index >= 0 && index < props.tabs.length) {
+    activeName.value = props.tabs[index].id;
+    emit('tab-change', index);
+  }
+}
+
+// 关闭标签（供外部调用）
+function closeTab(index: number) {
+  if (index < 0 || props.tabs.length <= 1) return;
+  handleTabRemove(props.tabs[index].id);
+}
+
+// 检查标签类型是否已存在
+function isTabTypeExists(tabTypeId: string): boolean {
+  return props.tabs.some(tab => tab.id === tabTypeId);
+}
+
+// 处理添加标签（Element Plus 原生 tab-add 事件）
+// 当使用自定义 add-icon 时，这个事件仍然会被触发
+// 我们需要阻止默认行为，只显示下拉菜单
+function handleTabAdd() {
+  // 阻止默认添加行为，因为我们使用自定义下拉菜单
+  // 如果只有一个可用类型，直接添加
+  if (props.availableTabTypes && props.availableTabTypes.length === 1) {
+    const tabType = props.availableTabTypes[0];
+    if (!isTabTypeExists(tabType.id)) {
+      emit('tab-add', tabType);
+    }
+  }
+  // 如果有多个类型，下拉菜单会处理，这里不做任何操作
+}
+
+// 处理从下拉菜单添加标签
+function handleAddTab(tabType: Tab) {
+  // 如果该类型的标签已存在，不添加
+  if (isTabTypeExists(tabType.id)) {
+    return;
+  }
+  emit('tab-add', tabType);
+}
+
+// 拖拽开始
+function handleDragStart(index: number, event: DragEvent) {
+  isDragging.value = true;
+  draggedIndex.value = index;
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    // 设置拖拽时的视觉效果
+    if (event.dataTransfer.setDragImage) {
+      const dragImage = document.createElement('div');
+      dragImage.style.opacity = '0.5';
+      dragImage.style.position = 'absolute';
+      dragImage.style.top = '-1000px';
+      document.body.appendChild(dragImage);
+      event.dataTransfer.setDragImage(dragImage, 0, 0);
+      setTimeout(() => document.body.removeChild(dragImage), 0);
+    }
+  }
+}
+
+// 拖拽悬停
+function handleDragOver(index: number, event: DragEvent) {
+  event.preventDefault();
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move';
+  }
+  if (draggedIndex.value !== null && draggedIndex.value !== index) {
+    dragOverIndex.value = index;
+  }
+}
+
+// 拖拽离开
+function handleDragLeave(index: number) {
+  if (dragOverIndex.value === index) {
+    dragOverIndex.value = null;
+  }
+}
+
+// 拖拽放下
+function handleDrop(index: number, event: DragEvent) {
+  event.preventDefault();
+  if (draggedIndex.value === null || draggedIndex.value === index) {
+    return;
+  }
+  
+  const fromIndex = draggedIndex.value;
+  const toIndex = index;
+  
+  // 发出重新排序事件，让父组件处理实际的数组重排
+  emit('tab-reorder', fromIndex, toIndex);
+  
+  // 更新活动标签（如果拖拽的是当前活动标签）
+  const currentActiveIndex = props.tabs.findIndex(t => t.id === activeName.value);
+  if (currentActiveIndex === fromIndex) {
+    // 如果拖拽的是当前活动标签，更新到新位置
+    const newTabs = [...props.tabs];
+    const [movedTab] = newTabs.splice(fromIndex, 1);
+    newTabs.splice(toIndex, 0, movedTab);
+    activeName.value = movedTab.id;
+  } else if (fromIndex < currentActiveIndex && toIndex >= currentActiveIndex) {
+    // 从前面拖到后面，活动索引减1
+    if (currentActiveIndex > 0) {
+      activeName.value = props.tabs[currentActiveIndex - 1].id;
+    }
+  } else if (fromIndex > currentActiveIndex && toIndex <= currentActiveIndex) {
+    // 从后面拖到前面，活动索引加1
+    if (currentActiveIndex < props.tabs.length - 1) {
+      activeName.value = props.tabs[currentActiveIndex + 1].id;
+    }
+  }
+  
+  // 重置拖拽状态
+  draggedIndex.value = null;
+  dragOverIndex.value = null;
+}
+
+// 拖拽结束
+function handleDragEnd() {
+  // 延迟重置，避免触发点击事件
+  setTimeout(() => {
+    isDragging.value = false;
+  }, 0);
+  draggedIndex.value = null;
+  dragOverIndex.value = null;
 }
 
 // 暴露方法供父组件调用
 defineExpose({
   setActiveTab,
   closeTab,
-  activeIndex: computed(() => activeIndex.value),
+  activeIndex: computed(() => {
+    const index = props.tabs.findIndex(t => t.id === activeName.value);
+    return index >= 0 ? index : 0;
+  }),
 });
 </script>
 
@@ -164,60 +392,83 @@ defineExpose({
 
 .tab-panel-tabs {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
-  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
-  overflow-x: auto;
-  flex-shrink: 0;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
-.tab-panel-tag {
+/* Element Plus Tabs 内容区域样式 */
+.tab-panel-tabs :deep(.el-tabs__content) {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+}
+
+.tab-panel-tabs :deep(.el-tab-pane) {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+/* 标签样式 */
+.tab-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
   user-select: none;
-  transition: all 0.2s;
   white-space: nowrap;
+  width: 100%;
 }
 
-.tab-panel-tag:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.tab-panel-tag-active {
-  font-weight: 500;
-}
-
-.tab-panel-tag-icon {
+.tab-label-icon {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
+  pointer-events: none;
 }
 
-.tab-panel-tag-label {
+.tab-label-text {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+  pointer-events: none;
 }
 
-.tab-panel-content {
+/* 拖拽状态样式 - 通过深度选择器作用于 Element Plus 的标签项 */
+.tab-panel-tabs :deep(.el-tabs__item) {
+  cursor: grab;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.tab-panel-tabs :deep(.el-tabs__item:active) {
+  cursor: grabbing;
+}
+
+.tab-pane-dragging :deep(.el-tabs__item) {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.tab-pane-drag-over :deep(.el-tabs__item) {
+  transform: translateX(4px);
+}
+
+/* 确保标签页内容区域占满空间 */
+.tab-panel-tabs :deep(.el-tabs__header) {
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.tab-panel-tabs :deep(.el-tabs__body) {
   flex: 1;
   overflow: hidden;
-  position: relative;
-  min-height: 0; /* 重要：允许 flex 子元素缩小 */
-}
-
-.tab-panel-content-item {
-  width: 100%;
-  height: 100%;
-  position: relative;
+  min-height: 0;
 }
 </style>
 
