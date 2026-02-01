@@ -698,18 +698,18 @@ function onDoubleClick(event: MouseEvent) {
     
     if (!timeline.value) return;
     
-    let selectedKey = timeline.value.findKey(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
-    if (selectedKey !== null) {
-        timeline.value.deleteKey(selectedKey);
+    let foundKey = timeline.value.findKey(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
+    if (foundKey !== null) {
+        timeline.value.deleteKey(foundKey);
         updateView();
         emit('change');
         return;
     }
     
     if (timeline1.value) {
-        selectedKey = timeline1.value.findKey(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
-        if (selectedKey) {
-            timeline1.value.deleteKey(selectedKey);
+        foundKey = timeline1.value.findKey(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
+        if (foundKey) {
+            timeline1.value.deleteKey(foundKey);
             updateView();
             emit('change');
             return;
@@ -719,7 +719,7 @@ function onDoubleClick(event: MouseEvent) {
     // 没有选中关键点时，检查是否点击到曲线，添加新关键点
     let newKey = timeline.value.addKeyAtCurve(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
     if (newKey) {
-        selectedKey.value = newKey as AnimationCurveKeyframe;
+        selectedKey.value = newKey;
         selectTimeline.value = timeline.value;
         updateView();
         emit('change');
@@ -729,7 +729,7 @@ function onDoubleClick(event: MouseEvent) {
     if (timeline1.value) {
         newKey = timeline1.value.addKeyAtCurve(curvePos.time, curvePos.value, pointSize / curveRect.value.height);
         if (newKey) {
-            selectedKey.value = newKey as AnimationCurveKeyframe;
+            selectedKey.value = newKey;
             selectTimeline.value = timeline1.value;
             updateView();
             emit('change');

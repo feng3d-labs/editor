@@ -6,7 +6,6 @@ import { editorcache } from '../caches/Editorcache';
 import { hierarchy } from '../feng3d/hierarchy/Hierarchy';
 import { EditorData } from '../global/EditorData';
 import { editorui } from '../global/editorui';
-import { ShortCutSetting } from '../shortcut/ShortCutSetting';
 import { editorAsset } from '../ui/assets/EditorAsset';
 import { MenuItem } from '../vue-app/components/MenuAdapter';
 import { popupView } from '../vue-app/components/PopupView';

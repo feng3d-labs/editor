@@ -32,7 +32,7 @@ export class NumberTextInputBinder extends TextInputBinder
     /**
      * 控制器
      */
-    controller: egret.DisplayObject;
+    controller: any;
 
     toText(v: number)
     {
@@ -58,7 +58,7 @@ export class NumberTextInputBinder extends TextInputBinder
         if (this.editable)
         {
             // windowEventProxy.on("mousedown", this.onMouseDown, this);
-            this.controller && this.controller.addEventListener(egret.MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
+            this.controller && this.controller.addEventListener('mousedown', this.onMouseDown, this);
             MouseOnDisableScroll.register(this.controller);
         }
     }
@@ -67,7 +67,7 @@ export class NumberTextInputBinder extends TextInputBinder
     {
         super.dispose();
         // windowEventProxy.off("mousedown", this.onMouseDown, this);
-        this.controller && this.controller.removeEventListener(egret.MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
+        this.controller && this.controller.removeEventListener('mousedown', this.onMouseDown, this);
         MouseOnDisableScroll.unRegister(this.controller);
     }
 
@@ -89,7 +89,7 @@ export class NumberTextInputBinder extends TextInputBinder
     private mouseDownPosition = new Vector2();
     private mouseDownValue = 0;
 
-    private onMouseDown(_e: egret.MouseEvent)
+    private onMouseDown(_e: any)
     {
         const mousePos = new Vector2(windowEventProxy.clientX, windowEventProxy.clientY);
 

@@ -2,14 +2,14 @@ import { NumberTextInputBinder } from './NumberTextInputBinder';
 
 export class NumberSliderTextInputBinder extends NumberTextInputBinder
 {
-    slider: eui.HSlider;
+    slider: any;
 
     initView()
     {
         super.initView();
         if (this.editable)
         {
-            this.slider.addEventListener(egret.Event.CHANGE, this._onSliderChanged, this);
+            this.slider.addEventListener('change', this._onSliderChanged, this);
         }
         this.slider.enabled = this.slider.touchEnabled = this.slider.touchChildren = this.editable;
     }
@@ -18,7 +18,7 @@ export class NumberSliderTextInputBinder extends NumberTextInputBinder
     {
         super.dispose();
 
-        this.slider.removeEventListener(egret.Event.CHANGE, this._onSliderChanged, this);
+        this.slider.removeEventListener('change', this._onSliderChanged, this);
     }
 
     protected updateView()

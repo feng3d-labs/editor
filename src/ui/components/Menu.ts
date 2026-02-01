@@ -2,7 +2,8 @@
  * Menu 适配器
  * 导出 Vue Menu 适配器，保持向后兼容
  */
-export { MenuItem, createMenuAdapter, MenuAdapter } from '../../vue-app/components/MenuAdapter';
+export { createMenuAdapter, MenuAdapter } from '../../vue-app/components/MenuAdapter';
+export type { MenuItem } from '../../vue-app/components/MenuAdapter';
 
 /**
  * Menu 实例（向后兼容）

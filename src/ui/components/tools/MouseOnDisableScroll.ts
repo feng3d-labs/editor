@@ -7,19 +7,19 @@ import { shortcut, windowEventProxy } from 'feng3d';
  */
 export class MouseOnDisableScroll
 {
-    static register(sprite: egret.DisplayObject)
+    static register(sprite: any)
     {
         if (!sprite) return;
-        sprite.addEventListener(egret.MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
+        sprite.addEventListener('mousedown', this.onMouseDown, this);
     }
 
-    static unRegister(sprite: egret.DisplayObject)
+    static unRegister(sprite: any)
     {
         if (!sprite) return;
-        sprite.removeEventListener(egret.MouseEvent.MOUSE_DOWN, this.onMouseDown, this);
+        sprite.removeEventListener('mousedown', this.onMouseDown, this);
     }
 
-    private static onMouseDown(_e: egret.MouseEvent)
+    private static onMouseDown(_e: any)
     {
         shortcut.activityState('disableScroll');
         //

@@ -9,29 +9,36 @@ declare global
         export interface Component
         {
             addBinder(...binders: UIBinder[]): void;
+            _binders?: UIBinder[];
+            $onRemoveFromStage?(): void;
         }
     }
 }
 
-eui.Component.prototype['addBinder'] = function (...binders: UIBinder[])
-{
-    this._binders = this._binders || [];
-    binders.forEach((v) =>
+// 兼容层：为 eui.Component 添加方法（如果存在）
+if (typeof (globalThis as any).eui !== 'undefined' && (globalThis as any).eui.Component) {
+    (globalThis as any).eui.Component.prototype['addBinder'] = function (...binders: UIBinder[])
     {
-        this._binders.push(v);
-    });
-};
+        this._binders = this._binders || [];
+        binders.forEach((v) =>
+        {
+            this._binders.push(v);
+        });
+    };
 
-const old$onRemoveFromStage = eui.Component.prototype.$onRemoveFromStage;
-eui.Component.prototype['$onRemoveFromStage'] = function ()
-{
-    if (this._binders)
+    const old$onRemoveFromStage = (globalThis as any).eui.Component.prototype.$onRemoveFromStage;
+    (globalThis as any).eui.Component.prototype['$onRemoveFromStage'] = function ()
     {
-        this._binders.forEach((v) => v.dispose());
-        this._binders.length = 0;
-    }
-    old$onRemoveFromStage.call(this);
-};
+        if (this._binders)
+        {
+            this._binders.forEach((v) => v.dispose());
+            this._binders.length = 0;
+        }
+        if (old$onRemoveFromStage) {
+            old$onRemoveFromStage.call(this);
+        }
+    };
+}
 
 export interface UIBinder
 {
@@ -53,7 +60,7 @@ export class TextInputBinder<T extends TextInputBinderEventMap = TextInputBinder
      */
     attribute: string;
 
-    textInput: eui.TextInput;
+    textInput: any;
 
     /**
      * 是否可编辑
@@ -91,9 +98,9 @@ export class TextInputBinder<T extends TextInputBinderEventMap = TextInputBinder
         watcher.unwatch(this.space, this.attribute, this.onValueChanged, this);
 
         //
-        this.textInput.removeEventListener(egret.FocusEvent.FOCUS_IN, this.ontxtfocusin, this);
-        this.textInput.removeEventListener(egret.FocusEvent.FOCUS_OUT, this.ontxtfocusout, this);
-        this.textInput.removeEventListener(egret.Event.CHANGE, this.onTextChange, this);
+        this.textInput.removeEventListener('focusin', this.ontxtfocusin, this);
+        this.textInput.removeEventListener('focusout', this.ontxtfocusout, this);
+        this.textInput.removeEventListener('change', this.onTextChange, this);
     }
 
     protected initView()
@@ -101,9 +108,9 @@ export class TextInputBinder<T extends TextInputBinderEventMap = TextInputBinder
         //
         if (this.editable)
         {
-            this.textInput.addEventListener(egret.FocusEvent.FOCUS_IN, this.ontxtfocusin, this);
-            this.textInput.addEventListener(egret.FocusEvent.FOCUS_OUT, this.ontxtfocusout, this);
-            this.textInput.addEventListener(egret.Event.CHANGE, this.onTextChange, this);
+            this.textInput.addEventListener('focusin', this.ontxtfocusin, this);
+            this.textInput.addEventListener('focusout', this.ontxtfocusout, this);
+            this.textInput.addEventListener('change', this.onTextChange, this);
         }
         watcher.watch(this.space, this.attribute, this.onValueChanged, this);
         this.textInput.enabled = this.editable;

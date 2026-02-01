@@ -4,7 +4,7 @@
  */
 import { globalEmitter, windowEventProxy } from 'feng3d';
 
-export type MenuItem = {
+export interface MenuItem {
   label?: string;
   priority?: number;
   type?: 'separator';
@@ -12,7 +12,7 @@ export type MenuItem = {
   submenu?: MenuItem[];
   enable?: boolean;
   show?: boolean;
-};
+}
 
 /**
  * Menu 适配器类
