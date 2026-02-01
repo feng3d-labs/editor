@@ -19,8 +19,9 @@
       >
         <template #default="{ node, data }">
           <div 
+            v-if="data"
             class="tree-node"
-            :class="{ 'tree-node-drag-over': dragOverTreeNode.value === data }"
+            :class="{ 'tree-node-drag-over': isTreeNodeDragOver(data) }"
           >
             <Icon
               :icon="data.isDirectory ? 'material-symbols:folder' : getFileIcon(data)"
@@ -510,6 +511,11 @@ function isFileSelected(file: AssetNode): boolean {
 let treeDragData: DragData | null = null;
 let treeDragSourceNode: AssetNode | null = null;
 const dragOverTreeNode = ref<any>(null); // 当前拖拽悬停的树节点（响应式）
+
+// 检查节点是否应该高亮（用于模板中的安全访问）
+function isTreeNodeDragOver(data: any): boolean {
+  return dragOverTreeNode.value === data;
+}
 
 // 判断树节点是否允许拖拽
 function allowTreeDrag(node: any): boolean {
