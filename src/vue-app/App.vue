@@ -3,9 +3,6 @@
     <!-- Vue 应用占位内容，后续会逐步迁移组件到这里 -->
     <!-- 当前阶段：仅作为占位，确保 Vue 应用可以正常挂载 -->
     
-    <!-- ToolTip 组件：显示工具提示 -->
-    <ToolTip />
-    
     <!-- Menu 组件：显示右键菜单 -->
     <Menu />
     
@@ -24,7 +21,6 @@
 
 <script setup lang="ts">
 import { ref, defineAsyncComponent, onMounted, onUnmounted } from 'vue';
-import ToolTip from './components/ToolTip.vue';
 import Menu from './components/Menu.vue';
 import { popupView } from './components/PopupView';
 import { editorui } from '../global/editorui';

@@ -61,16 +61,6 @@ declare global
         'script.gettslibs': { callback: (tslibs: { path: string, code: string }[]) => void }
 
         /**
-         * 显示工具提示
-         */
-        'tooltip.show': { text: string; x: number; y: number };
-
-        /**
-         * 隐藏工具提示
-         */
-        'tooltip.hide': undefined;
-
-        /**
          * 显示菜单
          */
         'menu.show': { items: any[]; parentRect?: { left: number; top: number; right: number; bottom: number }; x?: number; y?: number };
