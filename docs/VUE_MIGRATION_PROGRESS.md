@@ -1,7 +1,7 @@
 # Egret 到 Vue 迁移进度
 
 > **最后更新**: 2024-12-19  
-> **总体进度**: 80% 完成（核心功能 100%）
+> **总体进度**: 82% 完成（核心功能 100%）
 
 ## 📊 进度总览
 
@@ -11,12 +11,12 @@
 | **ObjectView 组件** | 27 | 27 | 0 | 0 | 100% |
 | **视图组件** | 5 | 5 | 0 | 0 | 100% |
 | **高级编辑器** | 3 | 1 | 0 | 2 | 33% |
-| **辅助组件** | 8 | 0 | 0 | 8 | 0% |
-| **总计** | 49 | 39 | 0 | 10 | 80% |
+| **辅助组件** | 8 | 1 | 0 | 7 | 13% |
+| **总计** | 49 | 40 | 0 | 9 | 82% |
 
 ---
 
-## ✅ 已完成组件（39/49）
+## ✅ 已完成组件（40/49）
 
 ### 核心 UI 组件（6/6）✅
 
@@ -97,7 +97,7 @@
 
 ---
 
-## ⏳ 待实现组件（10/49）
+## ⏳ 待实现组件（9/49）
 
 ### 🔴 高优先级 - 高级编辑器（2个）
 
@@ -147,15 +147,19 @@
 - **依赖**: 无
 - **状态**: ⏳ 待实现
 
-### 🟡 中优先级 - 辅助组件（8个）
+### 🟡 中优先级 - 辅助组件（7个）
 
 #### 3. TabView
 - **文件**: `src/ui/components/TabView.ts`
 - **Vue 实现**: `src/vue-app/components/TabView.vue` ⏳
-- **复杂度**: ⭐⭐
-- **预计时间**: 1-2 天
-- **说明**: 检查是否与 TabPanel 功能重复，可能需要统一
-- **状态**: ⏳ 待评估
+- **复杂度**: ⭐⭐⭐⭐
+- **预计时间**: 3-4 天
+- **说明**: 
+  - 主要用于旧布局系统（MainSplitView），新系统已用 TabPanel 替代
+  - 涉及模块管理、拖拽、SplitGroup 集成、右键菜单等复杂功能
+  - **建议**: 如果旧布局系统不再使用，可以跳过实现
+  - **优先级**: 低（向后兼容需要）
+- **状态**: ⏳ 待评估/低优先级
 
 #### 4. SplitGroup / SplitUIComponent
 - **文件**: `src/ui/components/SplitGroup.ts` / `src/ui/components/SplitUIComponent.ts`
@@ -181,13 +185,13 @@
 - **说明**: 用于场景视图中的区域选择
 - **状态**: ⏳ 待实现
 
-#### 7. TipString
+#### 7. TipString ✅
 - **文件**: `src/ui/components/TipString.ts`
-- **Vue 实现**: `src/vue-app/components/TipString.vue` ⏳
+- **Vue 实现**: `src/vue-app/components/TipString.vue` ✅
 - **复杂度**: ⭐
 - **预计时间**: 0.5 天
-- **说明**: 简单的提示组件
-- **状态**: ⏳ 待实现
+- **说明**: 简单的提示组件，用于 ToolTip 系统
+- **状态**: ✅ 已完成
 
 #### 8. TerrainView
 - **文件**: `src/ui/components/TerrainView.ts`
@@ -224,7 +228,7 @@
 
 ### 第二阶段：辅助组件（按需实现）
 4. ⏳ AreaSelectRect - 区域选择
-5. ⏳ TipString - 提示组件
+5. ✅ TipString - 提示组件
 6. ⏳ TerrainView - 地形视图
 7. ⏳ AnimationView - 动画视图
 8. ⏳ ShortCutSetting - 快捷键设置
@@ -300,6 +304,7 @@
 - ✅ 完成 OAVFeng3dPreView - 3D预览组件
 - ✅ 完成 MinMaxCurveView、MinMaxGradientView、MinMaxCurveVector3View
 - ✅ 完成 ColorPickerView - 弹出式颜色选择器
+- ✅ 完成 TipString - 提示字符串组件
 - ⏳ 高级编辑器组件（MinMaxCurveEditor、GradientEditor）待实现
 - 📝 统一迁移进度文档，简化文档结构
 

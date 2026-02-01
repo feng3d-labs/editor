@@ -159,10 +159,9 @@ function updateHierarchyTree() {
     };
   }
   
-  // el-tree 需要树形结构，只使用根节点的直接子节点
-  // 而不是使用 getShowNodes() 返回的扁平化数组
-  treeData.value = hierarchy.rootnode.children 
-    ? hierarchy.rootnode.children.map(convertNode)
+  // el-tree 需要树形结构，以场景作为根节点显示
+  treeData.value = hierarchy.rootnode 
+    ? [convertNode(hierarchy.rootnode)]
     : [];
   
   // 更新展开状态
@@ -411,8 +410,14 @@ function onDropdownVisibleChange(visible: boolean) {
 
 // 获取节点图标
 function getNodeIcon(data: any): string {
-  // 可以根据 GameObject 的类型返回不同的图标
-  // 这里简化处理，统一使用游戏对象图标
+  const node = data as HierarchyNode;
+  if (node && node.gameobject) {
+    // 场景根节点使用场景图标
+    if (node.gameobject.scene && node.gameobject.scene.gameObject === node.gameobject) {
+      return 'material-symbols:view-in-ar';
+    }
+  }
+  // 其他游戏对象使用通用图标
   return 'material-symbols:category';
 }
 
