@@ -7,9 +7,6 @@ import { modules } from './Modules';
 import { mouseEventEnvironment } from './polyfill/egret/MouseEvent';
 import { Editorshortcut } from './shortcut/Editorshortcut';
 import { editorAsset } from './ui/assets/EditorAsset';
-import { MainUI } from './ui/MainUI';
-// MainView 已迁移到 Vue，不再需要导入
-// import { MainView } from './ui/MainView';
 
 /**
  * editor的版本号
@@ -54,36 +51,27 @@ export class Editor extends eui.UILayer
 
     /**
      * 初始化 Egret
+     * @deprecated Egret UI 已迁移到 Vue，此方法仅保留基础初始化
      */
     private async initEgret()
     {
-        await new Promise(((resolve) =>
-        {
-            const mainui = new MainUI(() =>
-            {
-                //
-                const tooltipLayer = new eui.UILayer();
-                tooltipLayer.touchEnabled = false;
-                this.stage.addChild(tooltipLayer);
-                editorui.tooltipLayer = tooltipLayer;
-                //
-                const popupLayer = new eui.UILayer();
-                popupLayer.touchEnabled = false;
-                this.stage.addChild(popupLayer);
-                editorui.popupLayer = popupLayer;
-                //
-                const messageLayer = new eui.UILayer();
-                messageLayer.touchEnabled = false;
-                this.stage.addChild(messageLayer);
-                editorui.messageLayer = messageLayer;
-                //
-                editorcache.projectname = editorcache.projectname || 'newproject';
-
-                editorui.stage.removeChild(mainui);
-                resolve(undefined);
-            });
-            editorui.stage.addChild(mainui);
-        }));
+        // Egret UI 层已迁移到 Vue，这里只创建必要的 Egret 层用于兼容
+        const tooltipLayer = new eui.UILayer();
+        tooltipLayer.touchEnabled = false;
+        this.stage.addChild(tooltipLayer);
+        editorui.tooltipLayer = tooltipLayer;
+        //
+        const popupLayer = new eui.UILayer();
+        popupLayer.touchEnabled = false;
+        this.stage.addChild(popupLayer);
+        editorui.popupLayer = popupLayer;
+        //
+        const messageLayer = new eui.UILayer();
+        messageLayer.touchEnabled = false;
+        this.stage.addChild(messageLayer);
+        editorui.messageLayer = messageLayer;
+        //
+        editorcache.projectname = editorcache.projectname || 'newproject';
     }
 
     private async init()

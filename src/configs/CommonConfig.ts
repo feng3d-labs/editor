@@ -7,15 +7,9 @@ import { hierarchy } from '../feng3d/hierarchy/Hierarchy';
 import { EditorData } from '../global/EditorData';
 import { editorui } from '../global/editorui';
 import { ShortCutSetting } from '../shortcut/ShortCutSetting';
-import { AnimationView } from '../ui/animation/AnimationView';
 import { editorAsset } from '../ui/assets/EditorAsset';
-import { ProjectView } from '../ui/assets/ProjectView';
-import { MenuItem } from '../ui/components/Menu';
-import { popupview } from '../ui/components/Popupview';
-import { TabView } from '../ui/components/TabView';
-import { HierarchyView } from '../ui/hierarchy/HierarchyView';
-import { InspectorView } from '../ui/inspector/InspectorView';
-import { SceneView } from '../ui/SceneView';
+import { MenuItem } from '../vue-app/components/MenuAdapter';
+import { popupView } from '../vue-app/components/PopupView';
 import { viewLayoutConfig } from './ViewLayoutConfig';
 
 /**
@@ -56,7 +50,7 @@ export class MenuConfig
                     {
                         label: '新建项目', click: () =>
                         {
-                            popupview.popupObject({ newprojectname: 'newproject' }, {
+                            popupView.popupObject({ newprojectname: 'newproject' }, {
                                 closecallback: (data) =>
                                 {
                                     if (data.newprojectname && data.newprojectname.length > 0)
@@ -88,7 +82,7 @@ export class MenuConfig
                         }),
                         click: () =>
                         {
-                            popupview.popupObject({ newprojectname: 'newproject' }, {
+                            popupView.popupObject({ newprojectname: 'newproject' }, {
                                 closecallback: (data) =>
                                 {
                                     if (data.newprojectname && data.newprojectname.length > 0)
@@ -281,27 +275,24 @@ export class MenuConfig
             },
         ];
 
-        // popupview.popupViewWindow(ShortCutSetting.instance, { mode: false, width: 800, height: 600 });
-
-        [SceneView.moduleName,
-        InspectorView.moduleName,
-        HierarchyView.moduleName,
-        ProjectView.moduleName,
-        AnimationView.moduleName,
-        ShortCutSetting.moduleName,
-        ].forEach((v) =>
-        {
-            menus.push({
-                label: v,
-                click: () =>
-                {
-                    const tabview = new TabView();
-                    tabview.setModuleNames([v]);
-                    tabview.left = tabview.right = tabview.top = tabview.bottom = 0;
-                    popupview.popupViewWindow(tabview, { mode: false });
-                },
-            });
-        });
+        // 窗口菜单项已迁移到 Vue，暂时注释掉
+        // TODO: 实现 Vue 版本的窗口弹出功能
+        // [SceneView.moduleName,
+        // InspectorView.moduleName,
+        // HierarchyView.moduleName,
+        // ProjectView.moduleName,
+        // AnimationView.moduleName,
+        // ShortCutSetting.moduleName,
+        // ].forEach((v) =>
+        // {
+        //     menus.push({
+        //         label: v,
+        //         click: () =>
+        //         {
+        //             // TODO: 使用 Vue 版本的窗口弹出功能
+        //         },
+        //     });
+        // });
 
         return menus;
     }

@@ -1,52 +1,38 @@
-import { Constructor } from 'feng3d';
-import { Message } from './ui/components/Message';
-import { ModuleView } from './ui/components/TabView';
-
 /**
  * 模块
  *
  * 用于管理功能模块
+ * @deprecated Egret 模块系统已迁移到 Vue，此类保留用于向后兼容
  */
 export class Modules
 {
-    message: Message;
+    // Message 已迁移到 Vue，使用适配器
+    message: any;
 
+    /**
+     * 获取模块视图
+     * @deprecated Egret 模块视图已迁移到 Vue，此方法不再使用
+     */
     getModuleView(moduleName: string)
     {
-        this.moduleViewMap[moduleName] = this.moduleViewMap[moduleName] || [];
-        let moduleview = this.moduleViewMap[moduleName].pop();
-        if (!moduleview)
-        {
-            const Cls = Modules.moduleViewCls[moduleName];
-            if (!Cls)
-            {
-                console.error(`无法获取模块 ${moduleName} 界面类定义`);
-
-                return;
-            }
-            moduleview = new Cls();
-        }
-
-        return moduleview;
+        console.warn(`getModuleView(${moduleName}) 已废弃，请使用 Vue 组件`);
+        return null;
     }
 
     /**
      * 回收模块界面
-     *
-     * @param moduleView 模块界面
+     * @deprecated Egret 模块视图已迁移到 Vue，此方法不再使用
      */
-    recycleModuleView(moduleView: ModuleView)
+    recycleModuleView(moduleView: any)
     {
-        this.moduleViewMap[moduleView.moduleName] = this.moduleViewMap[moduleView.moduleName] || [];
-        this.moduleViewMap[moduleView.moduleName].push(moduleView);
+        console.warn('recycleModuleView 已废弃，请使用 Vue 组件');
     }
-
-    private moduleViewMap: { [name: string]: ModuleView[] } = {};
 
     /**
      * 模块界面类定义
+     * @deprecated Egret 模块视图已迁移到 Vue，此属性不再使用
      */
-    static moduleViewCls: { [name: string]: Constructor<ModuleView> } = {};
+    static moduleViewCls: { [name: string]: any } = {};
 }
 
 export const modules = new Modules();
