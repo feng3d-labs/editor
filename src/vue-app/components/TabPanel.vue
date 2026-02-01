@@ -1,35 +1,29 @@
 <!--
-  ⚠️ 自定义组件说明：
-  此组件保持自定义实现，未使用 Element Plus 的 ElTabs，原因：
-  1. 需要与编辑器布局系统深度集成（与 SplitPanel 配合使用）
-  2. 需要支持动态标签页（通过 slot 传递内容）
-  3. 需要支持标签页关闭功能
-  4. 需要自定义样式以匹配编辑器深色主题
-  5. 已有完整的实现和测试
-  
-  如果未来需要替换为 ElTabs，需要：
-  - 重新实现标签页关闭功能
-  - 调整样式以匹配编辑器主题
-  - 修改与 SplitPanel 的集成方式
+  TabPanel 组件
+  使用 Element Plus 的 Tag 组件优化标签显示
+  每个标签支持图标和关闭功能
 -->
 <template>
   <div class="tab-panel">
     <div class="tab-panel-tabs">
-      <div
+      <el-tag
         v-for="(tab, index) in tabs"
         :key="tab.id"
-        :class="['tab-panel-tab', { 'tab-panel-tab-active': index === activeIndex }]"
+        :type="index === activeIndex ? 'primary' : 'info'"
+        :effect="index === activeIndex ? 'dark' : 'plain'"
+        :closable="tabs.length > 1"
+        :class="['tab-panel-tag', { 'tab-panel-tag-active': index === activeIndex }]"
         @click="setActiveTab(index)"
+        @close="closeTab(index)"
       >
-        <span class="tab-panel-tab-label">{{ tab.label }}</span>
         <Icon
-          v-if="tabs.length > 1"
-          icon="mdi:close"
-          :size="16"
-          class="tab-panel-tab-close"
-          @click.stop="closeTab(index)"
+          v-if="getTabIcon(tab)"
+          :icon="getTabIcon(tab)"
+          :size="14"
+          class="tab-panel-tag-icon"
         />
-      </div>
+        <span class="tab-panel-tag-label">{{ tab.label }}</span>
+      </el-tag>
     </div>
     <div class="tab-panel-content">
       <template
@@ -48,6 +42,55 @@
 import { ref, computed, watch } from 'vue';
 import type { Tab } from './TabPanel.types';
 import Icon from './Icon.vue';
+
+/**
+ * 根据标签信息获取合适的图标
+ * 如果标签有 icon 属性，直接使用；否则根据 id 或 label 推断
+ */
+function getTabIcon(tab: Tab): string | undefined {
+  // 如果标签有 icon 属性，直接使用
+  if (tab.icon) {
+    return tab.icon;
+  }
+  
+  // 根据 id 推断图标
+  const iconMap: Record<string, string> = {
+    hierarchy: 'mdi:file-tree',
+    scene: 'mdi:cube-outline',
+    project: 'mdi:folder',
+    console: 'mdi:console',
+    inspector: 'mdi:code-tags',
+    tab1: 'mdi:file-document',
+    tab2: 'mdi:file-document-outline',
+    tab3: 'mdi:file-document-edit',
+    tab4: 'mdi:file-document-multiple',
+  };
+  
+  if (iconMap[tab.id]) {
+    return iconMap[tab.id];
+  }
+  
+  // 根据 label 推断图标
+  const labelLower = tab.label.toLowerCase();
+  if (labelLower.includes('层级') || labelLower.includes('hierarchy')) {
+    return 'mdi:file-tree';
+  }
+  if (labelLower.includes('场景') || labelLower.includes('scene')) {
+    return 'mdi:cube-outline';
+  }
+  if (labelLower.includes('项目') || labelLower.includes('project')) {
+    return 'mdi:folder';
+  }
+  if (labelLower.includes('控制台') || labelLower.includes('console')) {
+    return 'mdi:console';
+  }
+  if (labelLower.includes('检查器') || labelLower.includes('inspector')) {
+    return 'mdi:code-tags';
+  }
+  
+  // 默认图标
+  return 'mdi:file-document-outline';
+}
 
 interface Props {
   tabs: Tab[];
@@ -121,6 +164,9 @@ defineExpose({
 
 .tab-panel-tabs {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
   /* 使用 Element Plus 主题变量 */
   background-color: var(--el-bg-color-overlay, #2d2d2d);
   border-bottom: 1px solid var(--el-border-color, #3d3d3d);
@@ -128,52 +174,37 @@ defineExpose({
   flex-shrink: 0;
 }
 
-.tab-panel-tab {
-  display: flex;
+.tab-panel-tag {
+  display: inline-flex;
   align-items: center;
-  padding: 8px 16px;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
-  color: var(--el-text-color-primary, #cccccc);
+  gap: 6px;
   cursor: pointer;
   user-select: none;
-  border-right: 1px solid var(--el-border-color, #3d3d3d);
-  min-width: 100px;
-  position: relative;
+  transition: all 0.2s;
+  white-space: nowrap;
 }
 
-.tab-panel-tab:hover {
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-fill-color-dark, #3d3d3d);
+.tab-panel-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.tab-panel-tab-active {
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
-  color: var(--el-text-color-primary, #ffffff);
-  border-bottom: 2px solid var(--el-color-primary, #007acc);
+.tab-panel-tag-active {
+  font-weight: 500;
 }
 
-.tab-panel-tab-label {
+.tab-panel-tag-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tab-panel-tag-label {
   flex: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.tab-panel-tab-close {
-  margin-left: 8px;
-  padding: 2px 6px;
-  border-radius: 3px;
-  font-size: 16px;
-  line-height: 1;
-  opacity: 0.7;
-}
-
-.tab-panel-tab-close:hover {
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-fill-color-dark, #3d3d3d);
-  opacity: 1;
+  max-width: 200px;
 }
 
 .tab-panel-content {
