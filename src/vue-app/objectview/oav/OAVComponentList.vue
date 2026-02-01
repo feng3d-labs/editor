@@ -145,8 +145,6 @@ onUnmounted(() => {
 </script>
 
 <script lang="ts">
-import { nextTick } from 'vue';
-
 export default {
     name: 'OAVComponentList',
 };

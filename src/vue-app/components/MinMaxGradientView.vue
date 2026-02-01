@@ -238,6 +238,7 @@ function getModeName(modeValue: MinMaxGradientMode): string {
 function onColor0Click() {
     if (!props.editable) return;
     // TODO: 打开颜色选择器
+    // 可以使用 OAVColorPicker 的逻辑
     console.log('Open color picker for color0');
 }
 
@@ -252,14 +253,15 @@ function onColor1Click() {
 function onGradient0Click() {
     if (!props.editable) return;
     // TODO: 打开渐变编辑器
-    console.log('Open gradient editor for gradient0');
+    // 需要实现 GradientEditor.vue
+    console.log('Open gradient editor for gradient0 - 功能待实现');
 }
 
 // 渐变1点击
 function onGradient1Click() {
     if (!props.editable) return;
     // TODO: 打开渐变编辑器
-    console.log('Open gradient editor for gradient1');
+    console.log('Open gradient editor for gradient1 - 功能待实现');
 }
 
 // 右键菜单
@@ -300,7 +302,9 @@ function onRightClick(event: MouseEvent) {
     }
     
     const menuAdapter = new MenuAdapter();
-    menuAdapter.popup(menus, { x: event.clientX, y: event.clientY });
+    const placeholder = menuAdapter.popup(menus);
+    placeholder.x = event.clientX;
+    placeholder.y = event.clientY;
 }
 
 // 监听渐变变化

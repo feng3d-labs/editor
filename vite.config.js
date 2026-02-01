@@ -61,6 +61,9 @@ function configureCursorEditor()
                     const url = new URL(req.url || '', `http://${req.headers.host}`);
                     const file = url.searchParams.get('file');
                     
+                    // 调试：输出所有查询参数
+                    console.log('[Vite] Vue DevTools 请求参数:', Object.fromEntries(url.searchParams));
+                    
                     if (file)
                     {
                         try
@@ -87,23 +90,24 @@ function configureCursorEditor()
                             // 使用 Cursor 在当前窗口中打开文件
                             // --reuse-window: 在现有窗口中打开文件（而不是打开新窗口）
                             // --goto: 跳转到指定行号和列号位置
-                            const line = url.searchParams.get('line');
-                            const column = url.searchParams.get('column');
+                            // 尝试多种可能的参数名
+                            const line = url.searchParams.get('line') || url.searchParams.get('lineNumber') || url.searchParams.get('l');
+                            const column = url.searchParams.get('column') || url.searchParams.get('columnNumber') || url.searchParams.get('c');
                             const args = ['--reuse-window'];
                             
-                            // 如果指定了行号，使用 --goto 参数跳转到指定位置
-                            // 格式: --goto file:line:character
-                            if (line)
+                            // 始终使用 --goto 参数，即使没有行号也可以打开文件
+                            // 格式: --goto file:line:character 或 --goto file
+                            let position = filePath;
+                            if (line && line.trim() !== '')
                             {
-                                const position = column ? `${filePath}:${line}:${column}` : `${filePath}:${line}`;
-                                args.push('--goto', position);
-                                console.log(`[Vite] 使用 Cursor 打开文件并跳转: cursor ${args.join(' ')}`);
+                                // 如果有行号，添加行号和列号
+                                position = column && column.trim() !== '' 
+                                    ? `${filePath}:${line}:${column}` 
+                                    : `${filePath}:${line}`;
                             }
-                            else
-                            {
-                                args.push(filePath);
-                                console.log(`[Vite] 使用 Cursor 打开文件: cursor ${args.join(' ')}`);
-                            }
+                            
+                            args.push('--goto', position);
+                            console.log(`[Vite] 执行命令: cursor ${args.join(' ')}`);
                             
                             // 在 Windows 上，shell: true 可以确保正确执行命令
                             const child = spawn('cursor', args, { 

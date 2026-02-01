@@ -203,10 +203,18 @@ function drawCurve() {
 function onCurveClick() {
     if (!props.editable) return;
     
-    // 动态导入 MinMaxCurveEditor（如果已实现）
-    // 暂时使用占位
-    console.log('Open MinMaxCurveEditor');
-    // TODO: 实现 MinMaxCurveEditor
+    // 打开曲线编辑器
+    // 由于 MinMaxCurveEditor 非常复杂，暂时使用占位
+    // 未来可以实现完整的编辑器组件
+    console.log('Open MinMaxCurveEditor - 功能待实现');
+    
+    // TODO: 实现 MinMaxCurveEditor.vue
+    // 需要实现：
+    // 1. Canvas 绘制曲线和网格
+    // 2. 关键点添加/删除/拖拽
+    // 3. 控制点编辑
+    // 4. WrapMode 设置
+    // 5. 预设曲线选择
 }
 
 // 右键菜单
@@ -249,7 +257,9 @@ function onRightClick(event: MouseEvent) {
     }
     
     const menuAdapter = new MenuAdapter();
-    menuAdapter.popup(menus, { x: event.clientX, y: event.clientY });
+    const placeholder = menuAdapter.popup(menus);
+    placeholder.x = event.clientX;
+    placeholder.y = event.clientY;
 }
 
 // 监听曲线变化

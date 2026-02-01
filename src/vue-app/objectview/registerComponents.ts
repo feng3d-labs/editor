@@ -37,6 +37,7 @@ import OAVParticleComponentListVue from './oav/OAVParticleComponentList.vue';
 import OAVMinMaxCurveVue from './oav/OAVMinMaxCurve.vue';
 import OAVMinMaxGradientVue from './oav/OAVMinMaxGradient.vue';
 import OAVMinMaxCurveVector3Vue from './oav/OAVMinMaxCurveVector3.vue';
+import OAVFeng3dPreViewVue from './oav/OAVFeng3dPreView.vue';
 
 /**
  * 注册所有 Vue 版本的 objectview 组件
@@ -184,6 +185,9 @@ export function registerObjectViewComponents()
 
     /** 最小最大曲线向量3属性视图 - 三维曲线编辑器 */
     createOAVComponent('OAVMinMaxCurveVector3', OAVMinMaxCurveVector3Vue);
+
+    /** Feng3d 预览属性视图 - 3D对象预览 */
+    createOAVComponent('OAVFeng3dPreView', OAVFeng3dPreViewVue);
 
     // ============ 配置默认视图组件 ============
 

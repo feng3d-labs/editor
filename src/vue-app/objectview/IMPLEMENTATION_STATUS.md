@@ -32,6 +32,7 @@
 - ✅ OAVMinMaxCurve - 最小最大曲线
 - ✅ OAVMinMaxGradient - 最小最大渐变
 - ✅ OAVMinMaxCurveVector3 - 最小最大曲线向量3
+- ✅ OAVFeng3dPreView - Feng3d 预览
 
 - ✅ OAVColorPicker - 颜色选择器
 - ✅ OAVMaterialName - 材质名称选择器
@@ -44,7 +45,7 @@
 ## ⏳ 待实现的组件
 
 ### OAV 组件
-- ⏳ OAVFeng3dPreView - Feng3d 预览（需要与 Feng3dScreenShot 集成）
+- ✅ 所有核心 OAV 组件已完成
 
 ## 📝 实现说明
 
