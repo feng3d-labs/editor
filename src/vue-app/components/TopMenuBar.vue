@@ -52,7 +52,7 @@ function getMenuItems() {
   // 过滤掉分隔符，只显示有 label 的菜单项
   const items = mainMenu.filter((item) => item.type !== 'separator' && item.label);
   
-  // 处理菜单显示逻辑（与 Egret 版本一致）
+  // 处理菜单显示逻辑
   const processedItems = items.map((item) => {
     const menuItem = menu.handleShow({ submenu: [item] });
     return menuItem.submenu?.[0] || item;

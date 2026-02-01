@@ -111,7 +111,8 @@ export class TextInputBinder<T extends TextInputBinderEventMap = TextInputBinder
 
     protected onValueChanged()
     {
-        const objectViewEvent = new ObjectViewEvent(ObjectViewEvent.VALUE_CHANGE, true);
+        const objectViewEvent = new ObjectViewEvent();
+        objectViewEvent.type = ObjectViewEvent.VALUE_CHANGE;
         objectViewEvent.space = this.space;
         objectViewEvent.attributeName = this.attribute;
         objectViewEvent.attributeValue = this.space[this.attribute];

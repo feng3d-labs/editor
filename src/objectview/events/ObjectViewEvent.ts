@@ -1,6 +1,5 @@
 /**
  * 对象视图事件
- * @deprecated Egret Event 已移除，使用 feng3d EventEmitter 替代
  */
 export class ObjectViewEvent
 {

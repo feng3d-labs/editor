@@ -46,7 +46,7 @@ const editorCamera = ref<Camera | null>(null);
 const areaSelectRectRef = ref<InstanceType<typeof AreaSelectRect> | null>(null);
 const areaSelectStartPosition = ref<Vector2 | null>(null);
 
-// 拖放容器（Egret 已移除，使用 DOM 元素）
+// 拖放容器
 let dragContainer: HTMLElement | null = null;
 
 // 状态
@@ -479,9 +479,6 @@ function onAddSceneToolView(event: IEvent<any>) {
   // 获取原始对象（避免 Vue Proxy 干扰）
   const component = getRawObject(event.data);
   if (!component || !toolViewContainerRef.value) return;
-  
-  // Egret 已移除，不再需要特殊处理 Egret 组件
-  // 所有组件现在都是 Vue 组件或 DOM 元素
 }
 
 // 获取原始对象的辅助函数（避免 Vue Proxy 干扰 feng3d 事件系统）
@@ -590,7 +587,6 @@ onMounted(async () => {
   globalEmitter.on('editor.addSceneToolView', onAddSceneToolView);
   
   // 拖放功能
-  // Egret 已移除，使用 DOM 元素进行拖放注册
   if (containerRef.value) {
     dragContainer = containerRef.value;
     

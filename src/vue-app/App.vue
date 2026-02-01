@@ -90,7 +90,7 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: none; /* 初始阶段不影响 Egret 的交互 */
+  pointer-events: none;
   z-index: 1;
   overflow: hidden; /* 防止内容溢出 */
 }

@@ -23,7 +23,6 @@ export class ToolTipAdapter {
      */
     defaultTipview = () => null;
 
-    // Egret 已移除，使用 DOM 元素替代
     private tipmap = new Map<HTMLElement, any>();
     private currentElement: HTMLElement | null = null;
 

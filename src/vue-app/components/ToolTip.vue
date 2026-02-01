@@ -1,13 +1,10 @@
 <!--
   ⚠️ 自定义组件说明：
   此组件保持自定义实现，未使用 Element Plus 的 ElTooltip，原因：
-  1. 需要与 Egret 代码兼容（通过全局事件 tooltip.show/tooltip.hide 触发）
-  2. 需要动态位置计算（跟随鼠标位置）
-  3. 需要支持 Egret DisplayObject 的 tooltip 注册机制
-  4. 已有适配层（ToolTipAdapter）与旧代码桥接
+  1. 需要动态位置计算（跟随鼠标位置）
+  2. 已有适配层（ToolTipAdapter）与旧代码桥接
   
   如果未来需要替换为 ElTooltip，需要：
-  - 修改所有 Egret 代码的 tooltip 触发方式
   - 实现动态位置计算
   - 移除 ToolTipAdapter 适配层
 -->

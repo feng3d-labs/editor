@@ -92,8 +92,4 @@ html[data-theme="dark"] #vue-app-container {
   background: transparent;
 }
 
-/* 确保 Egret 相关元素也使用暗色背景（如果需要） */
-html[data-theme="dark"] #egretDiv {
-  background-color: #1e1e1e;
-}
 

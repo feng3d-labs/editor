@@ -3,7 +3,6 @@ import { objectview } from 'feng3d';
 
 /**
  * PopupView 适配器，兼容原有的 popupview API
- * Egret 已移除，现在直接使用 Vue 版本的 PopupView
  */
 export class PopupViewAdapter {
     /**

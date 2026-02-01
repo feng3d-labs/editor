@@ -21,7 +21,7 @@ export interface TreeNodeMap
 
 /**
  * 树节点基类
- * 不依赖 Egret UI，提供基础的树节点功能
+ * 提供基础的树节点功能
  */
 export class TreeNode<T extends TreeNodeMap = TreeNodeMap>
 {

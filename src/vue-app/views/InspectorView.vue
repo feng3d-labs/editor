@@ -77,15 +77,7 @@ async function updateView() {
     // 如果视图有 destroy 方法，调用它
     if (view.value.destroy) {
       view.value.destroy();
-    } else if ((view.value as any)._egretContainer) {
-      // Egret 组件，从容器中移除
-      const container = (view.value as any)._egretContainer;
-      if (container.parent) {
-        container.parent.removeChild(container);
-      }
-      delete (view.value as any)._egretContainer;
     } else if (view.value.parent) {
-      // 如果是 Egret 组件，从父容器移除
       view.value.parent.removeChild(view.value);
     } else if (view.value.dom && contentRef.value.contains(view.value.dom)) {
       // 如果是 DOM 元素，直接移除
@@ -135,7 +127,6 @@ async function updateView() {
   
   // 将视图添加到 DOM
   if (view.value) {
-    // Egret 已移除，所有组件现在都是 Vue 组件或 DOM 元素
     if (view.value.dom) {
       // Vue 组件返回的 DOM
       contentRef.value.appendChild(view.value.dom);
@@ -227,8 +218,6 @@ function onBackButton() {
   preSelectedObjects();
 }
 
-// Egret 已移除，不再需要更新 Egret 容器位置
-
 // 监听更新事件
 function onUpdateView() {
   updateView();
@@ -238,7 +227,6 @@ function onUpdateView() {
 async function onSaveShowData(event: IEvent<() => void | Promise<void>>) {
   console.log('InspectorView: 收到 saveShowData 事件', event);
   
-  // 先保存数据（与 Egret 版本一致）
   await saveShowData();
   console.log('InspectorView: 数据保存完成');
   
@@ -264,8 +252,6 @@ onMounted(() => {
   globalEmitter.on('editor.selectedObjectsChanged', onSelectedObjectsChanged);
   globalEmitter.on('inspector.update', onUpdateView);
   globalEmitter.on('inspector.saveShowData', onSaveShowData);
-  
-  // Egret 已移除，不再需要创建 Egret Group
   
   // 初始化视图
   updateView();

@@ -95,7 +95,6 @@ else
 }
 
 // 初始化 Vue 应用
-// Egret UI 已迁移到 Vue，不再需要初始化 Egret
 if (typeof window !== 'undefined')
 {
     // 等待 DOM 加载完成

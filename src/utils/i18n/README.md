@@ -4,7 +4,7 @@
 
 ## 功能特性
 
-- ✅ 支持 Vue 组件和 Egret 组件
+- ✅ 支持 Vue 组件
 - ✅ 响应式语言切换
 - ✅ 语言设置持久化（保存到本地存储）
 - ✅ 自动检测浏览器语言
@@ -45,23 +45,6 @@ const greeting = t('common.welcome', { name: 'World' });
 const text2 = t('some.key', undefined, '默认文本');
 ```
 
-### 在 Egret 组件中使用
-
-```typescript
-import { getText, createReactiveText } from '../utils/i18n/egret';
-
-// 方式1：直接获取文本
-label.text = getText('view.type');
-
-// 方式2：创建响应式文本（自动响应语言变化）
-const reactiveText = createReactiveText('view.type');
-reactiveText.updateLabel(label);
-
-// 组件销毁时记得清理
-this.once(egret.Event.REMOVED_FROM_STAGE, () => {
-    reactiveText.dispose();
-}, this);
-```
 
 ## 添加新的翻译
 
@@ -177,6 +160,5 @@ src/utils/i18n/
 ├── i18n.ts           # 核心模块
 ├── zh_CN.ts          # 简体中文资源
 ├── en_US.ts          # 英文资源
-├── egret.ts          # Egret 组件工具函数
 └── README.md         # 本文档
 ```

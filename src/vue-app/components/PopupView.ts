@@ -42,10 +42,6 @@ class PopupViewManager {
      */
     popupObject<T>(object: T, param: PopupviewParam<T> = {}) {
         const view: any = objectview.getObjectView(object);
-        
-        // Egret 已移除，不再需要特殊处理 Egret 组件
-        
-        // Vue 组件或 DOM 元素
         const width = param.width || 300;
         const height = param.height || 300;
         
@@ -146,9 +142,6 @@ class PopupViewManager {
      */
     popupObjectWindow<T>(object: T, param: PopupviewParam<T> = {}) {
         const view: any = objectview.getObjectView(object);
-        
-        // Egret 已移除，不再需要特殊处理 Egret 组件
-        
         return this.popupViewWindow(view, param);
     }
 

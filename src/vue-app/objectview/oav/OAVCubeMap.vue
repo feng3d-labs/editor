@@ -99,7 +99,8 @@ function onImageClick(faceIndex: number) {
 function dispatchValueChange(faceIndex: number) {
     const face = faces[faceIndex];
     if (props.attributeViewInfo) {
-        const event = new ObjectViewEvent(ObjectViewEvent.VALUE_CHANGE, true);
+        const event = new ObjectViewEvent();
+        event.type = ObjectViewEvent.VALUE_CHANGE;
         (event as any).space = r_owner;
         (event as any).attributeName = face.property;
         (event as any).attributeValue = textureCube.value;

@@ -89,7 +89,8 @@ function onColorChange(newValue: string | null) {
     
     // 触发值变化事件
     if (props.attributeViewInfo) {
-        const event = new ObjectViewEvent(ObjectViewEvent.VALUE_CHANGE, true);
+        const event = new ObjectViewEvent();
+        event.type = ObjectViewEvent.VALUE_CHANGE;
         (event as any).space = r_owner;
         (event as any).attributeName = props.name;
         (event as any).attributeValue = r_owner[props.name];
@@ -118,7 +119,8 @@ function onHexChange(newValue: string | null) {
         
         // 触发值变化事件
         if (props.attributeViewInfo) {
-            const event = new ObjectViewEvent(ObjectViewEvent.VALUE_CHANGE, true);
+            const event = new ObjectViewEvent();
+        event.type = ObjectViewEvent.VALUE_CHANGE;
             (event as any).space = r_owner;
             (event as any).attributeName = props.name;
             (event as any).attributeValue = r_owner[props.name];

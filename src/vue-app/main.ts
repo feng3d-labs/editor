@@ -1,6 +1,5 @@
 /**
  * Vue 应用入口
- * 与 Egret 应用并行运行
  */
 import { createApp } from 'vue';
 import App from './App.vue';
