@@ -19,6 +19,11 @@ export class SceneRotateTool extends Component
     get view() { return this._view; }
     set view(v) { this._view = v; this.load(); }
     private _view: EditorView;
+    
+    /**
+     * 图层容器（可选，如果不提供则使用全局的 SceneRotateToolLayer）
+     */
+    layerContainer?: HTMLElement;
 
     private arrowsX: GameObject;
     private arrowsNX: GameObject;
@@ -167,7 +172,13 @@ export class SceneRotateTool extends Component
     private newView()
     {
         const canvas = document.createElement('canvas');
-        document.getElementById('SceneRotateToolLayer').appendChild(canvas);
+        // 使用传入的容器，如果没有则回退到全局元素
+        const container = this.layerContainer || document.getElementById('SceneRotateToolLayer');
+        if (!container) {
+            console.error('SceneRotateTool: No container found');
+            throw new Error('SceneRotateTool: No container found');
+        }
+        container.appendChild(canvas);
         canvas.style.position = 'absolute';
         canvas.style.zIndex = '10';
         canvas.style.pointerEvents = 'auto';

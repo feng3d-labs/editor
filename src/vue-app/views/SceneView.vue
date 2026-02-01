@@ -7,6 +7,8 @@
     <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
     <!-- 性能统计工具容器 -->
     <div ref="statsContainerRef" class="scene-stats-container"></div>
+    <!-- 场景旋转工具图层 -->
+    <div ref="sceneRotateToolLayerRef" class="scene-rotate-tool-layer"></div>
     <!-- 粒子效果控制器 -->
     <ParticleEffectController />
     <!-- 相机预览组件（显示在场景界面右下角） -->
@@ -42,6 +44,7 @@ const containerRef = ref<HTMLElement>();
 const backRectRef = ref<HTMLElement>();
 const toolViewContainerRef = ref<HTMLElement>();
 const statsContainerRef = ref<HTMLElement>();
+const sceneRotateToolLayerRef = ref<HTMLElement>();
 
 // Stats 实例（每个 SceneView 独立）
 const statsInstance = ref<Stats | null>(null);
@@ -162,6 +165,11 @@ function initScene() {
     
     // 添加场景旋转工具
     const sceneRotateTool = editorScene.gameObject.addComponent(SceneRotateTool);
+    // 先设置场景旋转工具的容器（在设置 view 之前，因为 view 的 setter 会触发 load）
+    if (sceneRotateToolLayerRef.value) {
+      (sceneRotateTool as any).layerContainer = sceneRotateToolLayerRef.value;
+    }
+    // 然后设置 view（这会触发 load，此时 layerContainer 已经设置好了）
     sceneRotateTool.view = view.value;
     
     // 初始化模块
@@ -787,6 +795,18 @@ onUnmounted(() => {
   height: 100%;
   z-index: 10;
   pointer-events: none;
+  overflow: visible;
+}
+
+.scene-rotate-tool-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  background: transparent;
   overflow: visible;
 }
 </style>

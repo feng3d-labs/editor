@@ -86,10 +86,6 @@ html[data-theme="dark"] #vue-app-container {
 }
 
 /* 工具层背景透明，但确保内容可见 */
-#CameraPreviewLayer,
-#SceneRotateToolLayer,
-#stats {
-  background: transparent;
-}
+/* 注意：CameraPreviewLayer、SceneRotateToolLayer 和 stats 现在都在场景界面中，使用类选择器 */
 
 
