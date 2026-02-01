@@ -133,7 +133,8 @@ export class OAVBase extends EventEmitter implements IObjectAttributeView
         if (this._space[this._attributeName] !== value)
         {
             this._space[this._attributeName] = value;
-            const objectViewEvent = <any> new ObjectViewEvent(ObjectViewEvent.VALUE_CHANGE, true);
+            const objectViewEvent = <any> new ObjectViewEvent();
+            objectViewEvent.type = ObjectViewEvent.VALUE_CHANGE;
             objectViewEvent.space = this._space;
             objectViewEvent.attributeName = this._attributeName;
             objectViewEvent.attributeValue = this.attributeValue;

@@ -4,7 +4,7 @@ import { editorcache } from './caches/Editorcache';
 import { EditorData } from './global/EditorData';
 import { editorui } from './global/editorui';
 import { modules } from './Modules';
-import { mouseEventEnvironment } from './polyfill/egret/MouseEvent';
+// Egret MouseEvent polyfill 已移除
 import { Editorshortcut } from './shortcut/Editorshortcut';
 import { editorAsset } from './ui/assets/EditorAsset';
 
@@ -21,31 +21,20 @@ console.log(`editor version ${version}`);
  */
 export class Editor
 {
-    private stage: egret.Stage;
-
     constructor()
     {
         // giteeOauth.oauth();
         // 关闭右键默认菜单
         document.body.oncontextmenu = function () { return false; };
 
-        // 获取 Egret 舞台（如果存在）
-        const egretStage = (global as any).egret?.Stage?.getInstance?.();
-        if (egretStage) {
-            this.stage = egretStage;
-            editorui.stage = this.stage;
-            this.onAddedToStage();
-        } else {
-            // 如果没有 Egret 舞台，直接初始化
-            this.onAddedToStage();
-        }
+        // Egret 已移除，直接初始化
+        this.onAddedToStage();
     }
 
     private async onAddedToStage()
     {
-        if (this.stage) {
-            editorui.stage = this.stage;
-        }
+        // Egret 已移除，不再设置 stage
+        // editorui.stage 将保持为 undefined 或使用占位对象
 
         //
         // 使用 Vue Message 组件的适配器（过渡期）
@@ -67,27 +56,10 @@ export class Editor
     private async initEgret()
     {
         // Egret UI 层已迁移到 Vue，创建占位对象以保持向后兼容
-        if (this.stage) {
-            const tooltipLayer = new eui.UILayer();
-            tooltipLayer.touchEnabled = false;
-            this.stage.addChild(tooltipLayer);
-            editorui.tooltipLayer = tooltipLayer;
-            //
-            const popupLayer = new eui.UILayer();
-            popupLayer.touchEnabled = false;
-            this.stage.addChild(popupLayer);
-            editorui.popupLayer = popupLayer;
-            //
-            const messageLayer = new eui.UILayer();
-            messageLayer.touchEnabled = false;
-            this.stage.addChild(messageLayer);
-            editorui.messageLayer = messageLayer;
-        } else {
-            // 如果没有 Egret 舞台，创建占位对象
-            editorui.tooltipLayer = {} as any;
-            editorui.popupLayer = {} as any;
-            editorui.messageLayer = {} as any;
-        }
+        // 由于 Egret 脚本已移除，不再创建 Egret UI 层
+        editorui.tooltipLayer = {} as any;
+        editorui.popupLayer = {} as any;
+        editorui.messageLayer = {} as any;
         //
         editorcache.projectname = editorcache.projectname || 'newproject';
     }
@@ -117,7 +89,7 @@ export class Editor
         this.initMainView();
         // eslint-disable-next-line no-new
         new Editorshortcut();
-        mouseEventEnvironment();
+        // mouseEventEnvironment 已移除，Egret 已迁移到 Vue
 
         window.addEventListener('beforeunload', () =>
         {

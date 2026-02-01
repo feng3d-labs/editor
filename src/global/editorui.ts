@@ -4,13 +4,13 @@ import { invalidateAssettree } from '../vue-app/views/ProjectViewAdapter';
 
 export interface EditorUI
 {
-    stage: egret.Stage;
+    // Egret 已移除，这些属性仅保留为占位对象以保持向后兼容
+    stage: any;
     assetview: { invalidateAssettree: () => void };
     mainview: { width: number; height: number } | any; // MainView 已迁移到 Vue
-    tooltipLayer: eui.UILayer;
-    popupLayer: eui.UILayer;
-
-    messageLayer: eui.UILayer;
+    tooltipLayer: any;
+    popupLayer: any;
+    messageLayer: any;
 }
 
 export const editorui: EditorUI = <any>{

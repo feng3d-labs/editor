@@ -43,14 +43,7 @@ class PopupViewManager {
     popupObject<T>(object: T, param: PopupviewParam<T> = {}) {
         const view: any = objectview.getObjectView(object);
         
-        // 如果是 Egret 组件，需要特殊处理
-        if (view && (view.stage || view instanceof (global as any).egret.DisplayObject)) {
-            // Egret 组件，使用原来的方式
-            const editorui = (global as any).editorui;
-            if (editorui && editorui.popupView) {
-                return editorui.popupView.popupObject(object, param);
-            }
-        }
+        // Egret 已移除，不再需要特殊处理 Egret 组件
         
         // Vue 组件或 DOM 元素
         const width = param.width || 300;
@@ -154,14 +147,7 @@ class PopupViewManager {
     popupObjectWindow<T>(object: T, param: PopupviewParam<T> = {}) {
         const view: any = objectview.getObjectView(object);
         
-        // 如果是 Egret 组件，需要特殊处理
-        if (view && (view.stage || view instanceof (global as any).egret.DisplayObject)) {
-            // Egret 组件，使用原来的方式
-            const editorui = (global as any).editorui;
-            if (editorui && editorui.popupView) {
-                return editorui.popupView.popupObjectWindow(object, param);
-            }
-        }
+        // Egret 已移除，不再需要特殊处理 Egret 组件
         
         return this.popupViewWindow(view, param);
     }

@@ -1,10 +1,7 @@
 export * from './net/client';
 export * from './polyfill/feng3d/ShortCut';
 export * from './polyfill/feng3d/EventDispatcher';
-export * from './polyfill/egret/MouseEvent';
-export * from './polyfill/egret/TextField';
-export * from './polyfill/egret/DisplayObject';
-export * from './polyfill/egret/Scroller';
+// Egret polyfill 已移除，UI 已迁移到 Vue
 export * from './oauth/GiteeOauth';
 export * from './assets/NativeRequire';
 export * from './assets/NativeFS';

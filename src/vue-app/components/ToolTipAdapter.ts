@@ -23,44 +23,57 @@ export class ToolTipAdapter {
      */
     defaultTipview = () => null;
 
-    private tipmap = new Map<egret.DisplayObject, any>();
-    private currentDisplayObject: egret.DisplayObject | null = null;
+    // Egret 已移除，使用 DOM 元素替代
+    private tipmap = new Map<HTMLElement, any>();
+    private currentElement: HTMLElement | null = null;
 
     /**
      * 注册工具提示
-     * @param displayObject Egret 显示对象
+     * @param element DOM 元素
      * @param tip 提示数据（通常是字符串）
      */
-    register(displayObject: egret.DisplayObject, tip: any) {
-        if (!displayObject) return;
+    register(element: any, tip: any) {
+        if (!element) return;
         
-        this.tipmap.set(displayObject, tip);
-        displayObject.addEventListener(egret.MouseEvent.MOUSE_OVER, this.onMouseOver, this);
+        // 如果是 DOM 元素，直接使用；否则尝试获取 DOM
+        const domElement = element instanceof HTMLElement ? element : (element as any)?.dom || element;
+        if (!(domElement instanceof HTMLElement)) {
+            console.warn('ToolTipAdapter: element is not a DOM element', element);
+            return;
+        }
+        
+        this.tipmap.set(domElement, tip);
+        domElement.addEventListener('mouseenter', this.onMouseOver);
+        domElement.addEventListener('mouseleave', this.onMouseOut);
     }
 
     /**
      * 取消注册工具提示
-     * @param displayObject Egret 显示对象
+     * @param element DOM 元素
      */
-    unregister(displayObject: egret.DisplayObject) {
-        if (!displayObject) return;
+    unregister(element: any) {
+        if (!element) return;
         
-        this.tipmap.delete(displayObject);
-        displayObject.removeEventListener(egret.MouseEvent.MOUSE_OVER, this.onMouseOver, this);
+        const domElement = element instanceof HTMLElement ? element : (element as any)?.dom || element;
+        if (!(domElement instanceof HTMLElement)) return;
         
-        // 如果当前显示的是这个对象的提示，隐藏它
-        if (this.currentDisplayObject === displayObject) {
+        this.tipmap.delete(domElement);
+        domElement.removeEventListener('mouseenter', this.onMouseOver);
+        domElement.removeEventListener('mouseleave', this.onMouseOut);
+        
+        // 如果当前显示的是这个元素的提示，隐藏它
+        if (this.currentElement === domElement) {
             this.hideTooltip();
         }
     }
 
-    private onMouseOver = (event: egret.MouseEvent) => {
-        const displayObject = event.currentTarget as egret.DisplayObject;
-        const tip = this.tipmap.get(displayObject);
+    private onMouseOver = (event: MouseEvent) => {
+        const element = event.currentTarget as HTMLElement;
+        const tip = this.tipmap.get(element);
         
         if (!tip) return;
 
-        this.currentDisplayObject = displayObject;
+        this.currentElement = element;
         
         // 显示工具提示
         const text = String(tip);
@@ -68,16 +81,10 @@ export class ToolTipAdapter {
         const y = windowEventProxy.clientY;
         
         globalEmitter.emit('tooltip.show', { text, x, y });
-
-        // 监听鼠标移出事件
-        displayObject.addEventListener(egret.MouseEvent.MOUSE_OUT, this.onMouseOut, this);
     };
 
-    private onMouseOut = (event: egret.MouseEvent) => {
-        const displayObject = event.currentTarget as egret.DisplayObject;
-        displayObject.removeEventListener(egret.MouseEvent.MOUSE_OUT, this.onMouseOut, this);
-        
-        this.currentDisplayObject = null;
+    private onMouseOut = (event: MouseEvent) => {
+        this.currentElement = null;
         this.hideTooltip();
     };
 

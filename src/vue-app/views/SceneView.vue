@@ -46,8 +46,8 @@ const editorCamera = ref<Camera | null>(null);
 const areaSelectRectRef = ref<InstanceType<typeof AreaSelectRect> | null>(null);
 const areaSelectStartPosition = ref<Vector2 | null>(null);
 
-// Egret 容器用于拖放注册（drag.register 需要 egret.DisplayObject）
-let dragContainer: egret.DisplayObject | null = null;
+// 拖放容器（Egret 已移除，使用 DOM 元素）
+let dragContainer: HTMLElement | null = null;
 
 // 状态
 const selectedObjectsHistory = ref<GameObject[]>([]);
@@ -480,26 +480,8 @@ function onAddSceneToolView(event: IEvent<any>) {
   const component = getRawObject(event.data);
   if (!component || !toolViewContainerRef.value) return;
   
-  // 如果 component 是 Egret 组件，需要添加到 Egret 舞台
-  // 由于 Vue 和 Egret 的显示系统不同，我们需要将 Egret 组件添加到 editorui.stage
-  // 但需要确保它显示在 SceneView 容器上方
-  if (component instanceof (globalThis as any).eui.Component || component instanceof (globalThis as any).egret.DisplayObject) {
-    // 将组件添加到 editorui 的 messageLayer（最上层）
-    // 或者创建一个专门的容器层
-    if (editorui.stage && editorui.messageLayer) {
-      // 设置组件位置和大小，使其覆盖 SceneView 区域
-      const rect = toolViewContainerRef.value.getBoundingClientRect();
-      component.x = rect.left;
-      component.y = rect.top;
-      component.width = rect.width;
-      component.height = rect.height;
-      
-      // 添加到 messageLayer（最上层，不会被其他内容遮挡）
-      editorui.messageLayer.addChild(component);
-    } else {
-      console.warn('SceneView: editorui.stage or messageLayer not available');
-    }
-  }
+  // Egret 已移除，不再需要特殊处理 Egret 组件
+  // 所有组件现在都是 Vue 组件或 DOM 元素
 }
 
 // 获取原始对象的辅助函数（避免 Vue Proxy 干扰 feng3d 事件系统）
@@ -608,18 +590,12 @@ onMounted(async () => {
   globalEmitter.on('editor.addSceneToolView', onAddSceneToolView);
   
   // 拖放功能
-  // drag.register 需要 egret.DisplayObject，但 containerRef.value 是 DOM 元素
-  // 创建一个隐藏的 Egret 容器用于拖放注册
-  if (editorui.stage) {
-    dragContainer = new (globalThis as any).eui.Group();
-    dragContainer.width = 0;
-    dragContainer.height = 0;
-    dragContainer.visible = false;
-    // 将容器添加到舞台（但不显示）
-    editorui.stage.addChild(dragContainer);
+  // Egret 已移除，使用 DOM 元素进行拖放注册
+  if (containerRef.value) {
+    dragContainer = containerRef.value;
     
     // 注册拖放功能
-    drag.register(dragContainer, null, ['file_gameobject', 'file_script'], (dragdata) => {
+    drag.register(dragContainer as any, null, ['file_gameobject', 'file_script'], (dragdata) => {
       dragdata.getDragData('file_gameobject').forEach((v) => {
         hierarchy.addGameoObjectFromAsset(v, hierarchy.rootnode.gameobject);
       });
@@ -668,10 +644,7 @@ onUnmounted(() => {
   
   // 移除拖放功能
   if (dragContainer) {
-    drag.unregister(dragContainer);
-    if (dragContainer.parent) {
-      dragContainer.parent.removeChild(dragContainer);
-    }
+    drag.unregister(dragContainer as any);
     dragContainer = null;
   }
   
