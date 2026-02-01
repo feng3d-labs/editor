@@ -25,6 +25,10 @@ import 'element-plus/dist/index.css';
 // 引入自定义深色主题
 import './styles/element-plus-theme.css';
 
+// 注册 Vue 版本的 objectview 组件
+import { registerObjectViewComponents } from './objectview/registerComponents';
+registerObjectViewComponents();
+
 // 创建 Vue 应用
 const app = createApp(App);
 
