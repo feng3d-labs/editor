@@ -5,6 +5,8 @@
     <div ref="backRectRef" class="scene-back-rect"></div>
     <!-- 工具视图容器 -->
     <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
+    <!-- 性能统计工具容器 -->
+    <div ref="statsContainerRef" class="scene-stats-container"></div>
     <!-- 粒子效果控制器 -->
     <ParticleEffectController />
     <!-- 相机预览组件（显示在场景界面右下角） -->
@@ -39,6 +41,10 @@ const editorStore = useEditorStore();
 const containerRef = ref<HTMLElement>();
 const backRectRef = ref<HTMLElement>();
 const toolViewContainerRef = ref<HTMLElement>();
+const statsContainerRef = ref<HTMLElement>();
+
+// Stats 实例（每个 SceneView 独立）
+const statsInstance = ref<Stats | null>(null);
 
 // 3D 渲染相关
 const canvas = ref<HTMLCanvasElement | null>(null);
@@ -106,11 +112,28 @@ function initScene() {
     
     console.log('SceneView: initializing scene', { canvasSize: { width: rect.width, height: rect.height } });
     
-    // 初始化 Stats
-    Stats.init(document.getElementById('stats'));
+    // 创建独立的 Stats 实例（不使用单例）
+    if (statsContainerRef.value && !statsInstance.value) {
+      statsInstance.value = markRaw(new Stats());
+      if (statsInstance.value.dom) {
+        statsContainerRef.value.appendChild(statsInstance.value.dom);
+        // 设置初始样式
+        statsInstance.value.dom.style.position = 'absolute';
+        statsInstance.value.dom.style.left = '0px';
+        statsInstance.value.dom.style.top = '0px';
+        statsInstance.value.dom.style.zIndex = '10';
+        statsInstance.value.dom.style.pointerEvents = 'none';
+      }
+      
+    }
     
     // 创建 EditorView
     view.value = markRaw(new EditorView(canvas.value) as any);
+    
+    // 将 Stats 实例关联到 View
+    if (view.value && statsInstance.value) {
+      (view.value as any).statsInstance = statsInstance.value;
+    }
     
     // 启动渲染循环（View 类需要手动启动）
     if (view.value && typeof (view.value as any).start === 'function') {
@@ -210,13 +233,13 @@ function updateCanvasSize() {
     canvas.value.height = rect.height;
   }
   
-  // 更新 Stats 位置（相对于视口）
-  if (Stats.instance && Stats.instance.dom) {
-    Stats.instance.dom.style.position = 'absolute';
-    Stats.instance.dom.style.left = `${rect.left}px`;
-    Stats.instance.dom.style.top = `${rect.top}px`;
-    Stats.instance.dom.style.zIndex = '10';
-    Stats.instance.dom.style.pointerEvents = 'none';
+  // 更新 Stats 位置（相对于容器）
+  if (statsInstance.value && statsInstance.value.dom) {
+    statsInstance.value.dom.style.position = 'absolute';
+    statsInstance.value.dom.style.left = '0px';
+    statsInstance.value.dom.style.top = '0px';
+    statsInstance.value.dom.style.zIndex = '10';
+    statsInstance.value.dom.style.pointerEvents = 'none';
   }
   
   console.log('SceneView: canvas size updated', { width: rect.width, height: rect.height });
@@ -693,6 +716,20 @@ onUnmounted(() => {
     canvas.value = null;
   }
   
+  // 清理 Stats 实例
+  if (statsInstance.value) {
+    // 从 View 中移除 Stats 引用
+    if (view.value) {
+      (view.value as any).statsInstance = undefined;
+    }
+    
+    // 移除 DOM 元素
+    if (statsInstance.value.dom && statsInstance.value.dom.parentElement) {
+      statsInstance.value.dom.parentElement.removeChild(statsInstance.value.dom);
+    }
+    statsInstance.value = null;
+  }
+  
   // 清理场景
   view.value = null;
   editorCamera.value = null;
@@ -740,6 +777,17 @@ onUnmounted(() => {
   height: 100%;
   z-index: 2;
   pointer-events: none;
+}
+
+.scene-stats-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  overflow: visible;
 }
 </style>
 

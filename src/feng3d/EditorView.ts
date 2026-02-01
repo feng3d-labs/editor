@@ -37,10 +37,19 @@ export class EditorView extends View
     editorComponent: EditorComponent;
 
     /**
+     * Stats 实例（可选，由 SceneView 设置）
+     */
+    statsInstance?: any;
+
+    /**
      * 绘制场景
      */
     render()
     {
+        // 在渲染开始时调用 Stats.begin()
+        if (this.statsInstance) {
+            this.statsInstance.begin();
+        }
         if (EditorData.editorData.gameScene !== this.scene)
         {
             if (this.scene)
@@ -72,10 +81,22 @@ export class EditorView extends View
                 this.editorScene.update();
                 forwardRenderer.draw(this.gl, this.editorScene, this.camera);
             }
+            // 在提前返回前调用 Stats.end()
+            if (this.statsInstance) {
+                this.statsInstance.end();
+                this.statsInstance.update();
+            }
             return;
         }
 
-        if (this.contextLost) return;
+        if (this.contextLost) {
+            // 在提前返回前调用 Stats.end()
+            if (this.statsInstance) {
+                this.statsInstance.end();
+                this.statsInstance.update();
+            }
+            return;
+        }
 
         if (this.editorScene)
         {
@@ -97,6 +118,12 @@ export class EditorView extends View
                     wireframeRenderer.drawGameObject(this.gl, element.getComponent(Renderable), this.scene, this.camera, this.wireframeColor);
                 }
             });
+        }
+        
+        // 在渲染结束时调用 Stats.end() 和 update()
+        if (this.statsInstance) {
+            this.statsInstance.end();
+            this.statsInstance.update();
         }
     }
 }
