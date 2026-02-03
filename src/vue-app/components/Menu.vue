@@ -164,10 +164,10 @@ function calculateMenuPosition(
 // 显示菜单
 function showMenu(event: IEvent<{ items: MenuItem[]; parentRect?: { left: number; top: number; right: number; bottom: number }; x?: number; y?: number }>) {
   const { items, parentRect, x, y } = event.data;
-  
+
   const menuItem = handleShow({ submenu: items });
   if (!menuItem.submenu || menuItem.submenu.length === 0) return;
-  
+
   // 如果提供了 x, y 坐标，使用它们；否则计算位置
   let position: { x: number; y: number };
   if (x !== undefined && y !== undefined) {
@@ -175,7 +175,7 @@ function showMenu(event: IEvent<{ items: MenuItem[]; parentRect?: { left: number
   } else {
     position = calculateMenuPosition(menuItem.submenu, parentRect);
   }
-  
+
   menu.value = {
     visible: true,
     instances: [{

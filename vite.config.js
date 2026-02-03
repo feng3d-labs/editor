@@ -319,7 +319,7 @@ export default defineConfig(({ mode }) =>
             vueDevtools({
                 enabled: true,
             }),
-            configureCursorEditor(), // 配置 Cursor 编辑器
+            // configureCursorEditor(), // 配置 Cursor 编辑器
             // Element Plus 按需引入
             AutoImport({
                 resolvers: [ElementPlusResolver()],

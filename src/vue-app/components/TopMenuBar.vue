@@ -5,18 +5,19 @@
       mode="horizontal"
       :default-active="activeMenuIndex >= 0 ? String(activeMenuIndex) : ''"
       class="top-menu-bar-menu"
-      @select="handleMenuSelect"
+      :ellipsis="false"
     >
       <el-menu-item
         v-for="(item, index) in menuItems"
         :key="index"
         :index="String(index)"
-        @click="onMenuItemClick(item, index, $event)"
+        :ref="el => setMenuItemRef(el, index)"
+        @click="onMenuItemClick(item, index)"
       >
         <span class="menu-item-label">{{ item.label }}</span>
       </el-menu-item>
     </el-menu>
-    
+
     <!-- 项目名称（居中显示） -->
     <div class="project-name">
       <span>{{ projectName }}</span>
@@ -25,11 +26,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { globalEmitter, IEvent } from 'feng3d';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { globalEmitter } from 'feng3d';
 import { menuConfig } from '../../configs/CommonConfig';
-import { menu } from '../../ui/components/Menu';
+import { MenuAdapter } from './MenuAdapter';
 import { editorcache } from '../../caches/Editorcache';
+
+// 创建 MenuAdapter 实例
+const menuAdapter = new MenuAdapter();
 
 // 菜单项类型
 interface MenuItem {
@@ -46,44 +50,54 @@ interface MenuItem {
 const activeMenuIndex = ref<number>(-1);
 const menuItems = ref<MenuItem[]>([]);
 const projectName = ref<string>('newproject');
+const menuItemRefs = ref<Map<number, any>>(new Map());
 
 // 获取菜单项
 function getMenuItems() {
   const mainMenu = menuConfig.getMainMenu();
   // 过滤掉分隔符，只显示有 label 的菜单项
   const items = mainMenu.filter((item) => item.type !== 'separator' && item.label);
-  
+
   // 处理菜单显示逻辑
   const processedItems = items.map((item) => {
-    const menuItem = menu.handleShow({ submenu: [item] });
+    const menuItem = menuAdapter.handleShow({ submenu: [item] });
     return menuItem.submenu?.[0] || item;
   });
-  
+
   return processedItems;
 }
 
+// 设置菜单项 ref
+function setMenuItemRef(el: any, index: number) {
+  if (el) {
+    menuItemRefs.value.set(index, el);
+  } else {
+    menuItemRefs.value.delete(index);
+  }
+}
+
 // 菜单项点击
-function onMenuItemClick(item: MenuItem, index: number, event: MouseEvent) {
+function onMenuItemClick(item: MenuItem, index: number) {
   if (!item.submenu || item.submenu.length === 0) return;
-  
-  // 计算菜单位置（在菜单项下方）
-  const target = event.currentTarget as HTMLElement;
+
+  // 从 ref 中获取菜单项元素
+  const menuItemRef = menuItemRefs.value.get(index);
+  if (!menuItemRef) return;
+
+  // Element Plus 的 menu-item 组件，需要获取其 $el 属性
+  const target = menuItemRef.$el || menuItemRef;
+  if (!target || !target.getBoundingClientRect) return;
+
   const rect = target.getBoundingClientRect();
-  
+
   // 显示菜单
   globalEmitter.emit('menu.show', {
     items: item.submenu,
     x: rect.left,
     y: rect.bottom,
   } as any);
-  
-  activeMenuIndex.value = index;
-}
 
-// Element Plus Menu 选择处理
-function handleMenuSelect(index: string) {
-  // Element Plus Menu 会自动处理选中状态
-  // 这里可以添加额外的逻辑
+  activeMenuIndex.value = index;
 }
 
 // 监听菜单关闭事件
@@ -133,6 +147,12 @@ onUnmounted(() => {
   background-color: transparent;
   border-bottom: none;
   height: 100%;
+  flex: 1;
+  overflow: visible;
+}
+
+.top-menu-bar-menu :deep(.el-menu--horizontal) {
+  border-bottom: none;
 }
 
 .top-menu-bar-menu :deep(.el-menu-item) {
