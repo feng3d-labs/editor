@@ -1,6 +1,6 @@
 {
   "name": "@feng3d/themes",
-  "version": "1.0.0",
+  "version": "0.6.0",
   "description": "Theme management system for Feng3D Editor",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
@@ -20,7 +20,7 @@
   ],
   "author": "feng3d",
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
     "vue": "^3.0.0"
   },
   "devDependencies": {

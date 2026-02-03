@@ -50,7 +50,7 @@ const themeStore = useThemeStore();
 themeStore.applyTheme(themeStore.currentTheme);
 
 // 尝试初始化主题服务，加载并应用保存的主题
-import { ThemeService } from './services/ThemeService';
+import { ThemeService } from '@feng3d/themes';
 setTimeout(() => {
   const savedThemeId = localStorage.getItem('editor-vscode-theme');
   if (savedThemeId) {

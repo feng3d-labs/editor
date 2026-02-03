@@ -85,7 +85,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useThemeStore, type ThemeType } from '../stores/themeStore';
 import { useI18n, type Language } from '../composables/useI18n';
 import Icon from './Icon.vue';
-import { ThemeService, type ThemeInfo } from '../services/ThemeService';
+import { ThemeService, type ThemeInfo } from '@feng3d/themes';
 
 const props = withDefaults(defineProps<{
   modelValue?: boolean;
