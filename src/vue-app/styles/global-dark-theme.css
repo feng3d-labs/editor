@@ -11,8 +11,8 @@
 /* 暗色主题样式 - 仅在 data-theme="dark" 时生效 */
 html[data-theme="dark"],
 html[data-theme="dark"] body {
-  background-color: #1e1e1e;
-  color: #cccccc;
+  background-color: #2a2a2a;
+  color: #ffffff;
 }
 
 html[data-theme="dark"] body {
@@ -28,16 +28,16 @@ html[data-theme="dark"] ::-webkit-scrollbar {
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-track {
-  background: #1e1e1e;
+  background: #2a2a2a;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #3d3d3d;
+  background: #4a4a4a;
   border-radius: 5px;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: #4d4d4d;
+  background: #5a5a5a;
 }
 
 /* 选择文本样式 - 暗色主题（使用设计令牌主色） */
@@ -66,9 +66,9 @@ html[data-theme="dark"] a:hover {
 html[data-theme="dark"] input,
 html[data-theme="dark"] textarea,
 html[data-theme="dark"] select {
-  background-color: #2d2d2d;
-  color: #cccccc;
-  border: 1px solid #3d3d3d;
+  background-color: #3a3a3a;
+  color: #ffffff;
+  border: 1px solid #4a4a4a;
 }
 
 html[data-theme="dark"] input:focus,
@@ -81,8 +81,8 @@ html[data-theme="dark"] select:focus {
 /* 确保所有容器默认使用暗色背景 */
 html[data-theme="dark"] #vue-app,
 html[data-theme="dark"] #vue-app-container {
-  background-color: #1e1e1e;
-  color: #cccccc;
+  background-color: #2a2a2a;
+  color: #ffffff;
 }
 
 /* 工具层背景透明，但确保内容可见 */

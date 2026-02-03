@@ -264,7 +264,7 @@ function onBottomTabClose(index: number) {
   display: flex;
   flex-direction: column;
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
+  background-color: #2a2a2a;
 }
 
 
@@ -282,7 +282,7 @@ function onBottomTabClose(index: number) {
   width: 100%;
   height: 100%;
   /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-secondary, #666666);
+  color: #999999;
   font-size: 14px;
   text-align: center;
 }

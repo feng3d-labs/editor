@@ -927,8 +927,8 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
   height: 100%;
   overflow-y: auto;
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
-  color: var(--el-text-color-primary, #cccccc);
+  background-color: #4a4a4a;
+  color: #ffffff;
   padding: 8px;
 }
 
@@ -941,12 +941,62 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 /* Element Plus Tree 样式覆盖 */
 :deep(.el-tree) {
   background-color: transparent;
-  color: var(--el-text-color-primary, #cccccc);
+  color: #ffffff;
 }
 
 :deep(.el-tree-node__content) {
-  color: var(--el-text-color-primary, #cccccc);
+  color: #ffffff;
   height: 24px;
+}
+
+:deep(.el-tree-node__content:hover) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+:deep(.el-tree-node.is-current > .el-tree-node__content) {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+/* 右键菜单容器 */
+.context-menu-wrapper {
+  position: fixed;
+  z-index: 2000;
+}
+
+.context-menu {
+  background-color: #3a3a3a;
+  border: 1px solid #5a5a5a;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  min-width: 150px;
+  padding: 4px 0;
+  overflow: hidden;
+}
+
+.context-menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 14px;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.context-menu-item:hover:not(.context-menu-item-disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.context-menu-item-disabled {
+  color: #999999;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.context-menu-item-divided {
+  border-top: 1px solid #5a5a5a;
+  margin-top: 4px;
+  padding-top: 8px;
 }
 
 :deep(.el-tree-node__content:hover) {

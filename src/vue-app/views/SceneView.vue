@@ -756,7 +756,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
+  background-color: #3a3a3a;
   overflow: hidden;
 }
 
