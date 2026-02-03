@@ -78,6 +78,7 @@
   },
   "workspaces": [
     "packages/cannon",
-    "packages/cannon-plugin"
+    "packages/cannon-plugin",
+    "packages/themes"
   ]
 }
