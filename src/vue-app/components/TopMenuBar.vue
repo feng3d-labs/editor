@@ -17,12 +17,12 @@
         <span class="menu-item-label">{{ item.label }}</span>
       </el-menu-item>
     </el-menu>
-
+  
     <!-- 项目名称（居中显示） -->
     <div class="project-name">
       <span>{{ projectName }}</span>
     </div>
-
+  
     <!-- 右侧：工具按钮 -->
     <div class="menu-bar-right-tools">
       <el-button-group>
@@ -55,6 +55,9 @@
         </el-button>
       </el-button-group>
     </div>
+    
+    <!-- 设置对话框 -->
+    <SettingsDialog v-model="settingsDialogVisible" />
   </div>
 </template>
 

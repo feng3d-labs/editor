@@ -74,6 +74,7 @@ export const zh_CN: LanguageResources = {
     settings: {
         appearance: '外观',
         theme: '主题',
+        classicTheme: '经典主题',
         dark: '暗色',
         light: '亮色',
         language: '语言',

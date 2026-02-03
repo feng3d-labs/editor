@@ -49,6 +49,17 @@ const themeStore = useThemeStore();
 // 确保主题在应用挂载后正确应用
 themeStore.applyTheme(themeStore.currentTheme);
 
+// 尝试初始化主题服务，加载并应用保存的主题
+import { ThemeService } from './services/ThemeService';
+setTimeout(() => {
+  const savedThemeId = localStorage.getItem('editor-vscode-theme');
+  if (savedThemeId) {
+    ThemeService.getInstance().loadAndApplyTheme(savedThemeId).catch(error => {
+      console.error('Failed to load saved theme:', error);
+    });
+  }
+}, 100); // 延迟加载以确保DOM已准备就绪
+
 // 初始化国际化 Store
 import { useI18nStore } from './stores/i18nStore';
 const i18nStore = useI18nStore();

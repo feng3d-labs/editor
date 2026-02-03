@@ -70,9 +70,9 @@ html[data-theme="light"] a:hover {
 html[data-theme="light"] input,
 html[data-theme="light"] textarea,
 html[data-theme="light"] select {
-  background-color: #ffffff;
-  color: var(--color-gray-900);
-  border: 1px solid var(--color-gray-300);
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
+  border: 1px solid var(--el-border-color);
   border-radius: 4px;
   padding: 6px 12px;
   transition: all 0.2s ease;
@@ -108,8 +108,8 @@ html[data-theme="light"] button:disabled {
 /* 卡片/面板样式 - 亮色主题 */
 html[data-theme="light"] .card,
 html[data-theme="light"] .panel {
-  background-color: #ffffff;
-  border: 1px solid var(--color-gray-200);
+  background-color: var(--el-bg-color);
+  border: 1px solid var(--el-border-color);
   border-radius: 6px;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;

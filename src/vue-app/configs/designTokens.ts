@@ -7,11 +7,11 @@
  * 颜色设计令牌
  */
 export const colorTokens = {
-  primary: 'var(--color-primary-600)',
-  success: 'var(--color-success-500)',
-  warning: 'var(--color-warning-500)',
-  danger: 'var(--color-danger-500)',
-  info: 'var(--color-info-500)',
+  primary: 'var(--color-primary-600)',      // VSCode 主色 #0078D4
+  success: 'var(--color-success-500)',     // VSCode 成功色 #2EA043
+  warning: 'var(--color-warning-500)',     // VSCode 警告色 #dcb100
+  danger: 'var(--color-danger-500)',       // VSCode 错误色 #F85149
+  info: 'var(--color-info-500)',           // VSCode 信息色 #4daafc
 } as const;
 
 /**

@@ -2,7 +2,7 @@
   <el-dialog
     v-model="visible"
     :title="t('toolbar.settings')"
-    width="500px"
+    width="600px"
     :close-on-click-modal="false"
     @close="onClose"
   >
@@ -10,11 +10,31 @@
       <!-- 主题设置 -->
       <div class="settings-section">
         <h3 class="settings-section-title">{{ t('settings.appearance') }}</h3>
+        
+        <!-- 新主题选择 -->
         <div class="settings-item">
           <label class="settings-label">{{ t('settings.theme') }}</label>
-          <el-radio-group
-            :model-value="currentTheme"
+          <el-select
+            :model-value="selectedThemeId"
             @update:model-value="onThemeChange"
+            class="settings-select-full"
+            placeholder="Select a theme"
+          >
+            <el-option
+              v-for="theme in availableThemes"
+              :key="theme.id"
+              :label="theme.name"
+              :value="theme.id"
+            />
+          </el-select>
+        </div>
+        
+        <!-- 传统主题选择（保留原有功能） -->
+        <div class="settings-item">
+          <label class="settings-label">{{ t('settings.classicTheme') }}</label>
+          <el-radio-group
+            :model-value="classicTheme"
+            @update:model-value="onClassicThemeChange"
             class="settings-radio-group"
           >
             <el-radio-button value="dark">
@@ -61,10 +81,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useThemeStore, type ThemeType } from '../stores/themeStore';
 import { useI18n, type Language } from '../composables/useI18n';
 import Icon from './Icon.vue';
+import { ThemeService, type ThemeInfo } from '../services/ThemeService';
 
 const props = withDefaults(defineProps<{
   modelValue?: boolean;
@@ -91,9 +112,56 @@ const currentTheme = computed(() => themeStore.currentTheme);
 // 当前语言
 const currentLanguage = computed(() => language.value);
 
-// 主题变化处理
-function onThemeChange(theme: ThemeType) {
+// 主题服务
+const themeService = ThemeService.getInstance();
+
+// 可用主题列表
+const availableThemes = ref<ThemeInfo[]>([]);
+
+// 当前选中的主题ID
+const selectedThemeId = ref<string>('');
+
+// 经典主题（保留原有功能）
+const classicTheme = computed({
+  get: () => themeStore.currentTheme,
+  set: (value: ThemeType) => {
+    themeStore.setTheme(value);
+  }
+});
+
+// 在组件挂载时加载主题信息
+onMounted(() => {
+  availableThemes.value = themeService.getThemes();
+  
+  // 设置当前主题ID
+  const currentThemeId = themeService.getCurrentThemeId();
+  if (currentThemeId) {
+    selectedThemeId.value = currentThemeId;
+  } else {
+    // 如果没有加载过特定主题，则根据当前经典主题设置默认值
+    selectedThemeId.value = currentTheme.value === 'dark' ? 'dark_modern' : 'light_modern';
+  }
+});
+
+// 主题变化处理（新的主题系统）
+async function onThemeChange(themeId: string) {
+  try {
+    await themeService.loadAndApplyTheme(themeId);
+    selectedThemeId.value = themeId;
+    
+    // 保存主题ID到本地存储
+    localStorage.setItem('editor-vscode-theme', themeId);
+  } catch (error) {
+    console.error('Failed to apply theme:', error);
+  }
+}
+
+// 经典主题变化处理（保留原有功能）
+function onClassicThemeChange(theme: ThemeType) {
   themeStore.setTheme(theme);
+  
+  // 重置所选主题ID，因为现在使用经典主题
+  selectedThemeId.value = '';
 }
 
 // 语言变化处理
@@ -136,11 +204,16 @@ function onClose() {
   padding: 8px 0;
 }
 
+.settings-item:not(:last-child) {
+  margin-bottom: 8px;
+}
+
 .settings-label {
   font-size: 13px;
   color: var(--el-text-color-regular);
   flex-shrink: 0;
   margin-right: 16px;
+  min-width: 120px;
 }
 
 .settings-radio-group {
@@ -159,6 +232,11 @@ function onClose() {
 .settings-select {
   flex: 1;
   max-width: 200px;
+}
+
+.settings-select-full {
+  flex: 1;
+  max-width: 100%;
 }
 
 .dialog-footer {
