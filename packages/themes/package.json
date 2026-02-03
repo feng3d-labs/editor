@@ -2,15 +2,31 @@
   "name": "@feng3d/themes",
   "version": "0.6.0",
   "description": "Theme management system for Feng3D Editor",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "homepage": "https://feng3d.com/",
+  "author": "feng",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "module": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
-    "build:esm": "tsc --module es2015 --outDir dist/esm",
-    "build:types": "tsc --declaration --emitDeclarationOnly --outDir dist/types",
-    "dev": "tsc --watch"
+    "clean": "rimraf \"{lib,dist,public}\"",
+    "build": "vite build",
+    "types": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint --ext .js --ext .ts src --ignore-path .gitignore --max-warnings 0",
+    "lintfix": "npm run lint -- --fix",
+    "docs": "typedoc",
+    "release": "npm run clean && npm run lint && npm run build && npm run types && npm publish",
+    "prepublishOnly": "node scripts/prepublish.js",
+    "postpublish": "node scripts/postpublish.js"
   },
   "keywords": [
     "feng3d",
@@ -18,13 +34,32 @@
     "vscode",
     "editor"
   ],
-  "author": "feng3d",
-  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://gitee.com/feng3d/feng3d-editor.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "src",
+    "tsconfig.json"
+  ],
   "peerDependencies": {
     "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0",
-    "typescript": "^4.9.0"
+    "@feng3d/cli": "^0.0.19",
+    "@typescript-eslint/eslint-plugin": "5.17.0",
+    "@typescript-eslint/parser": "5.17.0",
+    "cross-env": "7.0.3",
+    "eslint": "8.12.0",
+    "rimraf": "3.0.2",
+    "tslib": "^2.4.0",
+    "typedoc": "^0.24.8",
+    "typescript": "5.1.3",
+    "vite": "^4.3.9"
   }
 }

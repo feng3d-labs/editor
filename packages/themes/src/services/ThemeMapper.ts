@@ -13,12 +13,13 @@ export class ThemeMapper {
    */
   public static mapVSCodeToDesignSystem(vscodeTheme: VSCodeTheme): Record<string, string> {
     const mappedVariables: Record<string, string> = {};
+    const colors = vscodeTheme.colors as Record<string, string>;
     
     // 映射主色调
-    const accentColor = vscodeTheme.colors['activityBar.activeBorder'] || 
-                       vscodeTheme.colors['button.background'] || 
+    const accentColor = colors['activityBar.activeBorder'] || 
+                       colors['button.background'] || 
                        '#0078D4'; // 默认使用 VSCode 的蓝色
-    mappedVariables['--color-primary-600'] = accentColor as string || '#0078D4';
+    mappedVariables['--color-primary-600'] = accentColor || '#0078D4';
     
     // 从主色调生成色阶
     mappedVariables['--color-primary-50'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.9);
@@ -32,55 +33,55 @@ export class ThemeMapper {
     mappedVariables['--color-primary-900'] = this.darkenColor(mappedVariables['--color-primary-600'], 0.6);
     
     // 映射编辑器背景
-    mappedVariables['--color-editor-bg'] = (vscodeTheme.colors['editor.background'] || 
-                                          vscodeTheme.colors['activityBar.background'] || 
-                                          '#1F1F1F') as string;
+    mappedVariables['--color-editor-bg'] = (colors['editor.background'] || 
+                                          colors['activityBar.background'] || 
+                                          '#1F1F1F');
     
     // 映射面板背景
-    mappedVariables['--color-panel-bg'] = (vscodeTheme.colors['sideBar.background'] || 
-                                         vscodeTheme.colors['editorWidget.background'] || 
-                                         '#181818') as string;
+    mappedVariables['--color-panel-bg'] = (colors['sideBar.background'] || 
+                                         colors['editorWidget.background'] || 
+                                         '#181818');
     
     // 映射工具栏背景
-    mappedVariables['--color-toolbar-bg'] = (vscodeTheme.colors['titleBar.activeBackground'] || 
-                                           vscodeTheme.colors['activityBar.background'] || 
-                                           '#181818') as string;
+    mappedVariables['--color-toolbar-bg'] = (colors['titleBar.activeBackground'] || 
+                                           colors['activityBar.background'] || 
+                                           '#181818');
     
     // 映射边框颜色
-    mappedVariables['--color-border'] = (vscodeTheme.colors['sideBar.border'] || 
-                                       vscodeTheme.colors['tab.border'] || 
-                                       '#2B2B2B') as string;
+    mappedVariables['--color-border'] = (colors['sideBar.border'] || 
+                                       colors['tab.border'] || 
+                                       '#2B2B2B');
     
     // 映射主要文字颜色
-    mappedVariables['--color-text-primary'] = (vscodeTheme.colors['editor.foreground'] || 
-                                             vscodeTheme.colors['foreground'] || 
-                                             '#CCCCCC') as string;
+    mappedVariables['--color-text-primary'] = (colors['editor.foreground'] || 
+                                             colors['foreground'] || 
+                                             '#CCCCCC');
     
     // 映射次要文字颜色
-    mappedVariables['--color-text-secondary'] = (vscodeTheme.colors['sideBarSectionHeader.foreground'] || 
-                                               vscodeTheme.colors['descriptionForeground'] || 
-                                               '#9D9D9D') as string;
+    mappedVariables['--color-text-secondary'] = (colors['sideBarSectionHeader.foreground'] || 
+                                               colors['descriptionForeground'] || 
+                                               '#9D9D9D');
     
     // 映射第三等级文字颜色
-    mappedVariables['--color-text-tertiary'] = (vscodeTheme.colors['activityBar.inactiveForeground'] || 
-                                              '#868686') as string;
+    mappedVariables['--color-text-tertiary'] = (colors['activityBar.inactiveForeground'] || 
+                                              '#868686');
     
     // 映射成功颜色
-    mappedVariables['--color-success-500'] = (vscodeTheme.colors['editorGutter.addedBackground'] || 
-                                            '#2EA043') as string;
+    mappedVariables['--color-success-500'] = (colors['editorGutter.addedBackground'] || 
+                                            '#2EA043');
     
     // 映射警告颜色
-    const warningColor = (vscodeTheme as any).colors['notificationsWarningIcon.foreground'] || '#dcb100';
-    mappedVariables['--color-warning-500'] = warningColor as string;
+    const warningColor = (colors as any)['notificationsWarningIcon.foreground'] || '#dcb100';
+    mappedVariables['--color-warning-500'] = warningColor;
     
     // 映射危险/错误颜色
-    mappedVariables['--color-danger-500'] = (vscodeTheme.colors['editorGutter.deletedBackground'] || 
-                                           vscodeTheme.colors['errorForeground'] || 
-                                           '#F85149') as string;
+    mappedVariables['--color-danger-500'] = (colors['editorGutter.deletedBackground'] || 
+                                           colors['errorForeground'] || 
+                                           '#F85149');
     
     // 映射信息颜色
-    mappedVariables['--color-info-500'] = (vscodeTheme.colors['textLink.foreground'] || 
-                                         '#4daafc') as string;
+    mappedVariables['--color-info-500'] = (colors['textLink.foreground'] || 
+                                         '#4daafc');
     
     // 映射灰度色板 (基于 VSCode 的灰度)
     mappedVariables['--color-gray-50'] = this.lightenColor(mappedVariables['--color-editor-bg'], 0.95);
@@ -143,7 +144,7 @@ export class ThemeMapper {
    * 提取 HSL 值，如果存在
    */
   private static extractHSLFromTheme(theme: VSCodeTheme, key: string, fallback: string): string | null {
-    const color = theme.colors[key];
+    const color = (theme.colors as Record<string, string>)[key];
     if (color) {
       return color;
     }
