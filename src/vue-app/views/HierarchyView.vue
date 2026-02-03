@@ -927,8 +927,8 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
   height: 100%;
   overflow-y: auto;
   /* 使用 Element Plus 主题变量 */
-  background-color: #4a4a4a;
-  color: #ffffff;
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
   padding: 8px;
 }
 
@@ -941,21 +941,21 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 /* Element Plus Tree 样式覆盖 */
 :deep(.el-tree) {
   background-color: transparent;
-  color: #ffffff;
+  color: var(--el-text-color-primary);
 }
 
 :deep(.el-tree-node__content) {
-  color: #ffffff;
+  color: var(--el-text-color-primary);
   height: 24px;
 }
 
 :deep(.el-tree-node__content:hover) {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--el-fill-color);
 }
 
 :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background-color: var(--el-fill-color-dark);
+  color: var(--el-text-color-primary);
 }
 
 /* 右键菜单容器 */

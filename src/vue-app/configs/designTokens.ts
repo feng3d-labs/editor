@@ -7,11 +7,11 @@
  * 颜色设计令牌
  */
 export const colorTokens = {
-  primary: '#409EFF',
-  success: '#67C23A',
-  warning: '#E6A23C',
-  danger: '#F56C6C',
-  info: '#909399',
+  primary: 'var(--color-primary-600)',
+  success: 'var(--color-success-500)',
+  warning: 'var(--color-warning-500)',
+  danger: 'var(--color-danger-500)',
+  info: 'var(--color-info-500)',
 } as const;
 
 /**

@@ -209,7 +209,7 @@ function onQRCodeClick() {
   position: relative;
   width: 100%;
   height: 32px;
-  background-color: #4a4a4a;
+  background-color: var(--el-bg-color-overlay);
   display: flex;
   align-items: center;
   z-index: 1000;
@@ -235,21 +235,21 @@ function onQRCodeClick() {
   line-height: 32px;
   padding: 0 12px;
   font-size: 12px;
-  color: #ffffff;
+  color: var(--el-text-color-primary);
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
 }
 
 .top-menu-bar-menu :deep(.el-menu-item:hover) {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  border-bottom-color: #ffffff;
+  background-color: var(--el-fill-color);
+  color: var(--el-text-color-primary);
+  border-bottom-color: var(--el-text-color-primary);
 }
 
 .top-menu-bar-menu :deep(.el-menu-item.is-active) {
-  color: #ffffff;
-  border-bottom-color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--el-text-color-primary);
+  border-bottom-color: var(--el-text-color-primary);
+  background-color: var(--el-fill-color);
 }
 
 .menu-item-label {
@@ -261,7 +261,7 @@ function onQRCodeClick() {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  color: #ffffff;
+  color: var(--el-text-color-primary);
   font-size: 12px;
   pointer-events: none;
   user-select: none;

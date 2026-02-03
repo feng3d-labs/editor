@@ -302,17 +302,17 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   /* 使用 Element Plus 主题变量 */
-  background-color: #4a4a4a;
-  color: #ffffff;
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
 }
 
 .inspector-header {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid #5a5a5a;
+  border-bottom: 1px solid var(--el-border-color);
   /* 使用 Element Plus 主题变量 */
-  background-color: #3a3a3a;
+  background-color: var(--el-bg-color-overlay);
   gap: 8px;
 }
 
@@ -324,12 +324,12 @@ onUnmounted(() => {
 
 .type-name {
   /* 使用 Element Plus 主题变量 */
-  color: #ffffff;
+  color: var(--el-text-color-primary);
 }
 
 .empty-label {
   /* 使用 Element Plus 主题变量 */
-  color: #999999;
+  color: var(--el-text-color-secondary);
   font-style: italic;
 }
 
@@ -342,7 +342,7 @@ onUnmounted(() => {
 /* 确保 ObjectView 内容正确显示 */
 .inspector-content :deep(*) {
   /* 使用 Element Plus 主题变量 */
-  color: #ffffff;
+  color: var(--el-text-color-primary);
 }
 </style>
 

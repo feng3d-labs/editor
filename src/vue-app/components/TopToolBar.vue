@@ -234,7 +234,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #3a3a3a;
+  background-color: var(--el-bg-color);
   z-index: 1001;
   pointer-events: auto;
   padding: 0 8px;

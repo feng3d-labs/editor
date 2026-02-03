@@ -980,14 +980,14 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   /* 使用 Element Plus 主题变量 */
-  background-color: #4a4a4a;
-  color: #ffffff;
+  background-color: var(--el-bg-color);
+  color: var(--el-text-color-primary);
 }
 
 .project-view-tree {
   width: 200px;
   min-width: 150px;
-  border-right: 1px solid #5a5a5a;
+  border-right: 1px solid var(--el-border-color);
   overflow-y: auto;
   padding: 8px;
 }

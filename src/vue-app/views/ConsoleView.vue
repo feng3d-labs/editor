@@ -362,19 +362,19 @@ onUnmounted(() =>
 }
 
 .log-warn .log-type {
-  color: #ffa500;
+  color: var(--el-color-warning);
 }
 
 .log-error .log-type {
-  color: #f56c6c;
+  color: var(--el-color-danger);
 }
 
 .log-error .log-message {
-  color: #f56c6c;
+  color: var(--el-color-danger);
 }
 
 .log-warn .log-message {
-  color: #ffa500;
+  color: var(--el-color-warning);
 }
 
 .console-empty {
