@@ -1,5 +1,10 @@
 <template>
   <div ref="containerRef" class="scene-view">
+    <!-- 顶部工具栏 -->
+    <div class="scene-toolbar">
+      <TopToolBar />
+    </div>
+
     <!-- Canvas 将通过 ref 动态管理 -->
     <!-- 背景区域用于鼠标事件检测 -->
     <div ref="backRectRef" class="scene-back-rect"></div>
@@ -36,6 +41,7 @@ import { editorui } from '../../global/editorui';
 import CameraPreview from '../components/CameraPreview.vue';
 import AreaSelectRect from '../components/AreaSelectRect.vue';
 import ParticleEffectController from '../components/ParticleEffectController.vue';
+import TopToolBar from '../components/TopToolBar.vue';
 
 const editorStore = useEditorStore();
 
@@ -752,6 +758,16 @@ onUnmounted(() => {
   /* 使用 Element Plus 主题变量 */
   background-color: var(--el-bg-color, #1e1e1e);
   overflow: hidden;
+}
+
+.scene-toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 22px;
+  z-index: 1000;
+  pointer-events: auto;
 }
 
 .scene-view canvas {

@@ -1,6 +1,6 @@
 <template>
   <div class="top-menu-bar">
-    <!-- 使用 Element Plus Menu 组件 -->
+    <!-- 左侧：菜单 -->
     <el-menu
       mode="horizontal"
       :default-active="activeMenuIndex >= 0 ? String(activeMenuIndex) : ''"
@@ -22,6 +22,39 @@
     <div class="project-name">
       <span>{{ projectName }}</span>
     </div>
+
+    <!-- 右侧：工具按钮 -->
+    <div class="menu-bar-right-tools">
+      <el-button-group>
+        <el-button
+          size="small"
+          :icon="null"
+          @click="onHelpClick"
+          :title="t('toolbar.help')"
+          class="tool-button"
+        >
+          <Icon icon="mdi:help-circle" :size="16" />
+        </el-button>
+        <el-button
+          size="small"
+          :icon="null"
+          @click="onQRCodeClick"
+          :title="t('toolbar.qrcode')"
+          class="tool-button"
+        >
+          <Icon icon="mdi:qrcode" :size="16" />
+        </el-button>
+        <el-button
+          size="small"
+          :icon="null"
+          @click="onSettingClick"
+          :title="t('toolbar.settings')"
+          class="tool-button"
+        >
+          <Icon icon="mdi:cog" :size="16" />
+        </el-button>
+      </el-button-group>
+    </div>
   </div>
 </template>
 
@@ -31,6 +64,12 @@ import { globalEmitter } from 'feng3d';
 import { menuConfig } from '../../configs/CommonConfig';
 import { MenuAdapter } from './MenuAdapter';
 import { editorcache } from '../../caches/Editorcache';
+import { showQRCode } from '../../utils/QRCode';
+import { useI18n } from '../composables/useI18n';
+import Icon from './Icon.vue';
+import SettingsDialog from './SettingsDialog.vue';
+
+const { t } = useI18n();
 
 // 创建 MenuAdapter 实例
 const menuAdapter = new MenuAdapter();
@@ -51,6 +90,9 @@ const activeMenuIndex = ref<number>(-1);
 const menuItems = ref<MenuItem[]>([]);
 const projectName = ref<string>('newproject');
 const menuItemRefs = ref<Map<number, any>>(new Map());
+
+// 设置对话框显示状态
+const settingsDialogVisible = ref(false);
 
 // 获取菜单项
 function getMenuItems() {
@@ -127,6 +169,39 @@ onMounted(() => {
 onUnmounted(() => {
   globalEmitter.off('menu.hide', onMenuHide);
 });
+
+// 帮助按钮
+function onHelpClick() {
+  window.open('https://feng3d.com/');
+}
+
+// 设置按钮
+function onSettingClick() {
+  settingsDialogVisible.value = true;
+}
+
+// 二维码按钮
+function onQRCodeClick() {
+  setTimeout(() => {
+    const outputElement = document.getElementById('output');
+    if (outputElement) {
+      // 如果 output 元素为空，需要先初始化二维码
+      if (!outputElement.querySelector('canvas')) {
+        const url = window.location.href;
+        import('../../utils/QRCode').then(({ initQRCode }) => {
+          initQRCode(url);
+          setTimeout(() => {
+            showQRCode();
+          }, 300);
+        }).catch((error) => {
+          console.error('初始化二维码失败:', error);
+        });
+      } else {
+        showQRCode();
+      }
+    }
+  }, 10);
+}
 </script>
 
 <style scoped>
@@ -191,6 +266,41 @@ onUnmounted(() => {
   pointer-events: none;
   user-select: none;
   font-weight: 500;
+}
+
+/* 右侧工具按钮 */
+.menu-bar-right-tools {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.menu-bar-right-tools .tool-button {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-bar-right-tools :deep(.el-button-group) {
+  display: inline-flex;
+  gap: 0;
+}
+
+.menu-bar-right-tools :deep(.el-button-group .el-button) {
+  border-radius: 0;
+}
+
+.menu-bar-right-tools :deep(.el-button-group .el-button:first-child) {
+  border-top-left-radius: var(--el-border-radius-base);
+  border-bottom-left-radius: var(--el-border-radius-base);
+}
+
+.menu-bar-right-tools :deep(.el-button-group .el-button:last-child) {
+  border-top-right-radius: var(--el-border-radius-base);
+  border-bottom-right-radius: var(--el-border-radius-base);
 }
 </style>
 

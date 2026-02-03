@@ -35,10 +35,10 @@
           <Icon icon="mdi:arrow-expand-all" :size="16" />
         </el-button>
       </el-button-group>
-      
+
       <!-- 分隔线 -->
       <el-divider direction="vertical" class="divider" />
-      
+
       <!-- 工具组：Pivot/Center、Local/World -->
       <el-button-group>
         <el-button
@@ -99,43 +99,6 @@
         </el-button>
       </div>
     </div>
-
-    <!-- 右侧：工具按钮 - 使用 Element Plus Button -->
-    <div class="tool-section tool-section-right">
-      <!-- 工具组：帮助、二维码、设置 -->
-      <el-button-group>
-        <el-button
-          size="small"
-          :icon="null"
-          @click="onHelpClick"
-          :title="t('toolbar.help')"
-          class="tool-button"
-        >
-          <Icon icon="mdi:help-circle" :size="16" />
-        </el-button>
-        <el-button
-          size="small"
-          :icon="null"
-          @click="onQRCodeClick"
-          :title="t('toolbar.qrcode')"
-          class="tool-button"
-        >
-          <Icon icon="mdi:qrcode" :size="16" />
-        </el-button>
-        <el-button
-          size="small"
-          :icon="null"
-          @click="onSettingClick"
-          :title="t('toolbar.settings')"
-          class="tool-button"
-        >
-          <Icon icon="mdi:cog" :size="16" />
-        </el-button>
-      </el-button-group>
-    </div>
-    
-    <!-- 设置对话框 -->
-    <SettingsDialog v-model="settingsDialogVisible" />
   </div>
 </template>
 
@@ -145,12 +108,10 @@ import { globalEmitter, FS, FSType, serialization } from 'feng3d';
 import { EditorData, MRSToolType } from '../../global/EditorData';
 import { editorRS } from '../../assets/EditorRS';
 import { editorcache } from '../../caches/Editorcache';
-import { showQRCode } from '../../utils/QRCode';
 import { useEditorStore } from '../stores/editorStore';
 import { closeRunWindow, setRunWindow, getRunWindow } from '../utils/runWindowManager';
 import { useI18n } from '../composables/useI18n';
 import Icon from './Icon.vue';
-import SettingsDialog from './SettingsDialog.vue';
 
 const editorStore = useEditorStore();
 const { t } = useI18n();
@@ -159,9 +120,6 @@ const { t } = useI18n();
 const toolType = computed(() => editorStore.toolType);
 const isBaryCenter = computed(() => editorStore.isBaryCenter);
 const isWoldCoordinate = computed(() => editorStore.isWoldCoordinate);
-
-// 设置对话框显示状态
-const settingsDialogVisible = ref(false);
 
 // 播放按钮按下状态
 const isPlayPressed = ref(false);
@@ -262,38 +220,6 @@ function onStepClick() {
   console.log('Step clicked');
 }
 
-// 帮助和设置按钮
-function onHelpClick() {
-  window.open('https://feng3d.com/');
-}
-
-function onSettingClick() {
-  settingsDialogVisible.value = true;
-}
-
-// 二维码按钮
-function onQRCodeClick() {
-  setTimeout(() => {
-    const outputElement = document.getElementById('output');
-    if (outputElement) {
-      // 如果 output 元素为空，需要先初始化二维码
-      if (!outputElement.querySelector('canvas')) {
-        const url = window.location.href;
-        import('../../utils/QRCode').then(({ initQRCode }) => {
-          initQRCode(url);
-          setTimeout(() => {
-            showQRCode();
-          }, 300);
-        }).catch((error) => {
-          console.error('初始化二维码失败:', error);
-        });
-      } else {
-        showQRCode();
-      }
-    }
-  }, 10);
-}
-
 onUnmounted(() => {
   closeRunWindow();
 });
@@ -330,11 +256,6 @@ onUnmounted(() => {
   flex: 1;
   justify-content: center;
   gap: 12px;
-}
-
-.tool-section-right {
-  flex: 0 0 auto;
-  justify-content: flex-end;
 }
 
 /* Element Plus Divider 样式覆盖 */
