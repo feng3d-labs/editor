@@ -17,6 +17,8 @@ loadIconSets().catch((error) => {
   console.error('[Iconify] 预加载图标集失败:', error);
 });
 
+// 引入设计系统样式
+import './styles/design-system.css';
 // 引入全局主题样式（暗色和亮色）
 import './styles/global-dark-theme.css';
 import './styles/global-light-theme.css';

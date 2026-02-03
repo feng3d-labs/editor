@@ -20,13 +20,18 @@ export const useThemeStore = defineStore('theme', () => {
      * 当前主题
      * 默认从 localStorage 读取，如果没有则使用暗色主题
      */
-    const getInitialTheme = (): ThemeType => {
-        if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
-            return 'dark';
-        }
-        const saved = localStorage.getItem('editor-theme');
-        return (saved === 'light' || saved === 'dark') ? saved : 'dark';
-    };
+     const getInitialTheme = (): ThemeType => {
+         if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+             // 检测系统主题偏好
+             if (typeof window !== 'undefined' && window.matchMedia) {
+                 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                 return prefersDark ? 'dark' : 'light';
+             }
+             return 'dark';
+         }
+         const saved = localStorage.getItem('editor-theme');
+         return (saved === 'light' || saved === 'dark') ? saved : 'dark';
+     };
     
     const currentTheme = ref<ThemeType>(getInitialTheme());
 

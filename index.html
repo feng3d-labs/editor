@@ -14,15 +14,30 @@
 	<meta name="x5-fullscreen" content="true" />
 	<meta name="360-fullscreen" content="true" />
 
+	<link rel="stylesheet" href="./src/vue-app/styles/design-system.css">
 	<style>
 		html,
 		body {
-			background: #1e1e1e; /* 深色背景 */
+			background: var(--color-editor-bg); /* 使用设计系统颜色 */
 			padding: 0;
 			border: 0;
 			margin: 0;
 			height: 100%;
-			color: #cccccc; /* 默认文本颜色 */
+			color: var(--color-text-secondary); /* 使用设计系统颜色 */
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+			transition: background-color 0.2s ease, color 0.2s ease;
+		}
+		
+		/* 暗色主题样式 */
+		html[data-theme="dark"] body {
+			background: var(--color-editor-bg);
+			color: var(--color-text-primary);
+		}
+		
+		/* 亮色主题样式 */
+		html[data-theme="light"] body {
+			background: var(--color-gray-50);
+			color: var(--color-gray-900);
 		}
 	</style>
 

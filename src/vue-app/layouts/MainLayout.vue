@@ -263,15 +263,17 @@ function onBottomTabClose(index: number) {
   pointer-events: auto;
   display: flex;
   flex-direction: column;
-  /* 使用 Element Plus 主题变量 */
-  background-color: #2a2a2a;
+  background-color: var(--el-bg-color, #2a2a2a);
+  color: var(--el-text-color-primary, #ffffff);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
-
 
 .main-content {
   flex: 1;
   min-height: 0;
   position: relative;
+  padding: 8px;
+  padding-top: 0;
 }
 
 .panel-placeholder {
@@ -281,14 +283,120 @@ function onBottomTabClose(index: number) {
   justify-content: center;
   width: 100%;
   height: 100%;
-  /* 使用 Element Plus 主题变量 */
-  color: #999999;
+  color: var(--color-text-secondary);
   font-size: 14px;
   text-align: center;
+  background-color: var(--color-panel-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin: 4px;
 }
 
 .panel-placeholder p {
   margin: 10px 0;
+}
+
+/* 分割面板样式 */
+.split-panel {
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* 标签面板样式 */
+.tab-panel {
+  background-color: var(--color-panel-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  margin: 4px;
+  overflow: hidden;
+}
+
+.tab-panel-header {
+  background-color: var(--color-toolbar-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-panel-content {
+  padding: 12px;
+  height: calc(100% - 40px);
+  overflow: auto;
+  background-color: var(--color-editor-bg);
+}
+
+/* 标签页样式 */
+.tab-item {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.tab-item.active {
+  background-color: var(--color-active);
+  color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
+}
+
+.tab-item:hover:not(.active) {
+  background-color: var(--color-hover);
+}
+
+/* 添加按钮样式 */
+.tab-add-btn {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-text-secondary);
+  border: 1px solid transparent;
+}
+
+.tab-add-btn:hover {
+  background-color: var(--color-hover);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+/* 关闭按钮样式 */
+.tab-close-btn {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--color-text-tertiary);
+  margin-left: 4px;
+}
+
+.tab-close-btn:hover {
+  background-color: var(--color-gray-600);
+  color: var(--color-text-primary);
+}
+
+/* 针对暗色主题的特殊样式 */
+.dark .main-layout,
+[data-theme="dark"] .main-layout {
+  background-color: var(--color-editor-bg);
+  color: var(--color-text-primary);
+}
+
+/* 针对亮色主题的特殊样式 */
+.light .main-layout,
+[data-theme="light"] .main-layout {
+  background-color: var(--color-gray-50);
+  color: var(--color-gray-900);
 }
 </style>
 

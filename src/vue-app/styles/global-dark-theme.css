@@ -11,8 +11,9 @@
 /* 暗色主题样式 - 仅在 data-theme="dark" 时生效 */
 html[data-theme="dark"],
 html[data-theme="dark"] body {
-  background-color: #2a2a2a;
-  color: #ffffff;
+  background-color: var(--color-editor-bg);
+  color: var(--color-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 html[data-theme="dark"] body {
@@ -23,42 +24,45 @@ html[data-theme="dark"] body {
 
 /* 滚动条样式 - 暗色主题 */
 html[data-theme="dark"] ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-track {
-  background: #2a2a2a;
+  background: var(--color-gray-800);
+  border-radius: 4px;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #4a4a4a;
-  border-radius: 5px;
+  background: var(--color-gray-600);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
 }
 
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: #5a5a5a;
+  background: var(--color-gray-500);
 }
 
 /* 选择文本样式 - 暗色主题（使用设计令牌主色） */
 html[data-theme="dark"] ::selection {
-  background-color: #409EFF;
+  background-color: var(--el-color-primary);
   color: #ffffff;
 }
 
 html[data-theme="dark"] ::-moz-selection {
-  background-color: #409EFF;
+  background-color: var(--el-color-primary);
   color: #ffffff;
 }
 
 /* 链接样式 - 暗色主题（使用设计令牌主色） */
 html[data-theme="dark"] a {
-  color: #409EFF;
+  color: var(--el-color-primary);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 html[data-theme="dark"] a:hover {
-  color: #66b1ff;
+  color: var(--color-primary-400);
   text-decoration: underline;
 }
 
@@ -66,23 +70,56 @@ html[data-theme="dark"] a:hover {
 html[data-theme="dark"] input,
 html[data-theme="dark"] textarea,
 html[data-theme="dark"] select {
-  background-color: #3a3a3a;
-  color: #ffffff;
-  border: 1px solid #4a4a4a;
+  background-color: var(--color-panel-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
 }
 
 html[data-theme="dark"] input:focus,
 html[data-theme="dark"] textarea:focus,
 html[data-theme="dark"] select:focus {
-  outline: 1px solid #409EFF;
-  border-color: #409EFF;
+  outline: none;
+  border-color: var(--el-color-primary);
+  box-shadow: 0 0 0 2px var(--color-focus);
+}
+
+/* 按钮样式 - 暗色主题 */
+html[data-theme="dark"] button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+html[data-theme="dark"] button:hover:not(:disabled) {
+  background-color: var(--color-hover);
+}
+
+html[data-theme="dark"] button:active:not(:disabled) {
+  background-color: var(--color-active);
+}
+
+html[data-theme="dark"] button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 卡片/面板样式 - 暗色主题 */
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .panel {
+  background-color: var(--color-panel-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
 }
 
 /* 确保所有容器默认使用暗色背景 */
 html[data-theme="dark"] #vue-app,
 html[data-theme="dark"] #vue-app-container {
-  background-color: #2a2a2a;
-  color: #ffffff;
+  background-color: var(--color-editor-bg);
+  color: var(--color-text-primary);
 }
 
 /* 工具层背景透明，但确保内容可见 */
