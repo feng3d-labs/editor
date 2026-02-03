@@ -1,22 +1,30 @@
 <template>
   <div class="top-menu-bar">
-    <!-- 左侧：菜单 -->
-    <el-menu
-      mode="horizontal"
-      :default-active="activeMenuIndex >= 0 ? String(activeMenuIndex) : ''"
-      class="top-menu-bar-menu"
-      :ellipsis="false"
-    >
-      <el-menu-item
-        v-for="(item, index) in menuItems"
-        :key="index"
-        :index="String(index)"
-        :ref="el => setMenuItemRef(el, index)"
-        @click="onMenuItemClick(item, index)"
+    <!-- 左侧：项目图标和菜单 -->
+    <div class="menu-bar-left">
+      <!-- 项目图标 -->
+      <div class="project-icon">
+        <img src="/favicon.ico" alt="Feng3D Editor" width="32" height="32" />
+      </div>
+      
+      <!-- 菜单 -->
+      <el-menu
+        mode="horizontal"
+        :default-active="activeMenuIndex >= 0 ? String(activeMenuIndex) : ''"
+        class="top-menu-bar-menu"
+        :ellipsis="false"
       >
-        <span class="menu-item-label">{{ item.label }}</span>
-      </el-menu-item>
-    </el-menu>
+        <el-menu-item
+          v-for="(item, index) in menuItems"
+          :key="index"
+          :index="String(index)"
+          :ref="el => setMenuItemRef(el, index)"
+          @click="onMenuItemClick(item, index)"
+        >
+          <span class="menu-item-label">{{ item.label }}</span>
+        </el-menu-item>
+      </el-menu>
+    </div>
   
     <!-- 项目名称（居中显示） -->
     <div class="project-name">
@@ -218,6 +226,27 @@ function onQRCodeClick() {
   z-index: 1000;
   padding: 0 8px;
   box-sizing: border-box;
+}
+
+.menu-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: 4px;
+}
+
+.project-icon img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
 /* Element Plus Menu 样式覆盖 */
