@@ -3,11 +3,9 @@
  * 将 VSCode 主题颜色映射到我们的设计系统变量
  */
 
-interface VSCodeTheme {
-  name: string;
-  include?: string;
-  colors: Record<string, string>;
-}
+import { VSCodeColorTheme } from '../interfaces/ThemeDefinition';
+
+interface VSCodeTheme extends VSCodeColorTheme {}
 
 export class ThemeMapper {
   /**
@@ -20,69 +18,69 @@ export class ThemeMapper {
     const accentColor = vscodeTheme.colors['activityBar.activeBorder'] || 
                        vscodeTheme.colors['button.background'] || 
                        '#0078D4'; // 默认使用 VSCode 的蓝色
-    mappedVariables['--color-primary-600'] = accentColor;
+    mappedVariables['--color-primary-600'] = accentColor as string || '#0078D4';
     
     // 从主色调生成色阶
-    mappedVariables['--color-primary-50'] = this.lightenColor(accentColor, 0.9);
-    mappedVariables['--color-primary-100'] = this.lightenColor(accentColor, 0.8);
-    mappedVariables['--color-primary-200'] = this.lightenColor(accentColor, 0.7);
-    mappedVariables['--color-primary-300'] = this.lightenColor(accentColor, 0.6);
-    mappedVariables['--color-primary-400'] = this.lightenColor(accentColor, 0.4);
-    mappedVariables['--color-primary-500'] = this.lightenColor(accentColor, 0.2);
-    mappedVariables['--color-primary-700'] = this.darkenColor(accentColor, 0.2);
-    mappedVariables['--color-primary-800'] = this.darkenColor(accentColor, 0.4);
-    mappedVariables['--color-primary-900'] = this.darkenColor(accentColor, 0.6);
+    mappedVariables['--color-primary-50'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.9);
+    mappedVariables['--color-primary-100'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.8);
+    mappedVariables['--color-primary-200'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.7);
+    mappedVariables['--color-primary-300'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.6);
+    mappedVariables['--color-primary-400'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.4);
+    mappedVariables['--color-primary-500'] = this.lightenColor(mappedVariables['--color-primary-600'], 0.2);
+    mappedVariables['--color-primary-700'] = this.darkenColor(mappedVariables['--color-primary-600'], 0.2);
+    mappedVariables['--color-primary-800'] = this.darkenColor(mappedVariables['--color-primary-600'], 0.4);
+    mappedVariables['--color-primary-900'] = this.darkenColor(mappedVariables['--color-primary-600'], 0.6);
     
     // 映射编辑器背景
-    mappedVariables['--color-editor-bg'] = vscodeTheme.colors['editor.background'] || 
+    mappedVariables['--color-editor-bg'] = (vscodeTheme.colors['editor.background'] || 
                                           vscodeTheme.colors['activityBar.background'] || 
-                                          '#1F1F1F';
+                                          '#1F1F1F') as string;
     
     // 映射面板背景
-    mappedVariables['--color-panel-bg'] = vscodeTheme.colors['sideBar.background'] || 
+    mappedVariables['--color-panel-bg'] = (vscodeTheme.colors['sideBar.background'] || 
                                          vscodeTheme.colors['editorWidget.background'] || 
-                                         '#181818';
+                                         '#181818') as string;
     
     // 映射工具栏背景
-    mappedVariables['--color-toolbar-bg'] = vscodeTheme.colors['titleBar.activeBackground'] || 
+    mappedVariables['--color-toolbar-bg'] = (vscodeTheme.colors['titleBar.activeBackground'] || 
                                            vscodeTheme.colors['activityBar.background'] || 
-                                           '#181818';
+                                           '#181818') as string;
     
     // 映射边框颜色
-    mappedVariables['--color-border'] = vscodeTheme.colors['sideBar.border'] || 
+    mappedVariables['--color-border'] = (vscodeTheme.colors['sideBar.border'] || 
                                        vscodeTheme.colors['tab.border'] || 
-                                       '#2B2B2B';
+                                       '#2B2B2B') as string;
     
     // 映射主要文字颜色
-    mappedVariables['--color-text-primary'] = vscodeTheme.colors['editor.foreground'] || 
+    mappedVariables['--color-text-primary'] = (vscodeTheme.colors['editor.foreground'] || 
                                              vscodeTheme.colors['foreground'] || 
-                                             '#CCCCCC';
+                                             '#CCCCCC') as string;
     
     // 映射次要文字颜色
-    mappedVariables['--color-text-secondary'] = vscodeTheme.colors['sideBarSectionHeader.foreground'] || 
+    mappedVariables['--color-text-secondary'] = (vscodeTheme.colors['sideBarSectionHeader.foreground'] || 
                                                vscodeTheme.colors['descriptionForeground'] || 
-                                               '#9D9D9D';
+                                               '#9D9D9D') as string;
     
     // 映射第三等级文字颜色
-    mappedVariables['--color-text-tertiary'] = vscodeTheme.colors['activityBar.inactiveForeground'] || 
-                                              '#868686';
+    mappedVariables['--color-text-tertiary'] = (vscodeTheme.colors['activityBar.inactiveForeground'] || 
+                                              '#868686') as string;
     
     // 映射成功颜色
-    mappedVariables['--color-success-500'] = vscodeTheme.colors['editorGutter.addedBackground'] || 
-                                            '#2EA043';
+    mappedVariables['--color-success-500'] = (vscodeTheme.colors['editorGutter.addedBackground'] || 
+                                            '#2EA043') as string;
     
     // 映射警告颜色
-    mappedVariables['--color-warning-500'] = this.extractHSLFromTheme(vscodeTheme, 'notificationsWarningIcon.foreground', '#dcb100') || 
-                                            '#dcb100';
+    const warningColor = (vscodeTheme as any).colors['notificationsWarningIcon.foreground'] || '#dcb100';
+    mappedVariables['--color-warning-500'] = warningColor as string;
     
     // 映射危险/错误颜色
-    mappedVariables['--color-danger-500'] = vscodeTheme.colors['editorGutter.deletedBackground'] || 
+    mappedVariables['--color-danger-500'] = (vscodeTheme.colors['editorGutter.deletedBackground'] || 
                                            vscodeTheme.colors['errorForeground'] || 
-                                           '#F85149';
+                                           '#F85149') as string;
     
     // 映射信息颜色
-    mappedVariables['--color-info-500'] = vscodeTheme.colors['textLink.foreground'] || 
-                                         '#4daafc';
+    mappedVariables['--color-info-500'] = (vscodeTheme.colors['textLink.foreground'] || 
+                                         '#4daafc') as string;
     
     // 映射灰度色板 (基于 VSCode 的灰度)
     mappedVariables['--color-gray-50'] = this.lightenColor(mappedVariables['--color-editor-bg'], 0.95);

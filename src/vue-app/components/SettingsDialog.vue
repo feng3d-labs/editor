@@ -130,7 +130,11 @@ const classicTheme = computed({
 });
 
 // 在组件挂载时加载主题信息
-onMounted(() => {
+onMounted(async () => {
+  // 等待主题列表加载完成
+  // 由于initThemes是异步的，我们等待一会儿确保主题加载完成
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
   availableThemes.value = themeService.getThemes();
   
   // 设置当前主题ID

@@ -4,12 +4,9 @@
  */
 
 import { ThemeMapper } from './ThemeMapper';
+import { VSCodeColorTheme } from '../interfaces/ThemeDefinition';
 
-interface ThemeData {
-  name: string;
-  include?: string;
-  colors: Record<string, string>;
-}
+interface ThemeData extends VSCodeColorTheme {}
 
 export interface ThemeInfo {
   id: string;
@@ -21,9 +18,12 @@ export interface ThemeInfo {
 export class ThemeService {
   private static instance: ThemeService;
   private themes: ThemeInfo[] = [];
+  private themesInitialized: boolean = false;
+  private initPromise: Promise<void> | null = null;
 
   private constructor() {
-    this.initThemes();
+    // 立即开始初始化主题列表
+    this.initPromise = this.initThemes();
   }
 
   public static getInstance(): ThemeService {
@@ -33,18 +33,56 @@ export class ThemeService {
     return ThemeService.instance;
   }
 
-  private initThemes() {
-    // 定义可用主题
-    this.themes = [
-      { id: 'dark_modern', name: 'Default Dark Modern', fileName: 'dark_modern.json', description: 'Modern dark theme based on VSCode' },
-      { id: 'dark_plus', name: 'Dark+', fileName: 'dark_plus.json', description: 'Dark+ theme based on VSCode' },
-      { id: 'dark_vs', name: 'Dark Visual Studio', fileName: 'dark_vs.json', description: 'Dark Visual Studio theme' },
-      { id: 'hc_black', name: 'High Contrast Black', fileName: 'hc_black.json', description: 'High contrast black theme' },
-      { id: 'hc_light', name: 'High Contrast Light', fileName: 'hc_light.json', description: 'High contrast light theme' },
-      { id: 'light_modern', name: 'Default Light Modern', fileName: 'light_modern.json', description: 'Modern light theme based on VSCode' },
-      { id: 'light_plus', name: 'Light+', fileName: 'light_plus.json', description: 'Light+ theme based on VSCode' },
-      { id: 'light_vs', name: 'Light Visual Studio', fileName: 'light_vs.json', description: 'Light Visual Studio theme' },
-    ];
+  private async initThemes() {
+    try {
+      // 从配置文件加载主题列表
+      const response = await fetch('/resource/themes/themes.json');
+      if (response.ok) {
+        const config = await response.json();
+        this.themes = config.themes.map((theme: any) => ({
+          id: theme.id,
+          name: theme.name,
+          fileName: theme.fileName,
+          description: theme.description
+        }));
+      } else {
+        // 如果配置文件不可用，则使用默认主题列表
+        this.themes = [
+          { id: 'dark_modern', name: 'Default Dark Modern', fileName: 'dark_modern.json', description: 'Modern dark theme based on VSCode' },
+          { id: 'dark_plus', name: 'Dark+', fileName: 'dark_plus.json', description: 'Dark+ theme based on VSCode' },
+          { id: 'dark_vs', name: 'Dark Visual Studio', fileName: 'dark_vs.json', description: 'Dark Visual Studio theme' },
+          { id: 'hc_black', name: 'High Contrast Black', fileName: 'hc_black.json', description: 'High contrast black theme' },
+          { id: 'hc_light', name: 'High Contrast Light', fileName: 'hc_light.json', description: 'High contrast light theme' },
+          { id: 'light_modern', name: 'Default Light Modern', fileName: 'light_modern.json', description: 'Modern light theme based on VSCode' },
+          { id: 'light_plus', name: 'Light+', fileName: 'light_plus.json', description: 'Light+ theme based on VSCode' },
+          { id: 'light_vs', name: 'Light Visual Studio', fileName: 'light_vs.json', description: 'Light Visual Studio theme' },
+        ];
+      }
+    } catch (error) {
+      console.error('Failed to load themes configuration:', error);
+      // 出错时使用默认主题列表
+      this.themes = [
+        { id: 'dark_modern', name: 'Default Dark Modern', fileName: 'dark_modern.json', description: 'Modern dark theme based on VSCode' },
+        { id: 'dark_plus', name: 'Dark+', fileName: 'dark_plus.json', description: 'Dark+ theme based on VSCode' },
+        { id: 'dark_vs', name: 'Dark Visual Studio', fileName: 'dark_vs.json', description: 'Dark Visual Studio theme' },
+        { id: 'hc_black', name: 'High Contrast Black', fileName: 'hc_black.json', description: 'High contrast black theme' },
+        { id: 'hc_light', name: 'High Contrast Light', fileName: 'hc_light.json', description: 'High contrast light theme' },
+        { id: 'light_modern', name: 'Default Light Modern', fileName: 'light_modern.json', description: 'Modern light theme based on VSCode' },
+        { id: 'light_plus', name: 'Light+', fileName: 'light_plus.json', description: 'Light+ theme based on VSCode' },
+        { id: 'light_vs', name: 'Light Visual Studio', fileName: 'light_vs.json', description: 'Light Visual Studio theme' },
+      ];
+    } finally {
+      this.themesInitialized = true;
+    }
+  }
+
+  /**
+   * 等待主题列表初始化完成
+   */
+  public async waitForInitialization(): Promise<void> {
+    if (this.initPromise) {
+      await this.initPromise;
+    }
   }
 
   /**
@@ -72,7 +110,7 @@ export class ThemeService {
         throw new Error(`Theme ${themeId} not found`);
       }
 
-      // 加载主题文件
+      // 加载主题文件（处理 include 字段）
       const themeData = await this.loadThemeFile(themeInfo.fileName);
       
       // 映射 VSCode 主题到我们的设计系统
@@ -89,11 +127,11 @@ export class ThemeService {
   }
 
   /**
-   * 加载主题文件
+   * 加载主题文件（支持 include 字段）
    */
-  private async loadThemeFile(fileName: string): Promise<ThemeData> {
+  private async loadThemeFile(fileName: string, basePath: string = '/resource/themes/'): Promise<ThemeData> {
     // 构建主题文件URL
-    const themeUrl = `/resource/themes/${fileName}`;
+    const themeUrl = basePath + fileName;
     
     try {
       const response = await fetch(themeUrl);
@@ -102,11 +140,42 @@ export class ThemeService {
       }
       
       const themeData: ThemeData = await response.json();
+      
+      // 如果主题文件包含 include 字段，需要先加载被继承的主题
+      if (themeData.include) {
+        // 处理相对路径
+        const includePath = this.resolveIncludePath(themeData.include, themeUrl);
+        const parentTheme = await this.loadThemeFile(includePath, '/');
+        
+        // 合并颜色：父主题为基础，当前主题覆盖
+        const mergedColors = { ...parentTheme.colors, ...themeData.colors };
+        
+        // 返回合并后的主题数据
+        return {
+          ...parentTheme, // 继承父主题的基本信息
+          ...themeData,   // 当前主题的信息覆盖父主题
+          colors: mergedColors // 合并后的颜色
+        };
+      }
+      
       return themeData;
     } catch (error) {
       console.error(`Error loading theme file ${fileName}:`, error);
       throw error;
     }
+  }
+  
+  /**
+   * 解析 include 路径
+   */
+  private resolveIncludePath(includePath: string, currentThemeUrl: string): string {
+    if (includePath.startsWith('./') || includePath.startsWith('../')) {
+      // 处理相对路径
+      const currentDir = currentThemeUrl.substring(0, currentThemeUrl.lastIndexOf('/') + 1);
+      const resolvedPath = new URL(includePath, currentDir).pathname;
+      return resolvedPath.split('/').pop() || includePath; // 只返回文件名
+    }
+    return includePath;
   }
 
   /**
