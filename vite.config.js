@@ -87,13 +87,6 @@ function copyStaticAssets()
 
             const outDir = resolve(__dirname, 'public');
             const assetsToCopy = [
-                { from: 'libs', to: 'libs' },
-                { from: 'packages', to: 'packages' },
-                { from: 'node_modules/feng3d/dist', to: 'node_modules/feng3d/dist' },
-                { from: 'node_modules/@feng3d-plugins/cannon/dist', to: 'node_modules/@feng3d-plugins/cannon/dist' },
-                { from: 'node_modules/@feng3d-plugins/cannon-plugin/dist', to: 'node_modules/@feng3d-plugins/cannon-plugin/dist' },
-                { from: 'dist/index.js', to: 'dist/index.js' },
-                { from: 'run.js', to: 'run.js' },
                 { from: 'resource', to: 'resource' },
             ];
 
