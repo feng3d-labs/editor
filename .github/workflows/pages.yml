@@ -3,11 +3,17 @@ name: Pages
 on:
   push:
     branches: [master]
+    paths:
+      - 'package.json'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
+    # 检查版本号是否变化，仅在版本变化或首次部署时执行
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
 
     steps:
       - name: Checkout
