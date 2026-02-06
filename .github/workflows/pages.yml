@@ -3,9 +3,6 @@ name: Pages
 on:
   push:
     branches: [master]
-    paths:
-      - 'package.json'
-      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 # 设置 GitHub Pages 部署权限
