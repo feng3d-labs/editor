@@ -1,17 +1,80 @@
 /**
  * 设计令牌配置
- * 基于 .superdesign/config.json 中的设计系统参数
+ * 使用 VSCode 主题语义化颜色变量
+ * 变量名直接对应 VSCode 的原始颜色 key
  */
 
 /**
- * 颜色设计令牌
+ * 颜色设计令牌 - 直接使用 VSCode 语义化颜色
+ * VSCode key: button.background -> CSS 变量: --button-background
  */
 export const colorTokens = {
-  primary: 'var(--color-primary-600)',      // VSCode 主色 #0078D4
-  success: 'var(--color-success-500)',     // VSCode 成功色 #2EA043
-  warning: 'var(--color-warning-500)',     // VSCode 警告色 #dcb100
-  danger: 'var(--color-danger-500)',       // VSCode 错误色 #F85149
-  info: 'var(--color-info-500)',           // VSCode 信息色 #4daafc
+  // 按钮
+  buttonBackground: 'var(--button-background)',
+  buttonForeground: 'var(--button-foreground)',
+  buttonHoverBackground: 'var(--button-hoverBackground)',
+
+  // 编辑器
+  editorBackground: 'var(--editor-background)',
+  editorForeground: 'var(--editor-foreground)',
+
+  // 面板
+  panelBackground: 'var(--panel-background)',
+  panelForeground: 'var(--panel-foreground)',
+
+  // 侧边栏
+  sideBarBackground: 'var(--sideBar-background)',
+  sideBarForeground: 'var(--sideBar-foreground)',
+  sideBarBorder: 'var(--sideBar-border)',
+
+  // 输入框
+  inputBackground: 'var(--input-background)',
+  inputForeground: 'var(--input-foreground)',
+  inputBorder: 'var(--input-border)',
+  inputPlaceholderForeground: 'var(--input-placeholderForeground)',
+
+  // 列表
+  listBackground: 'var(--list-background)',
+  listForeground: 'var(--list-foreground)',
+  listActiveSelectionBackground: 'var(--list-activeSelectionBackground)',
+  listActiveSelectionForeground: 'var(--list-activeSelectionForeground)',
+  listHoverBackground: 'var(--list-hoverBackground)',
+
+  // 边框
+  editorWidgetBorder: 'var(--editorWidget-border)',
+
+  // 状态颜色
+  errorForeground: 'var(--errorForeground)',
+  warningForeground: 'var(--warningForeground)',
+  infoForeground: 'var(--editorInfo-foreground)',
+
+  // 文本颜色
+  foreground: 'var(--foreground)',
+  descriptionForeground: 'var(--descriptionForeground)',
+
+  // 链接
+  textLinkForeground: 'var(--textLink-foreground)',
+
+  // 标题栏
+  titleBarActiveBackground: 'var(--titleBar-activeBackground)',
+  titleBarActiveForeground: 'var(--titleBar-activeForeground)',
+
+  // 选项卡
+  tabActiveBackground: 'var(--tab-activeBackground)',
+  tabActiveForeground: 'var(--tab-activeForeground)',
+  tabInactiveBackground: 'var(--tab-inactiveBackground)',
+  tabInactiveForeground: 'var(--tab-inactiveForeground)',
+
+  // 选择区域
+  editorSelectionBackground: 'var(--editor-selectionBackground)',
+  editorSelectionForeground: 'var(--editor-selectionForeground)',
+
+  // 行号
+  editorLineNumberForeground: 'var(--editorLineNumber-foreground)',
+
+  // 滚动条
+  scrollbarSliderBackground: 'var(--scrollbarSlider-background)',
+
 } as const;
 
 /**

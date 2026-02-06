@@ -1,60 +1,21 @@
 /**
  * Feng3D Editor Design System
- * 专业级3D编辑器配色系统
+ * 使用 VSCode 主题语义化颜色变量
+ * 变量名直接对应 VSCode 的原始颜色 key（如 --button-background）
  */
 
 :root {
-  /* === 主色调 - VSCode Modern Dark 主题 === */
-  --color-primary-50: #dce9fb;   /* 最浅蓝 */
-  --color-primary-100: #b6d4f5;
-  --color-primary-200: #90bff0;
-  --color-primary-300: #6abaaa;
-  --color-primary-400: #44a5c4;
-  --color-primary-500: #1f90ee;  /* 标准蓝 */
-  --color-primary-600: #0078D4;  /* 主要强调色 (VSCode 蓝色) */
-  --color-primary-700: #0065b4;  /* 深蓝 */
-  --color-primary-800: #005294;
-  --color-primary-900: #003f74;  /* 最深蓝 */
-
-  /* === 辅助色 - VSCode Modern Dark 主题 === */
-  --color-success-500: #2EA043;  /* 成功/绿色 (VSCode 绿色) */
-  --color-warning-500: #dcb100;  /* 警告/黄色 (VSCode 黄色) */
-  --color-danger-500: #F85149;   /* 错误/红色 (VSCode 红色) */
-  --color-info-500: #4daafc;     /* 信息/蓝色 (VSCode 链接蓝色) */
-  
-  /* === VSCode Modern Dark 灰度色板 === */
-  --color-gray-50: #f8f8f8;
-  --color-gray-100: #e0e0e0;
-  --color-gray-200: #d7d7d7;     /* VSCode 活跃前景色 */
-  --color-gray-300: #a0a0a0;
-  --color-gray-400: #989898;     /* VSCode 占位符前景色 */
-  --color-gray-500: #868686;     /* VSCode 非活跃前景色 */
-  --color-gray-600: #6E7681;     /* VSCode 行号前景色 */
-  --color-gray-700: #3C3C3C;     /* VSCode 边框色 */
-  --color-gray-800: #313131;     /* VSCode 下拉背景色 */
-  --color-gray-900: #181818;     /* VSCode 活跃边栏背景 */
-
-  /* === 编辑器专用颜色 (基于 VSCode 主题) === */
-  --color-editor-bg: #1F1F1F;      /* VSCode 编辑器背景 */
-  --color-panel-bg: #181818;       /* VSCode 活跃边栏背景 */
-  --color-toolbar-bg: #181818;     /* VSCode 活跃边栏背景 */
-  --color-border: #2B2B2B;         /* VSCode 边框色 */
-  --color-text-primary: #CCCCCC;   /* VSCode 主要文字色 */
-  --color-text-secondary: #9D9D9D; /* VSCode 描述前景色 */
-  --color-text-tertiary: #868686;  /* VSCode 非活跃前景色 */
+  /* VSCode 语义化颜色变量将由主题系统动态注入 */
+  /* 这些变量会根据当前主题自动更新 */
+  /* 例如: --button-background, --editor-background, --sideBar-foreground 等 */
 
   /* === 3D编辑器特殊颜色 === */
-  --color-axis-x: #F85149;      /* X轴 - 红色 (VSCode 错误色) */
-  --color-axis-y: #2EA043;      /* Y轴 - 绿色 (VSCode 成功色) */
-  --color-axis-z: #0078D4;      /* Z轴 - 蓝色 (VSCode 主色) */
-  --color-grid: rgba(204, 204, 204, 0.1); /* VSCode 风格网格线 */
-  --color-selection: rgba(0, 120, 212, 0.2); /* VSCode 主色选中区域 */
-  --color-highlight: #dcb100;   /* VSCode 高亮颜色 */
-
-  /* === VSCode 风格组件状态颜色 === */
-  --color-hover: rgba(0, 120, 212, 0.2);      /* VSCode 选中背景 */
-  --color-active: rgba(0, 120, 212, 0.4);
-  --color-focus: rgba(0, 120, 212, 0.5);     /* VSCode 焦点边框 */
+  --color-axis-x: #F85149;      /* X轴 - 红色 */
+  --color-axis-y: #2EA043;      /* Y轴 - 绿色 */
+  --color-axis-z: #0078D4;      /* Z轴 - 蓝色 */
+  --color-grid: rgba(204, 204, 204, 0.1);
+  --color-selection: rgba(0, 120, 212, 0.2);
+  --color-highlight: #dcb100;
 
   /* === 阴影 === */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -64,96 +25,96 @@
   --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
-/* === 暗色主题增强版 (基于 VSCode Modern Dark) === */
+/* === 暗色主题 === */
 html[data-theme="dark"] {
-  /* 主色调 (使用 VSCode Modern Dark 主色) */
-  --el-color-primary: var(--color-primary-600);        /* #0078D4 */
-  --el-color-primary-light-3: var(--color-primary-500); /* #1f90ee */
-  --el-color-primary-light-5: var(--color-primary-400); /* #44a5c4 */
-  --el-color-primary-light-7: var(--color-primary-300); /* #6abaaa */
-  --el-color-primary-light-8: var(--color-primary-200); /* #90bff0 */
-  --el-color-primary-light-9: var(--color-primary-100); /* #b6d4f5 */
-  --el-color-primary-dark-2: var(--color-primary-700);  /* #0065b4 */
+  /* Element Plus 主题变量映射到 VSCode 变量 */
+  --el-color-primary: var(--button-background);
+  --el-color-primary-light-3: var(--button-hoverBackground);
+  --el-color-primary-light-5: var(--button-hoverBackground);
+  --el-color-primary-light-7: var(--button-hoverBackground);
+  --el-color-primary-light-8: var(--button-hoverBackground);
+  --el-color-primary-light-9: var(--button-hoverBackground);
+  --el-color-primary-dark-2: var(--button-hoverBackground);
 
-  /* 背景色系 (使用 VSCode Modern Dark 色) */
-  --el-bg-color: var(--color-editor-bg);                /* #1F1F1F - VSCode 编辑器背景 */
-  --el-bg-color-page: #1F1F1F;                         /* VSCode 编辑器背景 */
-  --el-bg-color-overlay: var(--color-panel-bg);         /* #181818 - VSCode 活跃边栏背景 */
+  /* 背景色系 */
+  --el-bg-color: var(--editor-background);
+  --el-bg-color-page: var(--editor-background);
+  --el-bg-color-overlay: var(--sideBar-background);
 
-  /* 文字颜色 (使用 VSCode Modern Dark 文字色) */
-  --el-text-color-primary: var(--color-text-primary);   /* #CCCCCC - VSCode 主要文字 */
-  --el-text-color-regular: var(--color-text-secondary); /* #9D9D9D - VSCode 描述前景色 */
-  --el-text-color-secondary: var(--color-text-tertiary);/* #868686 - VSCode 非活跃前景色 */
-  --el-text-color-placeholder: var(--color-gray-400);   /* #989898 - VSCode 占位符前景色 */
-  --el-text-color-disabled: var(--color-gray-500);      /* #868686 - VSCode 非活跃前景色 */
+  /* 文字颜色 */
+  --el-text-color-primary: var(--editor-foreground);
+  --el-text-color-regular: var(--foreground);
+  --el-text-color-secondary: var(--sideBarSectionHeader-foreground);
+  --el-text-color-placeholder: var(--input-placeholderForeground);
+  --el-text-color-disabled: var(--activityBar-inactiveForeground);
 
-  /* 边框颜色 (使用 VSCode Modern Dark 边框色) */
-  --el-border-color: var(--color-border);               /* #2B2B2B - VSCode 边框 */
-  --el-border-color-light: var(--color-gray-700);       /* #3C3C3C - VSCode 边框 */
-  --el-border-color-lighter: var(--color-gray-800);     /* #313131 - VSCode 下拉背景 */
-  --el-border-color-extra-light: var(--color-gray-800); /* #313131 - VSCode 下拉背景 */
-  --el-border-color-dark: var(--color-gray-500);        /* #868686 - VSCode 非活跃前景色 */
-  --el-border-color-darker: var(--color-gray-400);      /* #989898 - VSCode 占位符前景色 */
+  /* 边框颜色 */
+  --el-border-color: var(--sideBar-border);
+  --el-border-color-light: var(--sideBar-border);
+  --el-border-color-lighter: var(--panel-border);
+  --el-border-color-extra-light: var(--panel-border);
+  --el-border-color-dark: var(--activityBar-inactiveForeground);
+  --el-border-color-darker: var(--input-placeholderForeground);
 
-  /* 填充色 (使用 VSCode Modern Dark 填充色) */
-  --el-fill-color: var(--color-gray-700);               /* #3C3C3C - VSCode 边框色 */
-  --el-fill-color-light: var(--color-gray-800);         /* #313131 - VSCode 下拉背景 */
-  --el-fill-color-lighter: var(--color-gray-800);       /* #313131 - VSCode 下拉背景 */
-  --el-fill-color-extra-light: var(--color-gray-900);   /* #181818 - VSCode 活跃边栏背景 */
-  --el-fill-color-dark: var(--color-gray-600);          /* #6E7681 - VSCode 行号前景色 */
-  --el-fill-color-darker: var(--color-gray-500);        /* #868686 - VSCode 非活跃前景色 */
+  /* 填充色 */
+  --el-fill-color: var(--sideBar-background);
+  --el-fill-color-light: var(--sideBar-background);
+  --el-fill-color-lighter: var(--sideBar-background);
+  --el-fill-color-extra-light: var(--editor-background);
+  --el-fill-color-dark: var(--input-background);
+  --el-fill-color-darker: var(--list-hoverBackground);
   --el-fill-color-blank: transparent;
-  
-  /* 状态颜色 (使用 VSCode Modern Dark 状态色) */
-  --el-color-success: var(--color-success-500);         /* #2EA043 - VSCode 成功色 */
-  --el-color-warning: var(--color-warning-500);         /* #dcb100 - VSCode 警告色 */
-  --el-color-danger: var(--color-danger-500);           /* #F85149 - VSCode 错误色 */
-  --el-color-info: var(--color-info-500);               /* #4daafc - VSCode 链接色 */
+
+  /* 状态颜色 */
+  --el-color-success: var(--editorGutter-addedBackground);
+  --el-color-warning: var(--warningForeground);
+  --el-color-danger: var(--errorForeground);
+  --el-color-info: var(--textLink-foreground);
 }
 
-/* === 亮色主题增强版 (基于 VSCode Modern Light) === */
+/* === 亮色主题 === */
 html[data-theme="light"] {
-  /* 主色调 (使用 VSCode Modern Light 主色) */
-  --el-color-primary: var(--color-primary-600);        /* #0078D4 - VSCode 主色 */
-  --el-color-primary-light-3: var(--color-primary-500); /* 标准蓝 */
-  --el-color-primary-light-5: var(--color-primary-400); /* 更浅的蓝 */
-  --el-color-primary-light-7: var(--color-primary-300); /* 更浅的蓝 */
-  --el-color-primary-light-8: var(--color-primary-200); /* 更浅的蓝 */
-  --el-color-primary-light-9: var(--color-primary-100); /* 最浅蓝 */
-  --el-color-primary-dark-2: var(--color-primary-700);  /* 深蓝 */
+  /* Element Plus 主题变量映射到 VSCode 变量 */
+  --el-color-primary: var(--button-background);
+  --el-color-primary-light-3: var(--button-hoverBackground);
+  --el-color-primary-light-5: var(--button-hoverBackground);
+  --el-color-primary-light-7: var(--button-hoverBackground);
+  --el-color-primary-light-8: var(--button-hoverBackground);
+  --el-color-primary-light-9: var(--button-hoverBackground);
+  --el-color-primary-dark-2: var(--button-hoverBackground);
 
-  /* 背景色系 (模拟 VSCode 亮色主题) */
-  --el-bg-color: #ffffff;                              /* 白色背景 */
-  --el-bg-color-page: #f8f8f8;                        /* 页面背景 */
-  --el-bg-color-overlay: #ffffff;                      /* 覆盖层背景 */
+  /* 背景色系 */
+  --el-bg-color: var(--editor-background);
+  --el-bg-color-page: var(--editor-background);
+  --el-bg-color-overlay: var(--sideBar-background);
 
-  /* 文字颜色 (模拟 VSCode 亮色主题) */
-  --el-text-color-primary: #1f1f1f;                    /* 主要文字色 */
-  --el-text-color-regular: #4d4d4d;                    /* 常规文字色 */
-  --el-text-color-secondary: #666666;                  /* 次要文字色 */
-  --el-text-color-placeholder: #767676;                /* 占位符文字色 */
-  --el-text-color-disabled: #a8a8a8;                   /* 禁用文字色 */
+  /* 文字颜色 */
+  --el-text-color-primary: var(--editor-foreground);
+  --el-text-color-regular: var(--foreground);
+  --el-text-color-secondary: var(--sideBarSectionHeader-foreground);
+  --el-text-color-placeholder: var(--input-placeholderForeground);
+  --el-text-color-disabled: var(--activityBar-inactiveForeground);
 
-  /* 边框颜色 (模拟 VSCode 亮色主题) */
-  --el-border-color: #e5e5e5;                          /* 边框色 */
-  --el-border-color-light: #eeeeee;                    /* 浅边框色 */
-  --el-border-color-lighter: #f0f0f0;                  /* 更浅边框色 */
-  --el-border-color-extra-light: #f5f5f5;              /* 最浅边框色 */
-  --el-border-color-dark: #d0d0d0;                     /* 深边框色 */
-  --el-border-color-darker: #bfbfbf;                   /* 更深边框色 */
+  /* 边框颜色 */
+  --el-border-color: var(--sideBar-border);
+  --el-border-color-light: var(--sideBar-border);
+  --el-border-color-lighter: var(--panel-border);
+  --el-border-color-extra-light: var(--panel-border);
+  --el-border-color-dark: var(--activityBar-inactiveForeground);
+  --el-border-color-darker: var(--input-placeholderForeground);
 
-  /* 填充色 (模拟 VSCode 亮色主题) */
-  --el-fill-color: #f0f0f0;                            /* 填充色 */
-  --el-fill-color-light: #f5f5f5;                      /* 浅填充色 */
-  --el-fill-color-lighter: #f8f8f8;                    /* 更浅填充色 */
-  --el-fill-color-extra-light: #fcfcfc;                /* 最浅填充色 */
-  --el-fill-color-dark: #e0e0e0;                       /* 深填充色 */
-  --el-fill-color-darker: #d0d0d0;                     /* 更深填充色 */
+  /* 填充色 */
+  --el-fill-color: var(--sideBar-background);
+  --el-fill-color-light: var(--sideBar-background);
+  --el-fill-color-lighter: var(--sideBar-background);
+  --el-fill-color-extra-light: var(--editor-background);
+  --el-fill-color-dark: var(--input-background);
+  --el-fill-color-darker: var(--list-hoverBackground);
   --el-fill-color-blank: transparent;
-  
-  /* 状态颜色 (使用 VSCode Modern Light 状态色) */
-  --el-color-success: var(--color-success-500);         /* #2EA043 - VSCode 成功色 */
-  --el-color-warning: var(--color-warning-500);         /* #dcb100 - VSCode 警告色 */
-  --el-color-danger: var(--color-danger-500);           /* #F85149 - VSCode 错误色 */
-  --el-color-info: var(--color-info-500);               /* #4daafc - VSCode 链接色 */
+
+  /* 状态颜色 */
+  --el-color-success: var(--editorGutter-addedBackground);
+  --el-color-warning: var(--warningForeground);
+  --el-color-danger: var(--errorForeground);
+  --el-color-info: var(--textLink-foreground);
 }

@@ -51,12 +51,17 @@ themeStore.applyTheme(themeStore.currentTheme);
 
 // 尝试初始化主题服务，加载并应用保存的主题
 import { ThemeService } from '@feng3d/themes';
-setTimeout(() => {
-  const savedThemeId = localStorage.getItem('editor-vscode-theme');
-  if (savedThemeId) {
-    ThemeService.getInstance().loadAndApplyTheme(savedThemeId).catch(error => {
-      console.error('Failed to load saved theme:', error);
-    });
+setTimeout(async () => {
+  try {
+    // 等待主题列表初始化完成
+    await ThemeService.getInstance().waitForInitialization();
+
+    const savedThemeId = localStorage.getItem('editor-vscode-theme');
+    if (savedThemeId) {
+      await ThemeService.getInstance().loadAndApplyTheme(savedThemeId);
+    }
+  } catch (error) {
+    console.error('Failed to load saved theme:', error);
   }
 }, 100); // 延迟加载以确保DOM已准备就绪
 

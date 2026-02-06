@@ -113,8 +113,8 @@ export class ThemeService {
       // 加载主题文件（处理 include 字段）
       const themeData = await this.loadThemeFile(themeInfo.fileName);
       
-      // 映射 VSCode 主题到我们的设计系统
-      const mappedTheme = ThemeMapper.mapVSCodeToDesignSystem(themeData);
+      // 映射 VSCode 主题到 CSS 变量
+      const mappedTheme = ThemeMapper.mapVSCodeToCSSVariables(themeData);
       
       // 应用映射后的主题
       this.applyMappedTheme(mappedTheme, themeId);

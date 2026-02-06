@@ -66,6 +66,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.39.2",
     "pinia": "^2.2.0",
+    "playwright": "^1.58.1",
     "qrcode": "^1.5.4",
     "rimraf": "^6.1.2",
     "tslib": "^2.4.0",
