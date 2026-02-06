@@ -65,13 +65,13 @@ const label = computed(() => {
 }
 
 .oav-array-header:hover {
-    background-color: var(--el-fill-color-dark, #3d3d3d);
+    background-color: var(--input-background, #3d3d3d);
 }
 
 .oav-array-icon {
     margin-right: 4px;
     transition: transform 0.2s;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .oav-array-icon-expanded {
@@ -81,7 +81,7 @@ const label = computed(() => {
 .oav-label {
     flex: 1;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

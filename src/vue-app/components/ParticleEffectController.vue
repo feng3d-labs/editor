@@ -220,8 +220,8 @@ onUnmounted(() => {
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: var(--el-bg-color-overlay, rgba(30, 30, 30, 0.9));
-  border: 1px solid var(--el-border-color, #3d3d3d);
+  background-color: var(--sideBar-background, rgba(30, 30, 30, 0.9));
+  border: 1px solid var(--sideBar-border, #3d3d3d);
   border-radius: 4px;
   padding: 8px;
   min-width: 200px;
@@ -241,7 +241,7 @@ onUnmounted(() => {
 }
 
 .control-label {
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
   font-size: 12px;
   min-width: 60px;
   user-select: none;
@@ -251,9 +251,9 @@ onUnmounted(() => {
   min-width: 28px;
   min-height: 28px;
   padding: 4px;
-  border: 1px solid var(--el-border-color, #3d3d3d);
-  background-color: var(--el-bg-color, #2d2d2d);
-  color: var(--el-text-color-primary, #cccccc);
+  border: 1px solid var(--sideBar-border, #3d3d3d);
+  background-color: var(--editor-background, #2d2d2d);
+  color: var(--editor-foreground, #cccccc);
   cursor: pointer;
   border-radius: 2px;
   display: inline-flex;
@@ -264,31 +264,31 @@ onUnmounted(() => {
 }
 
 .control-button:hover {
-  background-color: var(--el-fill-color, #3d3d3d);
+  background-color: var(--sideBar-background, #3d3d3d);
 }
 
 .control-button:active {
-  background-color: var(--el-fill-color-dark, #4d4d4d);
+  background-color: var(--sideBar-background-dark, #4d4d4d);
 }
 
 .control-input {
   flex: 1;
   min-width: 0;
   padding: 4px 8px;
-  border: 1px solid var(--el-border-color, #3d3d3d);
-  background-color: var(--el-bg-color, #2d2d2d);
-  color: var(--el-text-color-primary, #cccccc);
+  border: 1px solid var(--sideBar-border, #3d3d3d);
+  background-color: var(--editor-background, #2d2d2d);
+  color: var(--editor-foreground, #cccccc);
   font-size: 12px;
   border-radius: 2px;
   outline: none;
 }
 
 .control-input:focus {
-  border-color: var(--el-color-primary, #409eff);
+  border-color: var(--button-background, #409eff);
 }
 
 .control-input-readonly {
-  background-color: var(--el-fill-color-light, #1d1d1d);
+  background-color: var(--sideBar-background-light, #1d1d1d);
   cursor: default;
   user-select: none;
 }

@@ -26,7 +26,7 @@ watch(() => props.value, () => {
 .tip-string {
     width: 100%;
     height: 100%;
-    background-color: var(--el-bg-color-overlay, #eeeeee);
+    background-color: var(--sideBar-background, #eeeeee);
     border-radius: 2px;
     padding: 4px 5px;
     box-sizing: border-box;
@@ -34,7 +34,7 @@ watch(() => props.value, () => {
 
 .tip-string-content {
     font-size: 12px;
-    color: var(--el-text-color-primary, #000000);
+    color: var(--editor-foreground, #000000);
     max-width: 200px;
     word-wrap: break-word;
     white-space: normal;

@@ -755,8 +755,8 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--editor-background);
   overflow: hidden;
 }
 

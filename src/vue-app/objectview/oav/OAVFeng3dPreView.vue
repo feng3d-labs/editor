@@ -193,7 +193,7 @@ watch(() => previewObject.value, () => {
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -209,7 +209,7 @@ watch(() => previewObject.value, () => {
 .feng3d-preview-container {
     position: relative;
     border: 1px solid var(--el-border-color, #3d3d3d);
-    background-color: var(--el-fill-color-dark, #1d1d1d);
+    background-color: var(--input-background, #1d1d1d);
     cursor: grab;
     user-select: none;
 }

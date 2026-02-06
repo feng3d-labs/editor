@@ -301,18 +301,18 @@ onUnmounted(() => {
   flex-direction: column;
   width: 100%;
   height: 100%;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
-  color: var(--el-text-color-primary, #cccccc);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
 }
 
 .inspector-header {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  border-bottom: 1px solid var(--sideBar-border);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--sideBar-background);
   gap: 8px;
 }
 
@@ -323,13 +323,13 @@ onUnmounted(() => {
 }
 
 .type-name {
-  /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-primary, #cccccc);
+  /* 使用 VSCode 主题变量 */
+  color: var(--editor-foreground);
 }
 
 .empty-label {
-  /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-secondary, #666666);
+  /* 使用 VSCode 主题变量 */
+  color: var(--sideBarSectionHeader-foreground);
   font-style: italic;
 }
 
@@ -341,8 +341,8 @@ onUnmounted(() => {
 
 /* 确保 ObjectView 内容正确显示 */
 .inspector-content :deep(*) {
-  /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-primary, #cccccc);
+  /* 使用 VSCode 主题变量 */
+  color: var(--editor-foreground);
 }
 </style>
 

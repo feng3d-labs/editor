@@ -46,6 +46,7 @@
     "@feng3d-plugins/cannon": "^0.6.0",
     "@feng3d-plugins/cannon-plugin": "^0.6.0",
     "@feng3d/filesaver": "^0.0.1",
+    "@feng3d/themes": "^0.6.0",
     "@iconify/iconify": "^3.1.1",
     "@iconify/vue": "^5.0.0",
     "@tweenjs/tween.js": "^25.0.0",
@@ -53,7 +54,7 @@
     "feng3d": "^0.6.0",
     "jsonc-parser": "^3.1.0",
     "jszip": "^3.10.0",
-    "loadjs": "^4.2.0"
+    "loadjs": "^4.0.0"
   },
   "devDependencies": {
     "@iconify/json": "^2.2.433",
@@ -65,6 +66,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^9.39.2",
     "pinia": "^2.2.0",
+    "playwright": "^1.58.1",
     "qrcode": "^1.5.4",
     "rimraf": "^6.1.2",
     "tslib": "^2.4.0",
@@ -78,6 +80,7 @@
   },
   "workspaces": [
     "packages/cannon",
-    "packages/cannon-plugin"
+    "packages/cannon-plugin",
+    "packages/themes"
   ]
 }

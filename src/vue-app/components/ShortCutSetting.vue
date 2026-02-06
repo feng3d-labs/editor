@@ -117,12 +117,12 @@ const filteredShortcuts = computed<ShortcutItem[]>(() => {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: var(--el-bg-color);
+    background-color: var(--editor-background);
 }
 
 .shortcut-setting-header {
     padding: 8px;
-    border-bottom: 1px solid var(--el-border-color-lighter);
+    border-bottom: 1px solid var(--panel-border);
 }
 
 .shortcut-search-input {
@@ -142,7 +142,7 @@ const filteredShortcuts = computed<ShortcutItem[]>(() => {
 }
 
 .empty-text {
-    color: var(--el-text-color-placeholder);
+    color: var(--input-placeholderForeground);
     font-style: italic;
 }
 </style>

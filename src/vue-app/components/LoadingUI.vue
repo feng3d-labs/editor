@@ -56,7 +56,7 @@ defineExpose({
     align-items: center;
     justify-content: center;
     padding: 20px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     font-size: 14px;
 }
 
@@ -68,7 +68,7 @@ defineExpose({
 .loading-progress {
     margin-top: 4px;
     font-size: 12px;
-    color: var(--el-text-color-secondary, #999999);
+    color: var(--sideBarSectionHeader-foreground, #999999);
 }
 
 .loading-spinner {
@@ -78,8 +78,8 @@ defineExpose({
 .spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid var(--el-border-color-lighter, #4d4d4d);
-    border-top-color: var(--el-color-primary, #409eff);
+    border: 3px solid var(--panel-border, #4d4d4d);
+    border-top-color: var(--button-background, #409eff);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

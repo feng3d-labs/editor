@@ -333,7 +333,7 @@ watch(() => textureCube.value, () => {
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -352,7 +352,7 @@ watch(() => textureCube.value, () => {
 .oav-cubemap-face {
     position: absolute;
     border: 1px solid var(--el-border-color, #3d3d3d);
-    background-color: var(--el-fill-color-dark, #1d1d1d);
+    background-color: var(--input-background, #1d1d1d);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -367,7 +367,7 @@ watch(() => textureCube.value, () => {
 
 .oav-cubemap-placeholder {
     font-size: 10px;
-    color: var(--el-text-color-placeholder, #666);
+    color: var(--editor-foreground, #666);
     text-align: center;
 }
 

@@ -285,9 +285,9 @@ onUnmounted(() =>
   flex-direction: column;
   width: 100%;
   height: 100%;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
-  color: var(--el-text-color-primary, #cccccc);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--editor-background, #1e1e1e);
+  color: var(--editor-foreground, #cccccc);
 }
 
 .console-toolbar {
@@ -295,9 +295,9 @@ onUnmounted(() =>
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  border-bottom: 1px solid var(--panel-border, #3d3d3d);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--sideBar-background, #2d2d2d);
   gap: 12px;
 }
 
@@ -321,7 +321,7 @@ onUnmounted(() =>
   align-items: flex-start;
   gap: 8px;
   padding: 4px 0;
-  border-bottom: 1px solid var(--el-border-color-lighter, #252525);
+  border-bottom: 1px solid var(--panel-border, #252525);
   word-break: break-all;
 }
 
@@ -330,7 +330,7 @@ onUnmounted(() =>
 }
 
 .log-time {
-  color: var(--el-text-color-secondary, #666666);
+  color: var(--descriptionForeground, #666666);
   min-width: 100px;
   flex-shrink: 0;
 }
@@ -343,14 +343,14 @@ onUnmounted(() =>
 
 .log-message {
   flex: 1;
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
 }
 
 .log-stack {
   width: 100%;
   margin-top: 4px;
   padding-left: 158px;
-  color: var(--el-text-color-secondary, #999999);
+  color: var(--descriptionForeground, #999999);
   font-size: 11px;
   white-space: pre-wrap;
 }
@@ -358,23 +358,23 @@ onUnmounted(() =>
 /* 日志类型颜色 */
 .log-log .log-type,
 .log-info .log-type {
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
 }
 
 .log-warn .log-type {
-  color: #ffa500;
+  color: var(--el-color-warning);
 }
 
 .log-error .log-type {
-  color: #f56c6c;
+  color: var(--el-color-danger);
 }
 
 .log-error .log-message {
-  color: #f56c6c;
+  color: var(--el-color-danger);
 }
 
 .log-warn .log-message {
-  color: #ffa500;
+  color: var(--el-color-warning);
 }
 
 .console-empty {
@@ -382,7 +382,7 @@ onUnmounted(() =>
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: var(--el-text-color-secondary, #666666);
+  color: var(--descriptionForeground, #666666);
   font-style: italic;
 }
 
@@ -392,15 +392,15 @@ onUnmounted(() =>
 }
 
 .console-content::-webkit-scrollbar-track {
-  background: var(--el-bg-color, #1e1e1e);
+  background: var(--editor-background, #1e1e1e);
 }
 
 .console-content::-webkit-scrollbar-thumb {
-  background: var(--el-fill-color-dark, #3d3d3d);
+  background: var(--input-background, #3d3d3d);
   border-radius: 5px;
 }
 
 .console-content::-webkit-scrollbar-thumb:hover {
-  background: var(--el-fill-color-darker, #4d4d4d);
+  background: var(--editor-selectionForeground, #4d4d4d);
 }
 </style>

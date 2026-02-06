@@ -74,6 +74,7 @@ export const en_US: LanguageResources = {
     settings: {
         appearance: 'Appearance',
         theme: 'Theme',
+        classicTheme: 'Classic Theme',
         dark: 'Dark',
         light: 'Light',
         language: 'Language',

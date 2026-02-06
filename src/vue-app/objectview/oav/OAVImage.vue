@@ -38,7 +38,7 @@ const imageSrc = computed(() => {
 .oav-image-placeholder {
     padding: 20px;
     text-align: center;
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--sideBarSectionHeader-foreground, #666666);
     font-size: 12px;
     border: 1px dashed var(--el-border-color, #3d3d3d);
     border-radius: 2px;

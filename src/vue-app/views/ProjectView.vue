@@ -979,15 +979,15 @@ onUnmounted(() => {
   flex-direction: row;
   width: 100%;
   height: 100%;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
-  color: var(--el-text-color-primary, #cccccc);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
 }
 
 .project-view-tree {
   width: 200px;
   min-width: 150px;
-  border-right: 1px solid var(--el-border-color, #3d3d3d);
+  border-right: 1px solid var(--sideBar-border);
   overflow-y: auto;
   padding: 8px;
 }
@@ -1001,18 +1001,18 @@ onUnmounted(() => {
 
 .project-view-path {
   padding: 8px 12px;
-  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--sideBar-background, #2d2d2d);
 }
 
 .project-view-filter {
   padding: 8px 12px;
-  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+  border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
   display: flex;
   align-items: center;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--sideBar-background, #2d2d2d);
 }
 
 .project-view-filelist {
@@ -1033,21 +1033,21 @@ onUnmounted(() => {
   border-radius: 4px;
   cursor: pointer;
   user-select: none;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--sideBar-background, #2d2d2d);
   border: 1px solid transparent;
 }
 
 .file-item:hover {
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-fill-color, #2d2d2d);
-  border-color: var(--el-border-color, #3d3d3d);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--list-hoverBackground, #2d2d2d);
+  border-color: var(--sideBar-border, #3d3d3d);
 }
 
 .file-item-selected {
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-fill-color-dark, #3d3d3d);
-  border-color: var(--el-color-primary, #007acc);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--list-activeSelectionBackground, #3d3d3d);
+  border-color: var(--button-background, #007acc);
 }
 
 .file-item-dragging {
@@ -1056,14 +1056,14 @@ onUnmounted(() => {
 }
 
 .file-item-drag-over {
-  background-color: var(--el-color-primary-light-9, #1e3a5f) !important;
-  border-color: var(--el-color-primary, #007acc) !important;
+  background-color: var(--list-activeSelectionBackground, #1e3a5f) !important;
+  border-color: var(--button-background, #007acc) !important;
   border-style: dashed !important;
 }
 
 .file-list-drag-over {
-  background-color: var(--el-fill-color-light, #2a2a2a);
-  border: 2px dashed var(--el-color-primary, #007acc);
+  background-color: var(--list-hoverBackground, #2a2a2a);
+  border: 2px dashed var(--button-background, #007acc);
 }
 
 .file-item-icon {
@@ -1077,17 +1077,17 @@ onUnmounted(() => {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-primary, #cccccc);
+  /* 使用 VSCode 主题变量 */
+  color: var(--editor-foreground, #cccccc);
 }
 
 .project-view-filepath {
   padding: 4px 12px;
   font-size: 12px;
-  border-top: 1px solid var(--el-border-color, #3d3d3d);
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
-  color: var(--el-text-color-secondary, #666666);
+  border-top: 1px solid var(--sideBar-border, #3d3d3d);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--sideBar-background, #2d2d2d);
+  color: var(--sideBarSectionHeader-foreground, #666666);
 }
 
 .tree-node {
@@ -1097,7 +1097,7 @@ onUnmounted(() => {
 }
 
 .tree-node-drag-over {
-  background-color: var(--el-color-primary-light-9, #1e3a5f) !important;
+  background-color: var(--list-activeSelectionBackground, #1e3a5f) !important;
   border-radius: 4px;
   padding: 2px 4px;
 }
@@ -1105,20 +1105,20 @@ onUnmounted(() => {
 /* Element Plus Tree 样式覆盖 */
 :deep(.el-tree) {
   background-color: transparent;
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
 }
 
 :deep(.el-tree-node__content) {
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
 }
 
 :deep(.el-tree-node__content:hover) {
-  background-color: var(--el-fill-color, #2d2d2d);
+  background-color: var(--list-hoverBackground, #2d2d2d);
 }
 
 :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: var(--el-fill-color-dark, #3d3d3d);
-  color: var(--el-color-primary, #007acc);
+  background-color: var(--list-activeSelectionBackground, #3d3d3d);
+  color: var(--button-background, #007acc);
 }
 
 /* Element Plus Breadcrumb 样式覆盖 */
@@ -1127,11 +1127,11 @@ onUnmounted(() => {
 }
 
 :deep(.el-breadcrumb__inner) {
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
 }
 
 :deep(.el-breadcrumb__inner:hover) {
-  color: var(--el-color-primary, #007acc);
+  color: var(--button-background, #007acc);
 }
 </style>
 

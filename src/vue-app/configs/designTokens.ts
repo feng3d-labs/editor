@@ -1,17 +1,81 @@
 /**
  * 设计令牌配置
- * 基于 .superdesign/config.json 中的设计系统参数
+ * 使用 @feng3d/themes 包中的 VSCode 主题颜色变量
  */
 
+import { colorVariables } from '@feng3d/themes';
+
 /**
- * 颜色设计令牌
+ * 颜色设计令牌 - 使用 VSCode 语义化颜色变量
+ * 所有颜色都来自 VSCode 主题系统
  */
 export const colorTokens = {
-  primary: '#409EFF',
-  success: '#67C23A',
-  warning: '#E6A23C',
-  danger: '#F56C6C',
-  info: '#909399',
+  // 按钮
+  buttonBackground: `var(${colorVariables.buttonBackground})`,
+  buttonForeground: `var(${colorVariables.buttonForeground})`,
+  buttonHoverBackground: `var(${colorVariables.buttonHoverBackground})`,
+
+  // 编辑器
+  editorBackground: `var(${colorVariables.editorBackground})`,
+  editorForeground: `var(${colorVariables.editorForeground})`,
+
+  // 面板
+  panelBackground: `var(${colorVariables.panelBackground})`,
+  panelForeground: `var(${colorVariables.panelForeground})`,
+
+  // 侧边栏
+  sideBarBackground: `var(${colorVariables.sideBarBackground})`,
+  sideBarForeground: `var(${colorVariables.sideBarForeground})`,
+  sideBarBorder: `var(${colorVariables.sideBarBorder})`,
+
+  // 输入框
+  inputBackground: `var(${colorVariables.inputBackground})`,
+  inputForeground: `var(${colorVariables.inputForeground})`,
+  inputBorder: `var(${colorVariables.inputBorder})`,
+  inputPlaceholderForeground: `var(${colorVariables.inputPlaceholderForeground})`,
+
+  // 列表
+  listBackground: `var(${colorVariables.listBackground})`,
+  listForeground: `var(${colorVariables.listForeground})`,
+  listActiveSelectionBackground: `var(${colorVariables.listActiveSelectionBackground})`,
+  listActiveSelectionForeground: `var(${colorVariables.listActiveSelectionForeground})`,
+  listHoverBackground: `var(${colorVariables.listHoverBackground})`,
+
+  // 边框
+  editorWidgetBorder: `var(${colorVariables.editorWidgetBorder})`,
+
+  // 状态颜色
+  errorForeground: `var(${colorVariables.errorForeground})`,
+  warningForeground: `var(${colorVariables.warningForeground})`,
+  infoForeground: `var(${colorVariables.infoForeground})`,
+
+  // 文本颜色
+  foreground: `var(${colorVariables.foreground})`,
+  descriptionForeground: `var(${colorVariables.descriptionForeground})`,
+
+  // 链接
+  textLinkForeground: `var(${colorVariables.textLinkForeground})`,
+
+  // 标题栏
+  titleBarActiveBackground: `var(${colorVariables.titleBarActiveBackground})`,
+  titleBarActiveForeground: `var(${colorVariables.titleBarActiveForeground})`,
+
+  // 选项卡
+  tabActiveBackground: `var(${colorVariables.tabActiveBackground})`,
+  tabActiveForeground: `var(${colorVariables.tabActiveForeground})`,
+  tabInactiveBackground: `var(${colorVariables.tabInactiveBackground})`,
+  tabInactiveForeground: `var(${colorVariables.tabInactiveForeground})`,
+
+  // 选择区域
+  editorSelectionBackground: `var(${colorVariables.editorSelectionBackground})`,
+  editorSelectionForeground: `var(${colorVariables.editorSelectionForeground})`,
+
+  // 行号
+  editorLineNumberForeground: `var(${colorVariables.editorLineNumberForeground})`,
+
+  // 滚动条
+  scrollbarSliderBackground: `var(${colorVariables.scrollbarSliderBackground})`,
+
 } as const;
 
 /**

@@ -386,8 +386,10 @@ defineExpose({
   flex-direction: column;
   width: 100%;
   height: 100%;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color, #1e1e1e);
+  background-color: var(--sideBar-background, #3a3a3a);
+  border: 1px solid var(--sideBar-border, #4a4a4a);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .tab-panel-tabs {
@@ -399,18 +401,118 @@ defineExpose({
   min-height: 0;
 }
 
+/* Element Plus Tabs 标签头样式 */
+.tab-panel-tabs :deep(.el-tabs__header) {
+  margin: 0;
+  flex-shrink: 0;
+  background-color: var(--titleBar-activeBackground);
+  border-bottom: 1px solid var(--sideBar-border);
+  padding: 0 8px;
+  border-radius: 6px 6px 0 0;
+}
+
+.tab-panel-tabs :deep(.el-tabs__nav-wrap) {
+  border: none;
+}
+
+.tab-panel-tabs :deep(.el-tabs__nav-scroll) {
+  padding: 4px 0;
+}
+
+.tab-panel-tabs :deep(.el-tabs__nav) {
+  border: none;
+  margin: 0;
+}
+
+.tab-panel-tabs :deep(.el-tabs__item) {
+  color: var(--sideBarSectionHeader-foreground);
+  border: 1px solid transparent;
+  border-radius: 4px 4px 0 0;
+  padding: 8px 16px;
+  margin: 0 2px;
+  height: 36px;
+  line-height: 22px;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  cursor: grab;
+  user-select: none;
+}
+
+.tab-panel-tabs :deep(.el-tabs__item):hover {
+  color: var(--editor-foreground);
+  background-color: var(--list-hoverBackground);
+}
+
+.tab-panel-tabs :deep(.el-tabs__item.is-active) {
+  color: var(--button-background);
+  background-color: var(--editor-background);
+  border-color: var(--sideBar-border);
+  border-bottom-color: transparent;
+  font-weight: 500;
+}
+
+.tab-panel-tabs :deep(.el-tabs__item.is-active):not(.is-closable) {
+  border-bottom-color: var(--editor-background);
+}
+
+.tab-panel-tabs :deep(.el-tabs__item):active {
+  cursor: grabbing;
+}
+
+/* 添加按钮样式 */
+.tab-panel-tabs :deep(.el-tabs__new-tab) {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--descriptionForeground);
+  border: 1px solid transparent;
+  margin-left: 4px;
+}
+
+.tab-panel-tabs :deep(.el-tabs__new-tab):hover {
+  background-color: var(--list-hoverBackground);
+  color: var(--editor-foreground);
+  border-color: var(--sideBar-border);
+}
+
+/* 关闭按钮样式 */
+.tab-panel-tabs :deep(.el-icon.is-close) {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  margin-left: 4px;
+  color: var(--descriptionForeground);
+  transition: all 0.2s ease;
+}
+
+.tab-panel-tabs :deep(.el-icon.is-close):hover {
+  background-color: var(--sideBar-background);
+  color: var(--editor-foreground);
+}
+
 /* Element Plus Tabs 内容区域样式 */
 .tab-panel-tabs :deep(.el-tabs__content) {
   flex: 1;
   overflow: hidden;
   position: relative;
   min-height: 0;
+  background-color: var(--editor-background);
+  border-radius: 0 0 6px 6px;
 }
 
 .tab-panel-tabs :deep(.el-tab-pane) {
   width: 100%;
   height: 100%;
   overflow: auto;
+  padding: 12px;
 }
 
 /* 标签样式 */
@@ -422,6 +524,8 @@ defineExpose({
   user-select: none;
   white-space: nowrap;
   width: 100%;
+  height: 100%;
+  align-items: center;
 }
 
 .tab-label-icon {
@@ -429,6 +533,7 @@ defineExpose({
   display: inline-flex;
   align-items: center;
   pointer-events: none;
+  font-size: 14px;
 }
 
 .tab-label-text {
@@ -438,18 +543,10 @@ defineExpose({
   text-overflow: ellipsis;
   max-width: 200px;
   pointer-events: none;
+  font-size: 13px;
 }
 
-/* 拖拽状态样式 - 通过深度选择器作用于 Element Plus 的标签项 */
-.tab-panel-tabs :deep(.el-tabs__item) {
-  cursor: grab;
-  transition: transform 0.2s, opacity 0.2s;
-}
-
-.tab-panel-tabs :deep(.el-tabs__item:active) {
-  cursor: grabbing;
-}
-
+/* 拖拽状态样式 */
 .tab-pane-dragging :deep(.el-tabs__item) {
   opacity: 0.5;
   cursor: grabbing;
@@ -459,16 +556,33 @@ defineExpose({
   transform: translateX(4px);
 }
 
-/* 确保标签页内容区域占满空间 */
-.tab-panel-tabs :deep(.el-tabs__header) {
-  margin: 0;
-  flex-shrink: 0;
+/* 下拉菜单样式 */
+.tab-panel-tabs :deep(.el-dropdown) {
+  vertical-align: top;
 }
 
-.tab-panel-tabs :deep(.el-tabs__body) {
-  flex: 1;
-  overflow: hidden;
-  min-height: 0;
+.tab-panel-tabs :deep(.el-dropdown-menu) {
+  background-color: var(--sideBar-background);
+  border: 1px solid var(--el-border-color);
+  border-radius: 6px;
+  box-shadow: var(--shadow-lg);
+  padding: 4px 0;
+}
+
+.tab-panel-tabs :deep(.el-dropdown-menu__item) {
+  color: var(--el-text-color-primary);
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+}
+
+.tab-panel-tabs :deep(.el-dropdown-menu__item):hover {
+  background-color: var(--el-fill-color);
+}
+
+.tab-panel-tabs :deep(.el-dropdown-menu__item.is-disabled) {
+  color: var(--el-text-color-disabled);
+  cursor: not-allowed;
+  background-color: transparent;
 }
 </style>
 

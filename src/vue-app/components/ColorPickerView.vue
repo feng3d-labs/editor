@@ -563,8 +563,8 @@ watch(() => props.color, () => {
 <style scoped>
 .color-picker-view {
     padding: 8px;
-    background-color: var(--el-bg-color, #1d1d1d);
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    background-color: var(--editor-background, #1d1d1d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 4px;
 }
 
@@ -578,7 +578,7 @@ watch(() => props.color, () => {
     position: relative;
     width: 200px;
     height: 200px;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     cursor: crosshair;
 }
 
@@ -586,7 +586,7 @@ watch(() => props.color, () => {
     position: relative;
     width: 20px;
     height: 200px;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     cursor: crosshair;
 }
 
@@ -622,6 +622,6 @@ watch(() => props.color, () => {
 .color-picker-input-row label {
     width: 20px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 </style>

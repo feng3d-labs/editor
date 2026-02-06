@@ -98,7 +98,7 @@ defineExpose({
     width: 100%;
     padding: 4px 8px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     cursor: text;
     user-select: none;
     overflow: hidden;
@@ -107,7 +107,7 @@ defineExpose({
 }
 
 .rename-text-label:hover {
-    background-color: var(--el-fill-color-light, #3d3d3d);
+    background-color: var(--sideBar-background, #3d3d3d);
     border-radius: 2px;
 }
 </style>

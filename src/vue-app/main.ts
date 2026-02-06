@@ -17,14 +17,14 @@ loadIconSets().catch((error) => {
   console.error('[Iconify] 预加载图标集失败:', error);
 });
 
-// 引入全局主题样式（暗色和亮色）
-import './styles/global-dark-theme.css';
-import './styles/global-light-theme.css';
+// 引入设计系统样式
+import './styles/design-system.css';
+// 引入全局主题样式
+import './styles/global-theme.css';
 // 引入 Element Plus 样式
 import 'element-plus/dist/index.css';
-// 引入 Element Plus 主题样式（暗色和亮色）
+// 引入 Element Plus 主题定制样式
 import './styles/element-plus-theme.css';
-import './styles/element-plus-light-theme.css';
 
 // 注册 Vue 版本的 objectview 组件
 import { registerObjectViewComponents } from './objectview/registerComponents';
@@ -40,12 +40,38 @@ app.use(pinia);
 // 挂载到 DOM
 app.mount('#vue-app');
 
-// 初始化主题 Store，应用保存的主题或默认主题
-// 在应用挂载后应用主题，确保 DOM 已准备好
+// 初始化主题
+// 主题加载顺序：
+// 1. 首先尝试加载保存的 VSCode 主题（editor-vscode-theme）
+// 2. 如果没有，则使用经典主题设置（editor-theme）
 import { useThemeStore } from './stores/themeStore';
-const themeStore = useThemeStore();
-// 确保主题在应用挂载后正确应用
-themeStore.applyTheme(themeStore.currentTheme);
+import { ThemeService } from '@feng3d/themes';
+
+setTimeout(async () => {
+  try {
+    // 等待主题列表初始化完成
+    await ThemeService.getInstance().waitForInitialization();
+
+    // 优先加载保存的 VSCode 主题
+    const savedVscodeThemeId = localStorage.getItem('editor-vscode-theme');
+    if (savedVscodeThemeId) {
+      await ThemeService.getInstance().loadAndApplyTheme(savedVscodeThemeId);
+      // 同步经典主题状态
+      const themeStore = useThemeStore();
+      if (savedVscodeThemeId.includes('light')) {
+        themeStore.currentTheme = 'light';
+      } else {
+        themeStore.currentTheme = 'dark';
+      }
+    } else {
+      // 如果没有保存的 VSCode 主题，使用经典主题设置
+      const themeStore = useThemeStore();
+      await themeStore.applyTheme(themeStore.currentTheme);
+    }
+  } catch (error) {
+    console.error('Failed to initialize theme:', error);
+  }
+}, 100); // 延迟加载以确保DOM已准备就绪
 
 // 初始化国际化 Store
 import { useI18nStore } from './stores/i18nStore';
@@ -54,4 +80,3 @@ i18nStore.initialize();
 
 // 导出 pinia 实例，确保在需要时可以访问
 export { pinia };
-

@@ -106,7 +106,7 @@ onUnmounted(() => {
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;

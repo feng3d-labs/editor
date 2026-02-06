@@ -437,8 +437,8 @@ watch(() => currentTime.value, () => {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    background-color: var(--el-bg-color, #1e1e1e);
-    color: var(--el-text-color-primary, #cccccc);
+    background-color: var(--editor-background, #1e1e1e);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .animation-empty {
@@ -451,7 +451,7 @@ watch(() => currentTime.value, () => {
 
 .empty-message {
     text-align: center;
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--descriptionForeground, #666666);
 }
 
 .animation-content {
@@ -465,7 +465,7 @@ watch(() => currentTime.value, () => {
     display: flex;
     flex-direction: column;
     height: 100%;
-    border-right: 1px solid var(--el-border-color, #3d3d3d);
+    border-right: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .animation-controls {
@@ -473,7 +473,7 @@ watch(() => currentTime.value, () => {
     flex-direction: column;
     padding: 8px;
     gap: 8px;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .control-buttons {
@@ -490,11 +490,11 @@ watch(() => currentTime.value, () => {
 }
 
 .time-separator {
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--descriptionForeground, #666666);
 }
 
 .time-total {
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--descriptionForeground, #666666);
 }
 
 .animation-settings {
@@ -502,7 +502,7 @@ watch(() => currentTime.value, () => {
     flex-direction: column;
     padding: 8px;
     gap: 8px;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .setting-row {
@@ -513,7 +513,7 @@ watch(() => currentTime.value, () => {
 
 .setting-label {
     font-size: 12px;
-    color: var(--el-text-color-regular, #999999);
+    color: var(--descriptionForeground, #999999);
     min-width: 60px;
 }
 
@@ -528,7 +528,7 @@ watch(() => currentTime.value, () => {
     padding: 8px;
     font-size: 14px;
     font-weight: 500;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .properties-list {
@@ -543,29 +543,29 @@ watch(() => currentTime.value, () => {
     align-items: center;
     padding: 6px 8px;
     font-size: 12px;
-    border-bottom: 1px solid var(--el-border-color-lighter, #2d2d2d);
+    border-bottom: 1px solid var(--sideBar-border, #2d2d2d);
     cursor: pointer;
 }
 
 .property-item:hover {
-    background-color: var(--el-fill-color-light, #2d2d2d);
+    background-color: var(--list-hoverBackground, #2d2d2d);
 }
 
 .property-name {
     flex: 1;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .property-type {
     font-size: 11px;
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--descriptionForeground, #666666);
     margin-left: 8px;
 }
 
 .property-empty {
     padding: 20px;
     text-align: center;
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--descriptionForeground, #666666);
     font-size: 12px;
 }
 
@@ -579,7 +579,7 @@ watch(() => currentTime.value, () => {
     padding: 8px;
     font-size: 14px;
     font-weight: 500;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .timeline-content {
@@ -594,6 +594,6 @@ watch(() => currentTime.value, () => {
     justify-content: center;
     width: 100%;
     height: 100%;
-    color: var(--el-text-color-secondary, #666666);
+    color: var(--descriptionForeground, #666666);
 }
 </style>
