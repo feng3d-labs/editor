@@ -1,79 +1,80 @@
 /**
  * 设计令牌配置
- * 使用 VSCode 主题语义化颜色变量
- * 变量名直接对应 VSCode 的原始颜色 key
+ * 使用 @feng3d/themes 包中的 VSCode 主题颜色变量
  */
 
+import { colorVariables } from '@feng3d/themes';
+
 /**
- * 颜色设计令牌 - 直接使用 VSCode 语义化颜色
- * VSCode key: button.background -> CSS 变量: --button-background
+ * 颜色设计令牌 - 使用 VSCode 语义化颜色变量
+ * 所有颜色都来自 VSCode 主题系统
  */
 export const colorTokens = {
   // 按钮
-  buttonBackground: 'var(--button-background)',
-  buttonForeground: 'var(--button-foreground)',
-  buttonHoverBackground: 'var(--button-hoverBackground)',
+  buttonBackground: `var(${colorVariables.buttonBackground})`,
+  buttonForeground: `var(${colorVariables.buttonForeground})`,
+  buttonHoverBackground: `var(${colorVariables.buttonHoverBackground})`,
 
   // 编辑器
-  editorBackground: 'var(--editor-background)',
-  editorForeground: 'var(--editor-foreground)',
+  editorBackground: `var(${colorVariables.editorBackground})`,
+  editorForeground: `var(${colorVariables.editorForeground})`,
 
   // 面板
-  panelBackground: 'var(--panel-background)',
-  panelForeground: 'var(--panel-foreground)',
+  panelBackground: `var(${colorVariables.panelBackground})`,
+  panelForeground: `var(${colorVariables.panelForeground})`,
 
   // 侧边栏
-  sideBarBackground: 'var(--sideBar-background)',
-  sideBarForeground: 'var(--sideBar-foreground)',
-  sideBarBorder: 'var(--sideBar-border)',
+  sideBarBackground: `var(${colorVariables.sideBarBackground})`,
+  sideBarForeground: `var(${colorVariables.sideBarForeground})`,
+  sideBarBorder: `var(${colorVariables.sideBarBorder})`,
 
   // 输入框
-  inputBackground: 'var(--input-background)',
-  inputForeground: 'var(--input-foreground)',
-  inputBorder: 'var(--input-border)',
-  inputPlaceholderForeground: 'var(--input-placeholderForeground)',
+  inputBackground: `var(${colorVariables.inputBackground})`,
+  inputForeground: `var(${colorVariables.inputForeground})`,
+  inputBorder: `var(${colorVariables.inputBorder})`,
+  inputPlaceholderForeground: `var(${colorVariables.inputPlaceholderForeground})`,
 
   // 列表
-  listBackground: 'var(--list-background)',
-  listForeground: 'var(--list-foreground)',
-  listActiveSelectionBackground: 'var(--list-activeSelectionBackground)',
-  listActiveSelectionForeground: 'var(--list-activeSelectionForeground)',
-  listHoverBackground: 'var(--list-hoverBackground)',
+  listBackground: `var(${colorVariables.listBackground})`,
+  listForeground: `var(${colorVariables.listForeground})`,
+  listActiveSelectionBackground: `var(${colorVariables.listActiveSelectionBackground})`,
+  listActiveSelectionForeground: `var(${colorVariables.listActiveSelectionForeground})`,
+  listHoverBackground: `var(${colorVariables.listHoverBackground})`,
 
   // 边框
-  editorWidgetBorder: 'var(--editorWidget-border)',
+  editorWidgetBorder: `var(${colorVariables.editorWidgetBorder})`,
 
   // 状态颜色
-  errorForeground: 'var(--errorForeground)',
-  warningForeground: 'var(--warningForeground)',
-  infoForeground: 'var(--editorInfo-foreground)',
+  errorForeground: `var(${colorVariables.errorForeground})`,
+  warningForeground: `var(${colorVariables.warningForeground})`,
+  infoForeground: `var(${colorVariables.infoForeground})`,
 
   // 文本颜色
-  foreground: 'var(--foreground)',
-  descriptionForeground: 'var(--descriptionForeground)',
+  foreground: `var(${colorVariables.foreground})`,
+  descriptionForeground: `var(${colorVariables.descriptionForeground})`,
 
   // 链接
-  textLinkForeground: 'var(--textLink-foreground)',
+  textLinkForeground: `var(${colorVariables.textLinkForeground})`,
 
   // 标题栏
-  titleBarActiveBackground: 'var(--titleBar-activeBackground)',
-  titleBarActiveForeground: 'var(--titleBar-activeForeground)',
+  titleBarActiveBackground: `var(${colorVariables.titleBarActiveBackground})`,
+  titleBarActiveForeground: `var(${colorVariables.titleBarActiveForeground})`,
 
   // 选项卡
-  tabActiveBackground: 'var(--tab-activeBackground)',
-  tabActiveForeground: 'var(--tab-activeForeground)',
-  tabInactiveBackground: 'var(--tab-inactiveBackground)',
-  tabInactiveForeground: 'var(--tab-inactiveForeground)',
+  tabActiveBackground: `var(${colorVariables.tabActiveBackground})`,
+  tabActiveForeground: `var(${colorVariables.tabActiveForeground})`,
+  tabInactiveBackground: `var(${colorVariables.tabInactiveBackground})`,
+  tabInactiveForeground: `var(${colorVariables.tabInactiveForeground})`,
 
   // 选择区域
-  editorSelectionBackground: 'var(--editor-selectionBackground)',
-  editorSelectionForeground: 'var(--editor-selectionForeground)',
+  editorSelectionBackground: `var(${colorVariables.editorSelectionBackground})`,
+  editorSelectionForeground: `var(${colorVariables.editorSelectionForeground})`,
 
   // 行号
-  editorLineNumberForeground: 'var(--editorLineNumber-foreground)',
+  editorLineNumberForeground: `var(${colorVariables.editorLineNumberForeground})`,
 
   // 滚动条
-  scrollbarSliderBackground: 'var(--scrollbarSlider-background)',
+  scrollbarSliderBackground: `var(${colorVariables.scrollbarSliderBackground})`,
 
 } as const;
 

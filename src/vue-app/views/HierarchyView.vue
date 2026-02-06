@@ -926,9 +926,9 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color);
-  color: var(--el-text-color-primary);
+  /* 使用 VSCode 主题变量 */
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
   padding: 8px;
 }
 
@@ -941,21 +941,21 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 /* Element Plus Tree 样式覆盖 */
 :deep(.el-tree) {
   background-color: transparent;
-  color: var(--el-text-color-primary);
+  color: var(--editor-foreground);
 }
 
 :deep(.el-tree-node__content) {
-  color: var(--el-text-color-primary);
+  color: var(--editor-foreground);
   height: 24px;
 }
 
 :deep(.el-tree-node__content:hover) {
-  background-color: var(--el-fill-color);
+  background-color: var(--list-hoverBackground);
 }
 
 :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: var(--el-fill-color-dark);
-  color: var(--el-text-color-primary);
+  background-color: var(--list-activeSelectionBackground);
+  color: var(--editor-foreground);
 }
 
 /* 右键菜单容器 */
@@ -1015,8 +1015,8 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 }
 
 .context-menu {
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
-  border: 1px solid var(--el-border-color, #3d3d3d);
+  background-color: var(--sideBar-background, #2d2d2d);
+  border: 1px solid var(--sideBar-border, #3d3d3d);
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   min-width: 150px;
@@ -1027,24 +1027,24 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 .context-menu-item {
   padding: 8px 16px;
   cursor: pointer;
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
   font-size: 14px;
   user-select: none;
   transition: background-color 0.2s;
 }
 
 .context-menu-item:hover:not(.context-menu-item-disabled) {
-  background-color: var(--el-fill-color, #2d2d2d);
+  background-color: var(--list-hoverBackground, #2d2d2d);
 }
 
 .context-menu-item-disabled {
-  color: var(--el-text-color-disabled, #666666);
+  color: var(--descriptionForeground, #666666);
   cursor: not-allowed;
   opacity: 0.5;
 }
 
 .context-menu-item-divided {
-  border-top: 1px solid var(--el-border-color, #3d3d3d);
+  border-top: 1px solid var(--sideBar-border, #3d3d3d);
   margin-top: 4px;
   padding-top: 8px;
 }
@@ -1061,7 +1061,7 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 
 .context-menu-item-arrow {
   margin-left: 8px;
-  color: var(--el-text-color-secondary, #666666);
+  color: var(--sideBarSectionHeader-foreground, #666666);
 }
 
 .context-menu.submenu {

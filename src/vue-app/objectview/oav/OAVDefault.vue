@@ -32,7 +32,7 @@ const { label, value, onChange, onDoubleClick } = useOAVDefault(props);
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -48,10 +48,10 @@ const { label, value, onChange, onDoubleClick } = useOAVDefault(props);
     width: 100%;
     padding: 2px 4px;
     font-size: 12px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    background-color: var(--sideBar-background, #2d2d2d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .oav-input:disabled {
@@ -61,6 +61,6 @@ const { label, value, onChange, onDoubleClick } = useOAVDefault(props);
 
 .oav-input:focus {
     outline: none;
-    border-color: var(--el-color-primary, #007acc);
+    border-color: var(--button-background, #007acc);
 }
 </style>

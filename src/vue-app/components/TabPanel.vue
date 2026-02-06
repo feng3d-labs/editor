@@ -386,8 +386,8 @@ defineExpose({
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: var(--el-bg-color-overlay, #3a3a3a);
-  border: 1px solid var(--el-border-color, #4a4a4a);
+  background-color: var(--sideBar-background, #3a3a3a);
+  border: 1px solid var(--sideBar-border, #4a4a4a);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -405,8 +405,8 @@ defineExpose({
 .tab-panel-tabs :deep(.el-tabs__header) {
   margin: 0;
   flex-shrink: 0;
-  background-color: var(--color-toolbar-bg);
-  border-bottom: 1px solid var(--color-border);
+  background-color: var(--titleBar-activeBackground);
+  border-bottom: 1px solid var(--sideBar-border);
   padding: 0 8px;
   border-radius: 6px 6px 0 0;
 }
@@ -425,7 +425,7 @@ defineExpose({
 }
 
 .tab-panel-tabs :deep(.el-tabs__item) {
-  color: var(--color-text-secondary);
+  color: var(--sideBarSectionHeader-foreground);
   border: 1px solid transparent;
   border-radius: 4px 4px 0 0;
   padding: 8px 16px;
@@ -439,20 +439,20 @@ defineExpose({
 }
 
 .tab-panel-tabs :deep(.el-tabs__item):hover {
-  color: var(--color-text-primary);
-  background-color: var(--color-hover);
+  color: var(--editor-foreground);
+  background-color: var(--list-hoverBackground);
 }
 
 .tab-panel-tabs :deep(.el-tabs__item.is-active) {
-  color: var(--el-color-primary);
-  background-color: var(--color-editor-bg);
-  border-color: var(--color-border);
+  color: var(--button-background);
+  background-color: var(--editor-background);
+  border-color: var(--sideBar-border);
   border-bottom-color: transparent;
   font-weight: 500;
 }
 
 .tab-panel-tabs :deep(.el-tabs__item.is-active):not(.is-closable) {
-  border-bottom-color: var(--color-editor-bg);
+  border-bottom-color: var(--editor-background);
 }
 
 .tab-panel-tabs :deep(.el-tabs__item):active {
@@ -469,15 +469,15 @@ defineExpose({
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--color-text-tertiary);
+  color: var(--descriptionForeground);
   border: 1px solid transparent;
   margin-left: 4px;
 }
 
 .tab-panel-tabs :deep(.el-tabs__new-tab):hover {
-  background-color: var(--color-hover);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
+  background-color: var(--list-hoverBackground);
+  color: var(--editor-foreground);
+  border-color: var(--sideBar-border);
 }
 
 /* 关闭按钮样式 */
@@ -489,13 +489,13 @@ defineExpose({
   justify-content: center;
   border-radius: 3px;
   margin-left: 4px;
-  color: var(--color-text-tertiary);
+  color: var(--descriptionForeground);
   transition: all 0.2s ease;
 }
 
 .tab-panel-tabs :deep(.el-icon.is-close):hover {
-  background-color: var(--color-gray-600);
-  color: var(--color-text-primary);
+  background-color: var(--sideBar-background);
+  color: var(--editor-foreground);
 }
 
 /* Element Plus Tabs 内容区域样式 */
@@ -504,7 +504,7 @@ defineExpose({
   overflow: hidden;
   position: relative;
   min-height: 0;
-  background-color: var(--color-editor-bg);
+  background-color: var(--editor-background);
   border-radius: 0 0 6px 6px;
 }
 
@@ -562,7 +562,7 @@ defineExpose({
 }
 
 .tab-panel-tabs :deep(.el-dropdown-menu) {
-  background-color: var(--el-bg-color-overlay);
+  background-color: var(--sideBar-background);
   border: 1px solid var(--el-border-color);
   border-radius: 6px;
   box-shadow: var(--shadow-lg);

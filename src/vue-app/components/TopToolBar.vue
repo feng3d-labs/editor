@@ -234,7 +234,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: var(--el-bg-color);
+  background-color: var(--editor-background, #1e1e1e);
   z-index: 1001;
   pointer-events: auto;
   padding: 0 8px;

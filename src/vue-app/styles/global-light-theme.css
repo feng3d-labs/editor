@@ -1,6 +1,6 @@
 /**
  * 全局亮色主题样式
- * 确保整个应用使用统一的亮色调
+ * 使用 VSCode 主题语义化颜色变量
  */
 
 /* 全局基础样式 */
@@ -11,8 +11,8 @@
 /* 亮色主题样式 - 仅在 data-theme="light" 时生效 */
 html[data-theme="light"],
 html[data-theme="light"] body {
-  background-color: var(--color-gray-50);
-  color: var(--color-gray-900);
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -29,40 +29,40 @@ html[data-theme="light"] ::-webkit-scrollbar {
 }
 
 html[data-theme="light"] ::-webkit-scrollbar-track {
-  background: var(--color-gray-100);
+  background: var(--sideBar-background);
   border-radius: 4px;
 }
 
 html[data-theme="light"] ::-webkit-scrollbar-thumb {
-  background: var(--color-gray-300);
+  background: var(--scrollbarSlider-background);
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
 html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gray-400);
+  background: var(--scrollbarSlider-hoverBackground);
 }
 
-/* 选择文本样式 - 亮色主题（使用设计令牌主色） */
+/* 选择文本样式 - 亮色主题 */
 html[data-theme="light"] ::selection {
-  background-color: var(--el-color-primary);
+  background-color: var(--button-background);
   color: #ffffff;
 }
 
 html[data-theme="light"] ::-moz-selection {
-  background-color: var(--el-color-primary);
+  background-color: var(--button-background);
   color: #ffffff;
 }
 
-/* 链接样式 - 亮色主题（使用设计令牌主色） */
+/* 链接样式 - 亮色主题 */
 html[data-theme="light"] a {
-  color: var(--el-color-primary);
+  color: var(--textLink-foreground);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 html[data-theme="light"] a:hover {
-  color: var(--color-primary-700);
+  color: var(--textLink-foreground);
   text-decoration: underline;
 }
 
@@ -70,9 +70,9 @@ html[data-theme="light"] a:hover {
 html[data-theme="light"] input,
 html[data-theme="light"] textarea,
 html[data-theme="light"] select {
-  background-color: var(--el-bg-color);
-  color: var(--el-text-color-primary);
-  border: 1px solid var(--el-border-color);
+  background-color: var(--input-background);
+  color: var(--input-foreground);
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   padding: 6px 12px;
   transition: all 0.2s ease;
@@ -82,8 +82,8 @@ html[data-theme="light"] input:focus,
 html[data-theme="light"] textarea:focus,
 html[data-theme="light"] select:focus {
   outline: none;
-  border-color: var(--el-color-primary);
-  box-shadow: 0 0 0 2px var(--color-focus);
+  border-color: var(--button-background);
+  box-shadow: 0 0 0 2px var(--list-activeSelectionBackground);
 }
 
 /* 按钮样式 - 亮色主题 */
@@ -93,11 +93,11 @@ html[data-theme="light"] button {
 }
 
 html[data-theme="light"] button:hover:not(:disabled) {
-  background-color: var(--color-gray-100);
+  background-color: var(--list-hoverBackground);
 }
 
 html[data-theme="light"] button:active:not(:disabled) {
-  background-color: var(--color-gray-200);
+  background-color: var(--list-activeSelectionBackground);
 }
 
 html[data-theme="light"] button:disabled {
@@ -108,8 +108,8 @@ html[data-theme="light"] button:disabled {
 /* 卡片/面板样式 - 亮色主题 */
 html[data-theme="light"] .card,
 html[data-theme="light"] .panel {
-  background-color: var(--el-bg-color);
-  border: 1px solid var(--el-border-color);
+  background-color: var(--panel-background);
+  border: 1px solid var(--sideBar-border);
   border-radius: 6px;
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
@@ -118,10 +118,6 @@ html[data-theme="light"] .panel {
 /* 确保所有容器默认使用亮色背景 */
 html[data-theme="light"] #vue-app,
 html[data-theme="light"] #vue-app-container {
-  background-color: var(--color-gray-50);
-  color: var(--color-gray-900);
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
 }
-
-/* 工具层背景透明，但确保内容可见 */
-/* 注意：CameraPreviewLayer、SceneRotateToolLayer 和 stats 现在都在场景界面中，使用类选择器 */
-

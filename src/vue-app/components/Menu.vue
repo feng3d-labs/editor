@@ -287,8 +287,8 @@ onUnmounted(() => {
 .menu-container {
   position: fixed;
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
-  border: 1px solid var(--el-border-color, #3d3d3d);
+  background-color: var(--sideBar-background, #2d2d2d);
+  border: 1px solid var(--sideBar-border, #3d3d3d);
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   min-width: 150px;
@@ -305,18 +305,18 @@ onUnmounted(() => {
   justify-content: space-between;
   user-select: none;
   /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-primary, #cccccc);
+  color: var(--editor-foreground, #cccccc);
   font-size: 14px;
 }
 
 .menu-item:hover:not(.menu-item-separator):not(.menu-item-disabled) {
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-fill-color, #2d2d2d);
+  background-color: var(--sideBar-background, #2d2d2d);
 }
 
 .menu-item-disabled {
   /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-disabled, #444444);
+  color: var(--activityBar-inactiveForeground, #444444);
   cursor: not-allowed;
 }
 
@@ -330,7 +330,7 @@ onUnmounted(() => {
 .menu-separator {
   height: 1px;
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-border-color, #3d3d3d);
+  background-color: var(--sideBar-border, #3d3d3d);
   margin: 0 8px;
 }
 
@@ -342,12 +342,12 @@ onUnmounted(() => {
   margin-left: 8px;
   font-size: 10px;
   /* 使用 Element Plus 主题变量 */
-  color: var(--el-text-color-secondary, #666666);
+  color: var(--sideBarSectionHeader-foreground, #666666);
 }
 
 .menu-item-hover {
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-fill-color-dark, #3d3d3d);
+  background-color: var(--input-background, #3d3d3d);
 }
 </style>
 

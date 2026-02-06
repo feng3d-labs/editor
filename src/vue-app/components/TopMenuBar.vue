@@ -220,7 +220,7 @@ function onQRCodeClick() {
   position: relative;
   width: 100%;
   height: 32px;
-  background-color: var(--el-bg-color-overlay);
+  background-color: var(--sideBar-background, #252526);
   display: flex;
   align-items: center;
   z-index: 1000;
@@ -267,21 +267,21 @@ function onQRCodeClick() {
   line-height: 32px;
   padding: 0 12px;
   font-size: 12px;
-  color: var(--el-text-color-primary);
+  color: var(--editor-foreground, #cccccc);
   border-bottom: 2px solid transparent;
   transition: all 0.2s;
 }
 
 .top-menu-bar-menu :deep(.el-menu-item:hover) {
-  background-color: var(--el-fill-color);
-  color: var(--el-text-color-primary);
-  border-bottom-color: var(--el-text-color-primary);
+  background-color: var(--sideBar-background, #252526);
+  color: var(--editor-foreground, #cccccc);
+  border-bottom-color: var(--editor-foreground, #cccccc);
 }
 
 .top-menu-bar-menu :deep(.el-menu-item.is-active) {
-  color: var(--el-text-color-primary);
-  border-bottom-color: var(--el-text-color-primary);
-  background-color: var(--el-fill-color);
+  color: var(--editor-foreground, #cccccc);
+  border-bottom-color: var(--editor-foreground, #cccccc);
+  background-color: var(--sideBar-background, #252526);
 }
 
 .menu-item-label {
@@ -293,7 +293,7 @@ function onQRCodeClick() {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  color: var(--el-text-color-primary);
+  color: var(--editor-foreground, #cccccc);
   font-size: 12px;
   pointer-events: none;
   user-select: none;

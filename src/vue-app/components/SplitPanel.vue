@@ -100,7 +100,7 @@ watch(() => props.split, (newValue) => {
   height: 100%;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--sideBar-border);
 }
 
 .split-panel-content {
@@ -109,7 +109,7 @@ watch(() => props.split, (newValue) => {
   overflow: hidden;
   min-width: 0;
   min-height: 0;
-  background-color: var(--color-panel-bg);
+  background-color: var(--editor-background);
 }
 
 /* Element Plus Splitter 优化样式 */
@@ -124,12 +124,12 @@ watch(() => props.split, (newValue) => {
 }
 
 :deep(.el-splitter__divider) {
-  background-color: var(--color-border);
+  background-color: var(--sideBar-border);
   transition: all 0.2s ease;
 }
 
 :deep(.el-splitter__divider:hover) {
-  background-color: var(--el-color-primary);
+  background-color: var(--button-background);
   transform: scale(1.1);
 }
 

@@ -311,8 +311,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   /* 使用 Element Plus 主题变量 */
-  background-color: var(--el-bg-color-overlay, #2d2d2d);
-  border: 1px solid var(--el-border-color, #3d3d3d);
+  background-color: var(--sideBar-background, #2d2d2d);
+  border: 1px solid var(--sideBar-border, #3d3d3d);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   /* 确保预览窗口显示在场景上方 */
   z-index: 10;
@@ -327,7 +327,7 @@ onUnmounted(() => {
   justify-content: center;
   /* 使用 Element Plus 主题变量 */
   background-color: rgba(45, 45, 45, 0.5); /* fillAlpha="0.5" */
-  border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+  border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .camera-preview-title {

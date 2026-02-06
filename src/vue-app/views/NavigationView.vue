@@ -64,20 +64,20 @@ function onZoom() {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: var(--el-bg-color, #1d1d1d);
-    color: var(--el-text-color-primary, #cccccc);
+    background-color: var(--editor-background, #1d1d1d);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .navigation-header {
     padding: 12px 16px;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .navigation-title {
     margin: 0;
     font-size: 14px;
     font-weight: 500;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .navigation-content {
@@ -92,7 +92,7 @@ function onZoom() {
 
 .navigation-status {
     padding-top: 16px;
-    border-top: 1px solid var(--el-border-color, #3d3d3d);
+    border-top: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .status-item {
@@ -104,11 +104,11 @@ function onZoom() {
 
 .status-label {
     font-size: 12px;
-    color: var(--el-text-color-secondary, #999999);
+    color: var(--descriptionForeground, #999999);
 }
 
 .status-value {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 </style>

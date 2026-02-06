@@ -9,6 +9,72 @@
   /* 这些变量会根据当前主题自动更新 */
   /* 例如: --button-background, --editor-background, --sideBar-foreground 等 */
 
+  /* === VSCode 暗色主题默认值（作为回退） === */
+  --sideBar-background: #181818;
+  --sideBar-foreground: #cccccc;
+  --sideSectionHeader-background: transparent;
+  --sideBarSectionHeader-foreground: #bbbbbb;
+  --sideBar-border: #2b2b2b;
+
+  --editor-background: #1F1F1F;
+  --editor-foreground: #cccccc;
+
+  --panel-background: #181818;
+  --panel-foreground: #cccccc;
+  --panel-border: transparent;
+
+  --button-background: #0078D4;
+  --button-foreground: #ffffff;
+  --button-hoverBackground: #026EC1;
+
+  --button-secondaryBackground: #3c3c3c;
+  --button-secondaryForeground: #cccccc;
+
+  --activityBar-background: #181818;
+  --activityBar-foreground: #d7d7d7;
+  --activityBar-inactiveForeground: #858585;
+
+  --titleBar-activeBackground: #3c3c3c;
+  --titleBar-activeForeground: #cccccc;
+
+  --tab-activeBackground: #1F1F1F;
+  --tab-activeForeground: #ffffff;
+  --tab-inactiveBackground: #2d2d2d;
+  --tab-inactiveForeground: #969696;
+
+  --input-background: #313131;
+  --input-foreground: #cccccc;
+  --input-border: transparent;
+  --input-placeholderForeground: #858585;
+
+  --list-background: #252526;
+  --list-foreground: #cccccc;
+  --list-activeSelectionBackground: #094771;
+  --list-activeSelectionForeground: #ffffff;
+  --list-hoverBackground: #2a2d2e;
+
+  --foreground: #cccccc;
+  --descriptionForeground: #9d9d9d;
+
+  --scrollbarSlider-background: rgba(121, 121, 121, 0.4);
+  --scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
+  --scrollbarSlider-activeBackground: rgba(191, 191, 191, 0.4);
+
+  /* 状态颜色 */
+  --errorForeground: #f14c4c;
+  --warningForeground: #cca700;
+  --infoForeground: #3794ff;
+  --textLink-foreground: #3794ff;
+
+  /* Git 颜色 */
+  --editorGutter-addedBackground: #2EA043;
+  --editorGutter-modifiedBackground: #026EC1;
+  --editorGutter-deletedBackground: #f14c4c;
+
+  /* Diff 颜色 */
+  --diffEditor-insertedTextBackground: rgba(46, 160, 67, 0.2);
+  --diffEditor-removedTextBackground: rgba(241, 76, 76, 0.2);
+
   /* === 3D编辑器特殊颜色 === */
   --color-axis-x: #F85149;      /* X轴 - 红色 */
   --color-axis-y: #2EA043;      /* Y轴 - 绿色 */
@@ -27,36 +93,22 @@
 
 /* === 暗色主题 === */
 html[data-theme="dark"] {
-  /* Element Plus 主题变量映射到 VSCode 变量 */
+  /* === Element Plus 变量别名（直接映射到 VSCode 变量） === */
   --el-color-primary: var(--button-background);
-  --el-color-primary-light-3: var(--button-hoverBackground);
-  --el-color-primary-light-5: var(--button-hoverBackground);
-  --el-color-primary-light-7: var(--button-hoverBackground);
-  --el-color-primary-light-8: var(--button-hoverBackground);
-  --el-color-primary-light-9: var(--button-hoverBackground);
-  --el-color-primary-dark-2: var(--button-hoverBackground);
-
-  /* 背景色系 */
   --el-bg-color: var(--editor-background);
   --el-bg-color-page: var(--editor-background);
   --el-bg-color-overlay: var(--sideBar-background);
-
-  /* 文字颜色 */
   --el-text-color-primary: var(--editor-foreground);
   --el-text-color-regular: var(--foreground);
   --el-text-color-secondary: var(--sideBarSectionHeader-foreground);
   --el-text-color-placeholder: var(--input-placeholderForeground);
   --el-text-color-disabled: var(--activityBar-inactiveForeground);
-
-  /* 边框颜色 */
   --el-border-color: var(--sideBar-border);
   --el-border-color-light: var(--sideBar-border);
   --el-border-color-lighter: var(--panel-border);
   --el-border-color-extra-light: var(--panel-border);
   --el-border-color-dark: var(--activityBar-inactiveForeground);
   --el-border-color-darker: var(--input-placeholderForeground);
-
-  /* 填充色 */
   --el-fill-color: var(--sideBar-background);
   --el-fill-color-light: var(--sideBar-background);
   --el-fill-color-lighter: var(--sideBar-background);
@@ -64,8 +116,6 @@ html[data-theme="dark"] {
   --el-fill-color-dark: var(--input-background);
   --el-fill-color-darker: var(--list-hoverBackground);
   --el-fill-color-blank: transparent;
-
-  /* 状态颜色 */
   --el-color-success: var(--editorGutter-addedBackground);
   --el-color-warning: var(--warningForeground);
   --el-color-danger: var(--errorForeground);
@@ -74,36 +124,22 @@ html[data-theme="dark"] {
 
 /* === 亮色主题 === */
 html[data-theme="light"] {
-  /* Element Plus 主题变量映射到 VSCode 变量 */
+  /* === Element Plus 变量别名（直接映射到 VSCode 变量） === */
   --el-color-primary: var(--button-background);
-  --el-color-primary-light-3: var(--button-hoverBackground);
-  --el-color-primary-light-5: var(--button-hoverBackground);
-  --el-color-primary-light-7: var(--button-hoverBackground);
-  --el-color-primary-light-8: var(--button-hoverBackground);
-  --el-color-primary-light-9: var(--button-hoverBackground);
-  --el-color-primary-dark-2: var(--button-hoverBackground);
-
-  /* 背景色系 */
   --el-bg-color: var(--editor-background);
   --el-bg-color-page: var(--editor-background);
   --el-bg-color-overlay: var(--sideBar-background);
-
-  /* 文字颜色 */
   --el-text-color-primary: var(--editor-foreground);
   --el-text-color-regular: var(--foreground);
   --el-text-color-secondary: var(--sideBarSectionHeader-foreground);
   --el-text-color-placeholder: var(--input-placeholderForeground);
   --el-text-color-disabled: var(--activityBar-inactiveForeground);
-
-  /* 边框颜色 */
   --el-border-color: var(--sideBar-border);
   --el-border-color-light: var(--sideBar-border);
   --el-border-color-lighter: var(--panel-border);
   --el-border-color-extra-light: var(--panel-border);
   --el-border-color-dark: var(--activityBar-inactiveForeground);
   --el-border-color-darker: var(--input-placeholderForeground);
-
-  /* 填充色 */
   --el-fill-color: var(--sideBar-background);
   --el-fill-color-light: var(--sideBar-background);
   --el-fill-color-lighter: var(--sideBar-background);
@@ -111,8 +147,6 @@ html[data-theme="light"] {
   --el-fill-color-dark: var(--input-background);
   --el-fill-color-darker: var(--list-hoverBackground);
   --el-fill-color-blank: transparent;
-
-  /* 状态颜色 */
   --el-color-success: var(--editorGutter-addedBackground);
   --el-color-warning: var(--warningForeground);
   --el-color-danger: var(--errorForeground);

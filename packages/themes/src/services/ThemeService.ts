@@ -20,6 +20,7 @@ export class ThemeService {
   private themes: ThemeInfo[] = [];
   private themesInitialized: boolean = false;
   private initPromise: Promise<void> | null = null;
+  private loadedThemes: Map<string, ThemeData> = new Map(); // 缓存已加载的主题
 
   private constructor() {
     // 立即开始初始化主题列表
@@ -112,13 +113,13 @@ export class ThemeService {
 
       // 加载主题文件（处理 include 字段）
       const themeData = await this.loadThemeFile(themeInfo.fileName);
-      
+
       // 映射 VSCode 主题到 CSS 变量
       const mappedTheme = ThemeMapper.mapVSCodeToCSSVariables(themeData);
-      
+
       // 应用映射后的主题
       this.applyMappedTheme(mappedTheme, themeId);
-      
+
       console.log(`Theme ${themeId} loaded and applied successfully`);
     } catch (error) {
       console.error(`Failed to load and apply theme ${themeId}:`, error);
@@ -129,53 +130,86 @@ export class ThemeService {
   /**
    * 加载主题文件（支持 include 字段）
    */
-  private async loadThemeFile(fileName: string, basePath: string = '/resource/themes/'): Promise<ThemeData> {
+  private async loadThemeFile(fileName: string): Promise<ThemeData> {
+    // 检查缓存
+    if (this.loadedThemes.has(fileName)) {
+      return this.loadedThemes.get(fileName)!;
+    }
+
+    // 主题文件基础路径
+    const basePath = '/resource/themes/';
+
     // 构建主题文件URL
     const themeUrl = basePath + fileName;
-    
+
     try {
       const response = await fetch(themeUrl);
       if (!response.ok) {
         throw new Error(`Failed to load theme file: ${themeUrl}`);
       }
-      
+
       const themeData: ThemeData = await response.json();
-      
+
       // 如果主题文件包含 include 字段，需要先加载被继承的主题
       if (themeData.include) {
-        // 处理相对路径
-        const includePath = this.resolveIncludePath(themeData.include, themeUrl);
-        const parentTheme = await this.loadThemeFile(includePath, '/');
-        
+        const includePath = this.resolveIncludePath(themeData.include);
+        const parentTheme = await this.loadThemeFile(includePath);
+
         // 合并颜色：父主题为基础，当前主题覆盖
-        const mergedColors = { ...parentTheme.colors, ...themeData.colors };
-        
+        const parentColors = parentTheme.colors || {};
+        const currentColors = themeData.colors || {};
+        const mergedColors = { ...parentColors, ...currentColors };
+
+        // 合并 tokenColors（如果存在）
+        const parentTokenColors = parentTheme.tokenColors || [];
+        const currentTokenColors = themeData.tokenColors || [];
+        const mergedTokenColors = [...parentTokenColors];
+        // 合并 tokenColors，当前主题的覆盖父主题的
+        currentTokenColors.forEach(currentToken => {
+          const index = mergedTokenColors.findIndex(t => t.name === currentToken.name);
+          if (index >= 0) {
+            mergedTokenColors[index] = currentToken;
+          } else {
+            mergedTokenColors.push(currentToken);
+          }
+        });
+
         // 返回合并后的主题数据
-        return {
-          ...parentTheme, // 继承父主题的基本信息
-          ...themeData,   // 当前主题的信息覆盖父主题
-          colors: mergedColors // 合并后的颜色
+        const mergedTheme: ThemeData = {
+          ...parentTheme,
+          ...themeData,
+          colors: mergedColors,
+          tokenColors: mergedTokenColors
         };
+
+        // 缓存合并后的主题
+        this.loadedThemes.set(fileName, mergedTheme);
+        return mergedTheme;
       }
-      
+
+      // 缓存主题
+      this.loadedThemes.set(fileName, themeData);
       return themeData;
     } catch (error) {
       console.error(`Error loading theme file ${fileName}:`, error);
       throw error;
     }
   }
-  
+
   /**
    * 解析 include 路径
+   * 处理相对路径，如 "./dark_plus.json" -> "dark_plus.json"
    */
-  private resolveIncludePath(includePath: string, currentThemeUrl: string): string {
-    if (includePath.startsWith('./') || includePath.startsWith('../')) {
-      // 处理相对路径
-      const currentDir = currentThemeUrl.substring(0, currentThemeUrl.lastIndexOf('/') + 1);
-      const resolvedPath = new URL(includePath, currentDir).pathname;
-      return resolvedPath.split('/').pop() || includePath; // 只返回文件名
+  private resolveIncludePath(includePath: string): string {
+    // 移除 ./ 前缀
+    let path = includePath.replace(/^\.\//, '');
+
+    // 处理 ../ 前缀（简单处理，只去掉一层）
+    if (path.startsWith('../')) {
+      path = path.substring(3);
     }
-    return includePath;
+
+    return path;
   }
 
   /**
@@ -183,46 +217,73 @@ export class ThemeService {
    */
   private applyMappedTheme(mappedTheme: Record<string, string>, themeId: string): void {
     const root = document.documentElement;
-    
+
     // 清除之前的主题变量
     this.clearThemeVariables(root);
-    
+
     // 根据主题类型设置 data-theme 属性
     if (themeId.includes('light') || themeId.includes('hc_light')) {
       root.setAttribute('data-theme', 'light');
     } else {
       root.setAttribute('data-theme', 'dark');
     }
-    
+
     // 应用映射后的主题变量
     Object.entries(mappedTheme).forEach(([key, value]) => {
       if (value) {
         root.style.setProperty(key, value);
       }
     });
+
+    // 保存主题ID到本地存储
+    localStorage.setItem('editor-vscode-theme', themeId);
   }
 
   /**
    * 清除主题变量
    */
   private clearThemeVariables(root: HTMLElement): void {
-    // 获取所有CSS变量
-    const computedStyles = getComputedStyle(root);
-    const cssVars: string[] = [];
+    // 收集所有已设置的主题相关 CSS 变量
+    const variablesToRemove: string[] = [];
 
-    // 收集所有CSS变量
-    for (let i = 0; i < computedStyles.length; i++) {
-      const property = computedStyles[i];
-      if (property.startsWith('--')) {
-        cssVars.push(property);
+    // VSCode 主题变量通常以这些前缀开头
+    const prefixes = [
+      'activityBar-', 'button-', 'checkbox-', 'debugToolBar-', 'descriptionForeground',
+      'dropdown-', 'editor-', 'errorForeground', 'foreground', 'focusBorder',
+      'icon-', 'input-', 'list-', 'panel-', 'scrollbarSlider-', 'sideBar-',
+      'tab-', 'titleBar-', 'warningForeground', 'badge-', 'textLink-',
+      'progressBar-', 'widget-', 'diffEditor-', 'editorGutter-', 'gitDecoration-',
+      'notifications-', 'terminal-', 'charts-', 'breadcrumb-', 'minimap-',
+      'peekView-', 'extensionButton-', 'quickInput-', 'walkthrough-', 'welcomePage-'
+    ];
+
+    // 检查所有内联样式
+    const inlineStyle = root.style;
+    for (let i = inlineStyle.length - 1; i >= 0; i--) {
+      const propertyName = inlineStyle[i];
+      if (propertyName && propertyName.startsWith('--')) {
+        // 检查是否是主题相关的变量
+        const varName = propertyName.substring(2); // 移除 --
+        const isThemeVar = prefixes.some(prefix => varName.startsWith(prefix));
+        if (isThemeVar) {
+          variablesToRemove.push(propertyName);
+        }
       }
     }
 
-    // 清除我们的主题相关变量
-    cssVars.forEach(varName => {
-      if (varName.startsWith('--color-') || varName.startsWith('--el-')) {
-        root.style.removeProperty(varName);
+    // 清除旧的颜色变量（兼容旧版本）
+    for (let i = 0; i < inlineStyle.length; i++) {
+      const propertyName = inlineStyle[i];
+      if (propertyName && (propertyName.startsWith('--color-') || propertyName.startsWith('--el-'))) {
+        if (!variablesToRemove.includes(propertyName)) {
+          variablesToRemove.push(propertyName);
+        }
       }
+    }
+
+    // 移除所有收集到的变量
+    variablesToRemove.forEach(varName => {
+      root.style.removeProperty(varName);
     });
   }
 

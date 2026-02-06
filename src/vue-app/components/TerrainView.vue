@@ -517,7 +517,7 @@ defineExpose({
     gap: 4px;
     justify-content: center;
     padding: 4px 0;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .terrain-brushes-section {
@@ -529,7 +529,7 @@ defineExpose({
 .terrain-section-title {
     font-size: 12px;
     font-weight: bold;
-    color: var(--el-text-color-primary, #e5e5e5);
+    color: var(--editor-foreground, #e5e5e5);
     padding: 4px 0;
 }
 
@@ -538,8 +538,8 @@ defineExpose({
     grid-template-columns: repeat(10, 1fr);
     gap: 4px;
     padding: 8px;
-    background-color: var(--el-fill-color-light, #2d2d2d);
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    background-color: var(--sideBar-background, #2d2d2d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 4px;
 }
 
@@ -556,13 +556,13 @@ defineExpose({
 }
 
 .terrain-brush-item:hover {
-    border-color: var(--el-color-primary, #409eff);
-    background-color: var(--el-fill-color, #3d3d3d);
+    border-color: var(--button-background, #409eff);
+    background-color: var(--sideBar-background, #3d3d3d);
 }
 
 .terrain-brush-item.is-selected {
-    border-color: var(--el-color-primary, #409eff);
-    background-color: var(--el-color-primary-light-9, rgba(64, 158, 255, 0.1));
+    border-color: var(--button-background, #409eff);
+    background-color: var(--button-hoverBackground, rgba(64, 158, 255, 0.1));
 }
 
 .terrain-brush-image {
@@ -582,8 +582,8 @@ defineExpose({
     flex-direction: column;
     gap: 12px;
     padding: 8px;
-    background-color: var(--el-fill-color-light, #2d2d2d);
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    background-color: var(--sideBar-background, #2d2d2d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 4px;
 }
 
@@ -595,7 +595,7 @@ defineExpose({
 
 .terrain-setting-label {
     font-size: 12px;
-    color: var(--el-text-color-regular, #b0b0b0);
+    color: var(--foreground, #b0b0b0);
     min-width: 80px;
 }
 

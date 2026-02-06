@@ -25,15 +25,15 @@ function toggleTheme() {
 
 <style scoped>
 .theme-toggle-btn {
-  background-color: var(--color-hover);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
+  background-color: var(--list-hoverBackground);
+  border: 1px solid var(--sideBar-border);
+  color: var(--editor-foreground);
   transition: all 0.2s ease;
   margin-left: 8px;
 }
 
 .theme-toggle-btn:hover {
-  background-color: var(--color-active);
+  background-color: var(--list-activeSelectionBackground);
   transform: translateY(-1px);
 }
 

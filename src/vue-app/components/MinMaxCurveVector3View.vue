@@ -75,7 +75,7 @@ watch(() => props.minMaxCurveVector3.zCurve, onMinMaxCurveVector3Changed, { deep
 .minmax-curve-vector3-label {
     flex: 0 0 20px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     padding-top: 4px;
 }
 </style>

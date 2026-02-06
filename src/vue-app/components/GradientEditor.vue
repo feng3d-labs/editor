@@ -554,8 +554,8 @@ watch(() => props.gradient, () => {
 <style scoped>
 .gradient-editor {
     padding: 10px;
-    background-color: var(--el-bg-color, #1d1d1d);
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    background-color: var(--editor-background, #1d1d1d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 4px;
     min-width: 300px;
 }
@@ -569,7 +569,7 @@ watch(() => props.gradient, () => {
 
 .gradient-editor-header label {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
 }
 
 .gradient-editor-preview {
@@ -611,7 +611,7 @@ watch(() => props.gradient, () => {
     flex-direction: column;
     gap: 8px;
     padding: 8px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #2d2d2d);
     border-radius: 4px;
 }
 
@@ -624,7 +624,7 @@ watch(() => props.gradient, () => {
 .gradient-editor-controller-row label {
     width: 60px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     flex-shrink: 0;
 }
 </style>

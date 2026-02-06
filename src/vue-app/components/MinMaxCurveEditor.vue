@@ -1008,8 +1008,8 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 <style scoped>
 .min-max-curve-editor {
     padding: 10px;
-    background-color: var(--el-bg-color, #1d1d1d);
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    background-color: var(--editor-background, #1d1d1d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 4px;
     min-width: 400px;
     min-height: 300px;
@@ -1021,7 +1021,7 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
     gap: 16px;
     margin-bottom: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid var(--el-border-color, #3d3d3d);
+    border-bottom: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .toolbar-item {
@@ -1032,7 +1032,7 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 
 .toolbar-item label {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     white-space: nowrap;
 }
 
@@ -1040,8 +1040,8 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
     position: relative;
     width: 100%;
     height: 300px;
-    border: 1px solid var(--el-border-color, #3d3d3d);
-    background-color: var(--el-fill-color-dark, #1d1d1d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
+    background-color: var(--input-background, #1d1d1d);
     cursor: crosshair;
     margin-bottom: 10px;
 }
@@ -1059,8 +1059,8 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 
 .key-pos-label {
     position: absolute;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
-    color: var(--el-text-color-primary, #cccccc);
+    background-color: var(--sideBar-background, #2d2d2d);
+    color: var(--editor-foreground, #cccccc);
     padding: 2px 6px;
     border-radius: 2px;
     font-size: 11px;
@@ -1074,7 +1074,7 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 
 .samples-header {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     margin-bottom: 8px;
 }
 
@@ -1086,14 +1086,14 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 
 .sample-item {
     cursor: pointer;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
     overflow: hidden;
     transition: border-color 0.2s;
 }
 
 .sample-item:hover {
-    border-color: var(--el-color-primary, #409eff);
+    border-color: var(--button-background, #409eff);
 }
 
 .sample-canvas {
@@ -1104,9 +1104,9 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 
 .key-panel {
     padding: 10px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #2d2d2d);
     border-radius: 4px;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
 }
 
 .key-panel-row {
@@ -1123,7 +1123,7 @@ const particleDoubleCurvesSingend: gPartial<MinMaxCurve>[] = [
 .key-panel-row label {
     width: 80px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     flex-shrink: 0;
 }
 </style>

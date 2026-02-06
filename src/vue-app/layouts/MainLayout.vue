@@ -283,11 +283,11 @@ function onBottomTabClose(index: number) {
   justify-content: center;
   width: 100%;
   height: 100%;
-  color: var(--color-text-secondary);
+  color: var(--sideBarSectionHeader-foreground);
   font-size: 14px;
   text-align: center;
-  background-color: var(--color-panel-bg);
-  border: 1px solid var(--color-border);
+  background-color: var(--panel-background);
+  border: 1px solid var(--sideBar-border);
   border-radius: 6px;
   margin: 4px;
 }
@@ -304,16 +304,16 @@ function onBottomTabClose(index: number) {
 
 /* 标签面板样式 */
 .tab-panel {
-  background-color: var(--color-panel-bg);
-  border: 1px solid var(--color-border);
+  background-color: var(--panel-background);
+  border: 1px solid var(--sideBar-border);
   border-radius: 6px;
   margin: 4px;
   overflow: hidden;
 }
 
 .tab-panel-header {
-  background-color: var(--color-toolbar-bg);
-  border-bottom: 1px solid var(--color-border);
+  background-color: var(--titleBar-activeBackground);
+  border-bottom: 1px solid var(--sideBar-border);
   padding: 8px 12px;
   display: flex;
   align-items: center;
@@ -324,7 +324,7 @@ function onBottomTabClose(index: number) {
   padding: 12px;
   height: calc(100% - 40px);
   overflow: auto;
-  background-color: var(--color-editor-bg);
+  background-color: var(--editor-background);
 }
 
 /* 标签页样式 */
@@ -337,13 +337,13 @@ function onBottomTabClose(index: number) {
 }
 
 .tab-item.active {
-  background-color: var(--color-active);
+  background-color: var(--list-activeSelectionBackground);
   color: var(--el-color-primary);
   border-color: var(--el-color-primary);
 }
 
 .tab-item:hover:not(.active) {
-  background-color: var(--color-hover);
+  background-color: var(--list-hoverBackground);
 }
 
 /* 添加按钮样式 */
@@ -356,14 +356,14 @@ function onBottomTabClose(index: number) {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--color-text-secondary);
+  color: var(--sideBarSectionHeader-foreground);
   border: 1px solid transparent;
 }
 
 .tab-add-btn:hover {
-  background-color: var(--color-hover);
-  color: var(--color-text-primary);
-  border-color: var(--color-border);
+  background-color: var(--list-hoverBackground);
+  color: var(--editor-foreground);
+  border-color: var(--sideBar-border);
 }
 
 /* 关闭按钮样式 */
@@ -376,27 +376,27 @@ function onBottomTabClose(index: number) {
   border-radius: 3px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--color-text-tertiary);
+  color: var(--descriptionForeground);
   margin-left: 4px;
 }
 
 .tab-close-btn:hover {
-  background-color: var(--color-gray-600);
-  color: var(--color-text-primary);
+  background-color: var(--sideBar-background);
+  color: var(--editor-foreground);
 }
 
 /* 针对暗色主题的特殊样式 */
 .dark .main-layout,
 [data-theme="dark"] .main-layout {
-  background-color: var(--color-editor-bg);
-  color: var(--color-text-primary);
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
 }
 
 /* 针对亮色主题的特殊样式 */
 .light .main-layout,
 [data-theme="light"] .main-layout {
-  background-color: var(--color-gray-50);
-  color: var(--color-gray-900);
+  background-color: var(--editor-background);
+  color: var(--editor-foreground);
 }
 </style>
 

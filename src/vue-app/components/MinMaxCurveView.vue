@@ -347,8 +347,8 @@ watch(() => mode.value, () => {
     position: relative;
     width: 100%;
     height: 60px;
-    border: 1px solid var(--el-border-color, #3d3d3d);
-    background-color: var(--el-fill-color-dark, #1d1d1d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
+    background-color: var(--input-background, #1d1d1d);
     cursor: pointer;
 }
 

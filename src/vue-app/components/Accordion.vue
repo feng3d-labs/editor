@@ -42,10 +42,10 @@ defineExpose({
 
 <style scoped>
 .accordion {
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
     margin-bottom: 4px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #2d2d2d);
     overflow: hidden;
 }
 
@@ -53,21 +53,21 @@ defineExpose({
     display: flex;
     align-items: center;
     padding: 8px 12px;
-    background-color: var(--el-fill-color-dark, #1d1d1d);
+    background-color: var(--input-background, #1d1d1d);
     cursor: pointer;
     user-select: none;
     transition: background-color 0.2s;
 }
 
 .accordion-header:hover {
-    background-color: var(--el-fill-color, #3d3d3d);
+    background-color: var(--sideBar-background, #3d3d3d);
 }
 
 .accordion-icon {
     margin-right: 8px;
     transition: transform 0.2s;
     font-size: 12px;
-    color: var(--el-text-color-secondary, #999);
+    color: var(--sideBarSectionHeader-foreground, #999);
 }
 
 .accordion-icon-rotated {
@@ -77,12 +77,12 @@ defineExpose({
 .accordion-title {
     font-size: 12px;
     font-weight: 500;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--editor-foreground, #cccccc);
     flex: 1;
 }
 
 .accordion-content {
     padding: 4px 0;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #2d2d2d);
 }
 </style>

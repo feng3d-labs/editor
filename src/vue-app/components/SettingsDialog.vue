@@ -195,10 +195,10 @@ function onClose() {
 .settings-section-title {
   font-size: 14px;
   font-weight: 600;
-  color: var(--el-text-color-primary);
+  color: var(--editor-foreground);
   margin: 0 0 12px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid var(--el-border-color-lighter);
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .settings-item {
@@ -214,7 +214,7 @@ function onClose() {
 
 .settings-label {
   font-size: 13px;
-  color: var(--el-text-color-regular);
+  color: var(--foreground);
   flex-shrink: 0;
   margin-right: 16px;
   min-width: 120px;
