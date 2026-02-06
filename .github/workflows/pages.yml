@@ -12,9 +12,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    # 检查版本号是否变化，仅在版本变化或首次部署时执行
-    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,7 +22,7 @@ jobs:
           node-version: 20
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build
         run: npm run build
