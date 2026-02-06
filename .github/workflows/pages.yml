@@ -26,8 +26,8 @@ jobs:
 
       - name: Build local packages
         run: |
-          npm run build --workspace=@feng3d-plugins/cannon --if-present
-          npm run build --workspace=@feng3d-plugins/cannon-plugin --if-present
+          cd packages/cannon && npm ci && npm run build
+          cd ../cannon-plugin && npm ci && npm run build
 
       - name: Build
         run: npm run build
