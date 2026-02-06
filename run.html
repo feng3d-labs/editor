@@ -15,19 +15,21 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+
+    <!-- Import Map 用于模块解析 -->
+    <script type="importmap">
+    {
+        "imports": {
+            "feng3d": "https://esm.sh/feng3d@0.5.0",
+            "@feng3d-plugins/cannon": "https://esm.sh/@feng3d-plugins/cannon@0.5.1",
+            "@feng3d-plugins/cannon-plugin": "https://esm.sh/@feng3d-plugins/cannon-plugin@0.5.0"
+        }
+    }
+    </script>
 </head>
 
 <body style="background-color: #a18c34;">
-    <!-- 使用 ES Modules 方式加载，避免复制 node_modules -->
-    <script type="module">
-        // 从 CDN 导入 feng3d 和插件
-        import 'https://unpkg.com/feng3d@0.5.0/dist/index.js';
-        import 'https://unpkg.com/@feng3d-plugins/cannon@0.5.1/dist/index.js';
-        import 'https://unpkg.com/@feng3d-plugins/cannon-plugin@0.5.0/dist/index.js';
-
-        // 导入运行脚本
-        import './src/run.ts';
-    </script>
+    <script type="module" src="./src/run.ts"></script>
 </body>
 
 </html>

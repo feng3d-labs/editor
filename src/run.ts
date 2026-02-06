@@ -1,6 +1,11 @@
 /* eslint-disable no-undef */
 // eslint-disable-next-line spaced-comment
 
+// 从 CDN 导入 feng3d 和插件
+import * as feng3d from 'feng3d';
+import '@feng3d-plugins/cannon';
+import '@feng3d-plugins/cannon-plugin';
+
 const fstype = GetQueryString('fstype');
 
 const result = [];
