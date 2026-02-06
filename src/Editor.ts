@@ -9,10 +9,24 @@ import { editorAsset } from './ui/assets/EditorAsset';
 
 /**
  * editor的版本号
+ * 由构建脚本从 package.json 自动注入
  */
-export const version = '0.5.1';
+export const version = __VERSION__ || '0.6.0';
 
-console.log(`editor version ${version}`);
+/**
+ * 编辑器构建信息
+ */
+export const buildInfo = {
+    version,
+    buildTime: __BUILD_TIME__ || new Date().toISOString(),
+    buildDate: __BUILD_DATE__ || new Date().toLocaleDateString('zh-CN'),
+};
+
+console.log(`%c========================================`, 'color: #6366f1; font-weight: bold');
+console.log(`%c feng3d-editor`, 'color: #6366f1; font-weight: bold; font-size: 14px');
+console.log(`%c 版本: ${buildInfo.version}`, 'color: #10b981; font-weight: bold');
+console.log(`%c 构建时间: ${buildInfo.buildTime}`, 'color: #8b5cf6');
+console.log(`%c========================================`, 'color: #6366f1; font-weight: bold');
 
 /**
  * 编辑器

@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
 import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import vue from '@vitejs/plugin-vue';
@@ -126,9 +127,20 @@ export default defineConfig(({ mode }) =>
     // GitHub Pages 部署在 /editor/ 子路径下
     const base = isProduction ? '/editor/' : '/';
 
+    // 读取 package.json 获取版本号
+    const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
+    const now = new Date();
+
     return {
         // 基础路径
         base,
+
+        // 定义全局常量
+        define: {
+            __BUILD_TIME__: JSON.stringify(now.toISOString()),
+            __BUILD_DATE__: JSON.stringify(now.toLocaleDateString('zh-CN')),
+            __VERSION__: JSON.stringify(pkg.version),
+        },
 
         // 开发服务器配置
         server: {

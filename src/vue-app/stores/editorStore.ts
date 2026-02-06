@@ -236,7 +236,8 @@ export const useEditorStore = defineStore('editor', () => {
      * @param url 编辑器资源相对路径
      */
     function getEditorAssetPath(url: string): string {
-        return `${document.URL.substring(0, document.URL.lastIndexOf('/') + 1)}resource/${url}`;
+        // 使用 import.meta.env.BASE_URL 支持 GitHub Pages 等子路径部署
+        return `${import.meta.env.BASE_URL}resource/${url}`;
     }
 
     return {

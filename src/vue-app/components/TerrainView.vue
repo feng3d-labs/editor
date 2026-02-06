@@ -397,7 +397,8 @@ function getBrushImageUrl(index: number): string {
     } catch (e) {
         // 资源加载失败，使用占位符
     }
-    return `resource/assets/${brushName}`;
+    // 使用 import.meta.env.BASE_URL 支持 GitHub Pages 等子路径部署
+    return `${import.meta.env.BASE_URL}resource/assets/${brushName}`;
 }
 
 // 设置变化处理函数
