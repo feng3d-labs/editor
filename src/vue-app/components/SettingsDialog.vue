@@ -299,9 +299,28 @@ function onClose() {
   max-width: 200px;
 }
 
+.settings-select {
+  flex: 1;
+  max-width: 200px;
+}
+
 .settings-select-full {
   flex: 1;
   max-width: 100%;
+}
+
+/* 确保下拉框输入框使用正确的背景色 */
+/* Element Plus select 使用 .el-select__wrapper 而不是 .el-input__wrapper */
+.settings-select-full :deep(.el-select__wrapper) {
+  background-color: var(--input-background) !important;
+  border: 1px solid var(--input-border) !important;
+  box-shadow: none !important;
+}
+
+.settings-select :deep(.el-select__wrapper) {
+  background-color: var(--input-background) !important;
+  border: 1px solid var(--input-border) !important;
+  box-shadow: none !important;
 }
 
 .dialog-footer {

@@ -60,6 +60,24 @@
   cursor: pointer;
 }
 
+/* Element Plus Select 组件使用 .el-select__wrapper */
+.el-select__wrapper {
+  background-color: var(--input-background) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 4px;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+.el-select__wrapper:hover {
+  border-color: var(--dropdown-border);
+}
+
+.el-select__wrapper.is-focused {
+  border-color: var(--button-background);
+  box-shadow: 0 0 0 2px var(--list-activeSelectionBackground);
+}
+
 /* 设置对话框中的下拉列表样式 */
 .settings-dropdown.el-select-dropdown {
   background-color: var(--editor-background) !important;
