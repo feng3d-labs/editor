@@ -21,7 +21,7 @@ function copyIconifyJsonFiles() {
             const __dirname = dirname(__filename);
 
             const iconSets = ['mdi', 'material-symbols'];
-            const outDir = resolve(__dirname, 'dist-vite');
+            const outDir = resolve(__dirname, 'public');
             const iconifyDir = resolve(outDir, 'iconify');
 
             // 创建 iconify 目录
@@ -85,7 +85,7 @@ function copyStaticAssets()
                 }
             };
 
-            const outDir = resolve(__dirname, 'dist-vite');
+            const outDir = resolve(__dirname, 'public');
             const assetsToCopy = [
                 { from: 'libs', to: 'libs' },
                 { from: 'packages', to: 'packages' },
@@ -132,16 +132,14 @@ function copyStaticAssets()
 export default defineConfig(({ mode }) =>
 {
     const isProduction = mode === 'production';
-    // GitHub Pages 部署在 /editor/ 子路径下
-    const base = isProduction ? '/editor/' : '/';
 
     // 读取 package.json 获取版本号
     const pkg = JSON.parse(readFileSync('./package.json', 'utf-8'));
     const now = new Date();
 
     return {
-        // 基础路径
-        base,
+        // 基础路径 - 生产环境使用相对路径
+        base: isProduction ? './' : '/',
 
         // 定义全局常量
         define: {
@@ -165,7 +163,7 @@ export default defineConfig(({ mode }) =>
 
         // 构建配置 - 多页面应用
         build: {
-            outDir: 'dist-vite',
+            outDir: 'public',
             emptyOutDir: true,
             sourcemap: !isProduction,
             minify: isProduction ? 'esbuild' : false,

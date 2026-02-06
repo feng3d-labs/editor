@@ -4,7 +4,8 @@
 /out
 /dist
 lib
-/public
+/public/*
+!/public/.gitkeep
 dist-vite
 /.temp
 /.playwright-mcp
