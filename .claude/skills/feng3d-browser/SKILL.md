@@ -1,7 +1,7 @@
 ---
 name: feng3d-browser
-description: Browser automation for feng3d-editor project. Opens local development server, takes screenshots, tests UI, checks colors, and detects runtime errors. Triggers: "open editor", "test UI", "screenshot editor", "check colors", "open settings", "check errors".
-allowed-tools: Bash(node, npx), Read, Write
+description: Browser automation for feng3d-editor project. Opens local development server, takes screenshots, tests UI, checks colors, detects runtime errors, and validates GitHub Pages deployment. Triggers: "open editor", "test UI", "screenshot editor", "check colors", "open settings", "check errors", "verify deployment", "check pages".
+allowed-tools: Bash(node, npx), Read, Write, mcp__playwright__browser_*
 ---
 
 # Feng3D Editor Browser Automation
@@ -459,4 +459,211 @@ await chromium.launch({
   devtools: true,            // 打开开发者工具
   args: ['--start-maximized'] // 最大化窗口
 });
+```
+
+## GitHub Pages 部署验证
+
+推送代码后，自动验证 GitHub Pages 部署状态。
+
+### 验证脚本模板
+
+```javascript
+const { chromium } = require('playwright');
+const { getTempFilePath, cleanTempFiles } = require('./.temp/temp-cleaner.js');
+
+// 自动清理
+cleanTempFiles();
+
+const PAGES_URL = 'https://feng3d-labs.github.io/editor/';
+const CHECK_INTERVAL = 15000; // 15秒
+const MAX_CHECKS = 20; // 最多检查20次（5分钟）
+
+(async () => {
+  console.log(`🚀 开始验证部署: ${PAGES_URL}`);
+  console.log(`⏱ 检查间隔: ${CHECK_INTERVAL / 1000}秒，最多检查: ${MAX_CHECKS} 次`);
+
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+
+  let deploymentSuccess = false;
+  let errorCount = 0;
+  let criticalErrors = [];
+  const logs = [];
+
+  // 监听控制台
+  page.on('console', msg => {
+    const text = msg.text();
+    if (msg.type() === 'error') {
+      errorCount++;
+      criticalErrors.push({ type: 'console', text });
+      logs.push(`❌ [Error] ${text}`);
+    } else if (text.includes('已加载') || text.includes('loaded') || text.includes('success')) {
+      logs.push(`✅ ${text}`);
+    }
+    if (text.length < 200) {
+      console.log(`  [Console] ${text}`);
+    }
+  });
+
+  page.on('pageerror', err => {
+    errorCount++;
+    criticalErrors.push({ type: 'page', message: err.message });
+    logs.push(`❌ [Page Error] ${err.message}`);
+  });
+
+  // 监听请求失败
+  page.on('requestfailed', request => {
+    const url = request.url();
+    // 忽略 favicon.ico 和一些非关键资源
+    if (url.includes('favicon.ico') || url.includes('unespkg.com')) return;
+
+    const failure = request.failure();
+    if (failure && failure.errorText !== 'Aborted') {
+      errorCount++;
+      criticalErrors.push({
+        type: 'request',
+        url: url,
+        status: request.resourceTimingInfo()?.responseStatus
+      });
+      logs.push(`❌ [404] ${url}`);
+    }
+  });
+
+  // 等待1分钟后开始检查
+  console.log('⏳ 等待 60 秒后开始检查...');
+  await new Promise(resolve => setTimeout(resolve, 60000));
+
+  // 定期检查
+  for (let i = 0; i < MAX_CHECKS; i++) {
+    try {
+      console.log(`\n[${i + 1}/${MAX_CHECKS}] 检查中... (${new Date().toLocaleTimeString('zh-CN')})`);
+
+      await page.goto(PAGES_URL, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+      // 等待页面稳定
+      await page.waitForTimeout(3000);
+
+      // 检查关键元素
+      const title = await page.title();
+      const hasCanvas = await page.locator('canvas').count() > 0;
+
+      // 检查关键日志
+      const hasVersionLog = logs.some(l => l.includes('版本'));
+      const hasIconifySuccess = logs.some(l => l.includes('已加载图标集') || l.includes('离线模式已启用'));
+      const hasThemeSuccess = logs.some(l => l.includes('loaded and applied success'));
+      const hasSceneInit = logs.some(l => l.includes('初始化完成') || l.includes('scene initialized'));
+
+      // 检查是否有严重错误
+      const hasCriticalErrors = criticalErrors.filter(e =>
+        e.type === 'page' ||
+        (e.type === 'request' && e.url && !e.url.includes('favicon.ico') && !e.url.includes('esm.sh'))
+      );
+
+      console.log(`  - 页面标题: ${title}`);
+      console.log(`  - Canvas: ${hasCanvas ? '✅' : '❌'}`);
+      console.log(`  - 版本日志: ${hasVersionLog ? '✅' : '❌'}`);
+      console.log(`  - 图标集: ${hasIconifySuccess ? '✅' : '❌'}`);
+      console.log(`  - 主题: ${hasThemeSuccess ? '✅' : '❌'}`);
+      console.log(`  - 场景: ${hasSceneInit ? '✅' : '❌'}`);
+      console.log(`  - 错误数: ${errorCount} (非 favicon)`);
+
+      // 判断部署成功
+      if (hasVersionLog && hasIconifySuccess && hasThemeSuccess && hasSceneInit && hasCriticalErrors.length === 0) {
+        deploymentSuccess = true;
+        console.log('\n✅ 部署成功！页面正常运行');
+
+        // 截图保存
+        const screenshotPath = getTempFilePath('feng3d-browser', `deployment-success-${Date.now()}`, 'png');
+        await page.screenshot({ path: screenshotPath, fullPage: true });
+        console.log(`📸 截图保存: ${screenshotPath}`);
+        break;
+      }
+
+      // 如果有严重错误，提前报告
+      if (i >= 2 && hasCriticalErrors.length > 5) {
+        console.log(`\n⚠️  发现 ${hasCriticalErrors.length} 个严重错误，停止检查`);
+        break;
+      }
+
+    } catch (err) {
+      console.log(`❌ 访问失败: ${err.message}`);
+      if (i === MAX_CHECKS - 1) {
+        criticalErrors.push({ type: 'navigation', error: err.message });
+      }
+    }
+
+    if (i < MAX_CHECKS - 1) {
+      console.log(`⏳ ${CHECK_INTERVAL / 1000}秒后再次检查...`);
+      await new Promise(resolve => setTimeout(resolve, CHECK_INTERVAL));
+    }
+  }
+
+  // 输出最终报告
+  console.log('\n' + '='.repeat(50));
+  console.log('📊 部署验证报告');
+  console.log('='.repeat(50));
+  console.log(`URL: ${PAGES_URL}`);
+  console.log(`状态: ${deploymentSuccess ? '✅ 成功' : '❌ 失败'}`);
+  console.log(`检查次数: ${Math.min(MAX_CHECKS, 20)}`);
+  console.log(`总错误数: ${errorCount}`);
+
+  if (criticalErrors.length > 0) {
+    console.log(`\n❌ 关键错误:`);
+    criticalErrors.forEach((err, i) => {
+      console.log(`  ${i + 1}. [${err.type}]`);
+      if (err.text) console.log(`     ${err.text.substring(0, 100)}`);
+      if (err.message) console.log(`     ${err.message}`);
+      if (err.url) console.log(`     URL: ${err.url}`);
+    });
+  }
+
+  // 保存报告
+  const reportPath = getTempFilePath('feng3d-browser', 'deployment-report', 'txt');
+  const fs = require('fs');
+  fs.writeFileSync(reportPath, `
+部署验证报告
+URL: ${PAGES_URL}
+时间: ${new Date().toLocaleString('zh-CN')}
+状态: ${deploymentSuccess ? '✅ 成功' : '❌ 失败'}
+检查次数: ${Math.min(MAX_CHECKS, 20)}
+总错误数: ${errorCount}
+关键错误: ${criticalErrors.length}
+  `.trim());
+  console.log(`\n📄 报告保存: ${reportPath}`);
+
+  await browser.close();
+
+  if (!deploymentSuccess) {
+    process.exit(1);
+  }
+})();
+```
+
+### 使用示例
+
+```bash
+# 1. 推送代码
+git push origin master
+
+# 2. 运行验证脚本（会自动等待1分钟后开始检查）
+node .temp/feng3d-browser/verify-deployment.js
+```
+
+### 快速检查命令
+
+```bash
+# 直接访问并检查（不等待）
+node -e "
+const { chromium } = require('playwright');
+(async () => {
+  const page = await (await chromium.launch()).newPage();
+  await page.goto('https://feng3d-labs.github.io/editor/');
+  console.log('页面标题:', await page.title());
+  const errors = [];
+  page.on('console', msg => msg.type() === 'error' && errors.push(msg.text()));
+  await page.waitForTimeout(5000);
+  console.log('错误数:', errors.length);
+  await browser.close();
+})();
+"
 ```
