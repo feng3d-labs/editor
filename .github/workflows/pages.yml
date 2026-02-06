@@ -24,6 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build local packages
+        run: |
+          npm run build --workspace=@feng3d-plugins/cannon --if-present
+          npm run build --workspace=@feng3d-plugins/cannon-plugin --if-present
+
       - name: Build
         run: npm run build
 
