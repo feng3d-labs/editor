@@ -8,68 +8,68 @@
   box-sizing: border-box;
 }
 
-/* 暗色主题样式 - 仅在 data-theme="dark" 时生效 */
-html[data-theme="dark"],
-html[data-theme="dark"] body {
+/* 全局样式 */
+html,
+body {
   background-color: var(--editor-background);
   color: var(--editor-foreground);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-html[data-theme="dark"] body {
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 滚动条样式 - 暗色主题 */
-html[data-theme="dark"] ::-webkit-scrollbar {
+/* 滚动条样式 */
+::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-html[data-theme="dark"] ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: var(--sideBar-background);
   border-radius: 4px;
 }
 
-html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: var(--scrollbarSlider-background);
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
-html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbarSlider-hoverBackground);
 }
 
-/* 选择文本样式 - 暗色主题 */
-html[data-theme="dark"] ::selection {
+/* 选择文本样式 */
+::selection {
   background-color: var(--button-background);
   color: #ffffff;
 }
 
-html[data-theme="dark"] ::-moz-selection {
+::-moz-selection {
   background-color: var(--button-background);
   color: #ffffff;
 }
 
-/* 链接样式 - 暗色主题 */
-html[data-theme="dark"] a {
+/* 链接样式 */
+a {
   color: var(--textLink-foreground);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-html[data-theme="dark"] a:hover {
+a:hover {
   color: var(--textLink-foreground);
   text-decoration: underline;
 }
 
-/* 输入框、文本域等表单元素默认样式 - 暗色主题 */
-html[data-theme="dark"] input,
-html[data-theme="dark"] textarea,
-html[data-theme="dark"] select {
+/* 输入框、文本域等表单元素默认样式 */
+input,
+textarea,
+select {
   background-color: var(--input-background);
   color: var(--input-foreground);
   border: 1px solid var(--input-border);
@@ -78,36 +78,36 @@ html[data-theme="dark"] select {
   transition: all 0.2s ease;
 }
 
-html[data-theme="dark"] input:focus,
-html[data-theme="dark"] textarea:focus,
-html[data-theme="dark"] select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--button-background);
   box-shadow: 0 0 0 2px var(--list-activeSelectionBackground);
 }
 
-/* 按钮样式 - 暗色主题 */
-html[data-theme="dark"] button {
+/* 按钮样式 */
+button {
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-html[data-theme="dark"] button:hover:not(:disabled) {
+button:hover:not(:disabled) {
   background-color: var(--list-hoverBackground);
 }
 
-html[data-theme="dark"] button:active:not(:disabled) {
+button:active:not(:disabled) {
   background-color: var(--list-activeSelectionBackground);
 }
 
-html[data-theme="dark"] button:disabled {
+button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* 卡片/面板样式 - 暗色主题 */
-html[data-theme="dark"] .card,
-html[data-theme="dark"] .panel {
+/* 卡片/面板样式 */
+.card,
+.panel {
   background-color: var(--panel-background);
   border: 1px solid var(--sideBar-border);
   border-radius: 6px;
@@ -115,9 +115,9 @@ html[data-theme="dark"] .panel {
   transition: all 0.2s ease;
 }
 
-/* 确保所有容器默认使用暗色背景 */
-html[data-theme="dark"] #vue-app,
-html[data-theme="dark"] #vue-app-container {
+/* 确保所有容器默认使用主题背景 */
+#vue-app,
+#vue-app-container {
   background-color: var(--editor-background);
   color: var(--editor-foreground);
 }

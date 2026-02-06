@@ -1,75 +1,80 @@
 /**
  * 全局亮色主题样式
  * 使用 VSCode 主题语义化颜色变量
+ * 与暗色主题使用相同的变量名，只是变量值由主题系统动态更新
  */
+
+/* 该文件内容与 global-dark-theme.css 完全相同 */
+/* 因为两者使用相同的 VSCode 变量名，主题切换时只改变变量值 */
+/* 保留此文件是为了模块结构的完整性，内容可以合并到 global-dark-theme.css */
 
 /* 全局基础样式 */
 * {
   box-sizing: border-box;
 }
 
-/* 亮色主题样式 - 仅在 data-theme="light" 时生效 */
-html[data-theme="light"],
-html[data-theme="light"] body {
+/* 全局样式 */
+html,
+body {
   background-color: var(--editor-background);
   color: var(--editor-foreground);
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-html[data-theme="light"] body {
+body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 滚动条样式 - 亮色主题 */
-html[data-theme="light"] ::-webkit-scrollbar {
+/* 滚动条样式 */
+::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-html[data-theme="light"] ::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: var(--sideBar-background);
   border-radius: 4px;
 }
 
-html[data-theme="light"] ::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   background: var(--scrollbarSlider-background);
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
-html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbarSlider-hoverBackground);
 }
 
-/* 选择文本样式 - 亮色主题 */
-html[data-theme="light"] ::selection {
+/* 选择文本样式 */
+::selection {
   background-color: var(--button-background);
   color: #ffffff;
 }
 
-html[data-theme="light"] ::-moz-selection {
+::-moz-selection {
   background-color: var(--button-background);
   color: #ffffff;
 }
 
-/* 链接样式 - 亮色主题 */
-html[data-theme="light"] a {
+/* 链接样式 */
+a {
   color: var(--textLink-foreground);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
-html[data-theme="light"] a:hover {
+a:hover {
   color: var(--textLink-foreground);
   text-decoration: underline;
 }
 
-/* 输入框、文本域等表单元素默认样式 - 亮色主题 */
-html[data-theme="light"] input,
-html[data-theme="light"] textarea,
-html[data-theme="light"] select {
+/* 输入框、文本域等表单元素默认样式 */
+input,
+textarea,
+select {
   background-color: var(--input-background);
   color: var(--input-foreground);
   border: 1px solid var(--input-border);
@@ -78,36 +83,36 @@ html[data-theme="light"] select {
   transition: all 0.2s ease;
 }
 
-html[data-theme="light"] input:focus,
-html[data-theme="light"] textarea:focus,
-html[data-theme="light"] select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   outline: none;
   border-color: var(--button-background);
   box-shadow: 0 0 0 2px var(--list-activeSelectionBackground);
 }
 
-/* 按钮样式 - 亮色主题 */
-html[data-theme="light"] button {
+/* 按钮样式 */
+button {
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-html[data-theme="light"] button:hover:not(:disabled) {
+button:hover:not(:disabled) {
   background-color: var(--list-hoverBackground);
 }
 
-html[data-theme="light"] button:active:not(:disabled) {
+button:active:not(:disabled) {
   background-color: var(--list-activeSelectionBackground);
 }
 
-html[data-theme="light"] button:disabled {
+button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* 卡片/面板样式 - 亮色主题 */
-html[data-theme="light"] .card,
-html[data-theme="light"] .panel {
+/* 卡片/面板样式 */
+.card,
+.panel {
   background-color: var(--panel-background);
   border: 1px solid var(--sideBar-border);
   border-radius: 6px;
@@ -115,9 +120,9 @@ html[data-theme="light"] .panel {
   transition: all 0.2s ease;
 }
 
-/* 确保所有容器默认使用亮色背景 */
-html[data-theme="light"] #vue-app,
-html[data-theme="light"] #vue-app-container {
+/* 确保所有容器默认使用主题背景 */
+#vue-app,
+#vue-app-container {
   background-color: var(--editor-background);
   color: var(--editor-foreground);
 }

@@ -9,7 +9,7 @@
   /* 这些变量会根据当前主题自动更新 */
   /* 例如: --button-background, --editor-background, --sideBar-foreground 等 */
 
-  /* === VSCode 暗色主题默认值（作为回退） === */
+  /* === VSCode 默认值（作为回退） === */
   --sideBar-background: #181818;
   --sideBar-foreground: #cccccc;
   --sideSectionHeader-background: transparent;
@@ -89,41 +89,7 @@
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
   --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-}
 
-/* === 暗色主题 === */
-html[data-theme="dark"] {
-  /* === Element Plus 变量别名（直接映射到 VSCode 变量） === */
-  --el-color-primary: var(--button-background);
-  --el-bg-color: var(--editor-background);
-  --el-bg-color-page: var(--editor-background);
-  --el-bg-color-overlay: var(--sideBar-background);
-  --el-text-color-primary: var(--editor-foreground);
-  --el-text-color-regular: var(--foreground);
-  --el-text-color-secondary: var(--sideBarSectionHeader-foreground);
-  --el-text-color-placeholder: var(--input-placeholderForeground);
-  --el-text-color-disabled: var(--activityBar-inactiveForeground);
-  --el-border-color: var(--sideBar-border);
-  --el-border-color-light: var(--sideBar-border);
-  --el-border-color-lighter: var(--panel-border);
-  --el-border-color-extra-light: var(--panel-border);
-  --el-border-color-dark: var(--activityBar-inactiveForeground);
-  --el-border-color-darker: var(--input-placeholderForeground);
-  --el-fill-color: var(--sideBar-background);
-  --el-fill-color-light: var(--sideBar-background);
-  --el-fill-color-lighter: var(--sideBar-background);
-  --el-fill-color-extra-light: var(--editor-background);
-  --el-fill-color-dark: var(--input-background);
-  --el-fill-color-darker: var(--list-hoverBackground);
-  --el-fill-color-blank: transparent;
-  --el-color-success: var(--editorGutter-addedBackground);
-  --el-color-warning: var(--warningForeground);
-  --el-color-danger: var(--errorForeground);
-  --el-color-info: var(--textLink-foreground);
-}
-
-/* === 亮色主题 === */
-html[data-theme="light"] {
   /* === Element Plus 变量别名（直接映射到 VSCode 变量） === */
   --el-color-primary: var(--button-background);
   --el-bg-color: var(--editor-background);

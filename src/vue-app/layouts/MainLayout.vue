@@ -385,18 +385,6 @@ function onBottomTabClose(index: number) {
   color: var(--editor-foreground);
 }
 
-/* 针对暗色主题的特殊样式 */
-.dark .main-layout,
-[data-theme="dark"] .main-layout {
-  background-color: var(--editor-background);
-  color: var(--editor-foreground);
-}
-
-/* 针对亮色主题的特殊样式 */
-.light .main-layout,
-[data-theme="light"] .main-layout {
-  background-color: var(--editor-background);
-  color: var(--editor-foreground);
-}
+/* main-layout 样式统一使用 VSCode 变量，主题切换时自动更新 */
 </style>
 
