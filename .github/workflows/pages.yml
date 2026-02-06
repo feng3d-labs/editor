@@ -27,11 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build local packages
-        run: |
-          cd packages/cannon && npm ci && npm run build
-          cd ../cannon-plugin && npm ci && npm run build
-
       - name: Build
         run: npm run build
 
