@@ -19,14 +19,12 @@ loadIconSets().catch((error) => {
 
 // 引入设计系统样式
 import './styles/design-system.css';
-// 引入全局主题样式（暗色和亮色）
-import './styles/global-dark-theme.css';
-import './styles/global-light-theme.css';
+// 引入全局主题样式
+import './styles/global-theme.css';
 // 引入 Element Plus 样式
 import 'element-plus/dist/index.css';
-// 引入 Element Plus 主题样式（暗色和亮色）
+// 引入 Element Plus 主题定制样式
 import './styles/element-plus-theme.css';
-import './styles/element-plus-light-theme.css';
 
 // 注册 Vue 版本的 objectview 组件
 import { registerObjectViewComponents } from './objectview/registerComponents';
@@ -72,4 +70,3 @@ i18nStore.initialize();
 
 // 导出 pinia 实例，确保在需要时可以访问
 export { pinia };
-
