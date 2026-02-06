@@ -25,7 +25,7 @@ export const buildInfo = {
 console.log(`%c========================================`, 'color: #6366f1; font-weight: bold');
 console.log(`%c feng3d-editor`, 'color: #6366f1; font-weight: bold; font-size: 14px');
 console.log(`%c 版本: ${buildInfo.version}`, 'color: #10b981; font-weight: bold');
-console.log(`%c 构建时间: ${buildInfo.buildTime}`, 'color: #8b5cf6');
+console.log(`%c 构建时间: ${buildInfo.buildDate} ${new Date(buildInfo.buildTime).toLocaleTimeString('zh-CN', { hour12: false })}`, 'color: #8b5cf6');
 console.log(`%c========================================`, 'color: #6366f1; font-weight: bold');
 
 /**

@@ -29,7 +29,8 @@ export function configureOfflineMode() {
 
 /**
  * 预加载图标集
- * 从 public/iconify 目录加载 JSON 文件（由 Vite 插件复制）
+ * 从 iconify 目录加载 JSON 文件（由 Vite 插件复制到构建目录）
+ * 使用相对路径，与 index.html 处于同一层级
  */
 export async function loadIconSets() {
   const loadedSets: string[] = [];
@@ -38,9 +39,9 @@ export async function loadIconSets() {
   // 预加载图标集
   for (const iconSet of iconSets) {
     try {
-      // 从 public 目录加载 JSON 文件
-      // 使用 import.meta.env.BASE_URL 支持 GitHub Pages 等子路径部署
-      const response = await fetch(`${import.meta.env.BASE_URL}iconify/${iconSet}.json`);
+      // 使用相对路径，与 index.html 处于同一层级
+      // 构建后 iconify/*.json 与 assets/*.js 在同一目录
+      const response = await fetch(`./iconify/${iconSet}.json`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }

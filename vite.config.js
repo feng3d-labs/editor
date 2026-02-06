@@ -1,36 +1,43 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
-import { resolve } from 'node:path';
 import { readFileSync } from 'node:fs';
-import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
-import { spawn } from 'node:child_process';
 import vue from '@vitejs/plugin-vue';
 import vueDevtools from 'vite-plugin-vue-devtools';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 
-// 复制 Iconify JSON 文件到 public 目录的插件
+
+// 复制 Iconify JSON 文件到构建输出目录的插件
 function copyIconifyJsonFiles() {
     return {
         name: 'copy-iconify-json',
-        buildStart() {
-            // 在构建开始时复制需要的 JSON 文件到 public 目录
+        async writeBundle() {
+            // 使用 Node.js 内置模块
+            const { resolve, dirname } = await import('node:path');
+            const { existsSync, mkdirSync, copyFileSync } = await import('node:fs');
+            const { fileURLToPath } = await import('node:url');
+            const __filename = fileURLToPath(import.meta.url);
+            const __dirname = dirname(__filename);
+
             const iconSets = ['mdi', 'material-symbols'];
-            const publicDir = resolve(process.cwd(), 'public/iconify');
-            
-            if (!existsSync(publicDir)) {
-                mkdirSync(publicDir, { recursive: true });
+            const outDir = resolve(__dirname, 'dist-vite');
+            const iconifyDir = resolve(outDir, 'iconify');
+
+            // 创建 iconify 目录
+            if (!existsSync(iconifyDir)) {
+                mkdirSync(iconifyDir, { recursive: true });
             }
 
+            // 复制图标集 JSON 文件
             for (const iconSet of iconSets) {
-                const srcPath = resolve(process.cwd(), `node_modules/@iconify/json/json/${iconSet}.json`);
-                const destPath = resolve(publicDir, `${iconSet}.json`);
-                
+                const srcPath = resolve(__dirname, `node_modules/@iconify/json/json/${iconSet}.json`);
+                const destPath = resolve(iconifyDir, `${iconSet}.json`);
+
                 if (existsSync(srcPath)) {
                     try {
                         copyFileSync(srcPath, destPath);
-                        console.log(`[Vite] 已复制图标集: ${iconSet}.json`);
+                        console.log(`[Vite] 已复制图标集到构建目录: iconify/${iconSet}.json`);
                     } catch (error) {
                         console.warn(`[Vite] 复制图标集失败 ${iconSet}:`, error.message);
                     }
@@ -86,7 +93,8 @@ function copyStaticAssets()
                 { from: 'node_modules/@feng3d-plugins/cannon/dist', to: 'node_modules/@feng3d-plugins/cannon/dist' },
                 { from: 'node_modules/@feng3d-plugins/cannon-plugin/dist', to: 'node_modules/@feng3d-plugins/cannon-plugin/dist' },
                 { from: 'dist/index.js', to: 'dist/index.js' },
-                { from: 'run.js', to: 'run.js' }
+                { from: 'run.js', to: 'run.js' },
+                { from: 'resource', to: 'resource' },
             ];
 
             for (const { from, to } of assetsToCopy)
@@ -203,7 +211,7 @@ export default defineConfig(({ mode }) =>
             Components({
                 resolvers: [ElementPlusResolver()],
             }),
-            copyIconifyJsonFiles(), // 复制 Iconify JSON 文件
+            copyIconifyJsonFiles(), // 复制 Iconify JSON 文件到构建目录
             copyStaticAssets()
         ],
 
@@ -234,4 +242,3 @@ export default defineConfig(({ mode }) =>
         }
     };
 });
-

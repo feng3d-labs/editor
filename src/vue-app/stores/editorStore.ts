@@ -232,12 +232,12 @@ export const useEditorStore = defineStore('editor', () => {
     }
 
     /**
-     * 获取编辑器资源绝对路径
+     * 获取编辑器资源路径
+     * 使用相对路径，与 index.html 处于同一层级
      * @param url 编辑器资源相对路径
      */
     function getEditorAssetPath(url: string): string {
-        // 使用 import.meta.env.BASE_URL 支持 GitHub Pages 等子路径部署
-        return `${import.meta.env.BASE_URL}resource/${url}`;
+        return `./resource/${url}`;
     }
 
     return {
