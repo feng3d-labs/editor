@@ -40,26 +40,36 @@ app.use(pinia);
 // 挂载到 DOM
 app.mount('#vue-app');
 
-// 初始化主题 Store，应用保存的主题或默认主题
-// 在应用挂载后应用主题，确保 DOM 已准备好
+// 初始化主题
+// 主题加载顺序：
+// 1. 首先尝试加载保存的 VSCode 主题（editor-vscode-theme）
+// 2. 如果没有，则使用经典主题设置（editor-theme）
 import { useThemeStore } from './stores/themeStore';
-const themeStore = useThemeStore();
-// 确保主题在应用挂载后正确应用
-themeStore.applyTheme(themeStore.currentTheme);
-
-// 尝试初始化主题服务，加载并应用保存的主题
 import { ThemeService } from '@feng3d/themes';
+
 setTimeout(async () => {
   try {
     // 等待主题列表初始化完成
     await ThemeService.getInstance().waitForInitialization();
 
-    const savedThemeId = localStorage.getItem('editor-vscode-theme');
-    if (savedThemeId) {
-      await ThemeService.getInstance().loadAndApplyTheme(savedThemeId);
+    // 优先加载保存的 VSCode 主题
+    const savedVscodeThemeId = localStorage.getItem('editor-vscode-theme');
+    if (savedVscodeThemeId) {
+      await ThemeService.getInstance().loadAndApplyTheme(savedVscodeThemeId);
+      // 同步经典主题状态
+      const themeStore = useThemeStore();
+      if (savedVscodeThemeId.includes('light')) {
+        themeStore.currentTheme = 'light';
+      } else {
+        themeStore.currentTheme = 'dark';
+      }
+    } else {
+      // 如果没有保存的 VSCode 主题，使用经典主题设置
+      const themeStore = useThemeStore();
+      await themeStore.applyTheme(themeStore.currentTheme);
     }
   } catch (error) {
-    console.error('Failed to load saved theme:', error);
+    console.error('Failed to initialize theme:', error);
   }
 }, 100); // 延迟加载以确保DOM已准备就绪
 

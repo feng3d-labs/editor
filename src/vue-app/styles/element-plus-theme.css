@@ -26,7 +26,7 @@
 .el-button--primary {
   background-color: var(--button-background);
   border-color: var(--button-background);
-  color: white;
+  color: var(--button-foreground);
 }
 
 .el-button--primary:hover {
@@ -35,15 +35,15 @@
 }
 
 .el-input__wrapper {
-  background-color: var(--sideBar-background);
-  border: 1px solid var(--sideBar-border);
+  background-color: var(--input-background) !important;
+  border: 1px solid var(--input-border) !important;
   border-radius: 4px;
   box-shadow: none !important;
   transition: all 0.2s ease;
 }
 
 .el-input__wrapper:hover {
-  border-color: var(--activityBar-inactiveForeground);
+  border-color: var(--dropdown-border);
 }
 
 .el-input__wrapper.is-focus {
@@ -52,7 +52,7 @@
 }
 
 .el-input__inner {
-  color: var(--editor-foreground);
+  color: var(--input-foreground);
   padding: 6px 12px;
 }
 
@@ -60,26 +60,65 @@
   cursor: pointer;
 }
 
+/* 设置对话框中的下拉列表样式 */
+.settings-dropdown.el-select-dropdown {
+  background-color: var(--editor-background) !important;
+  border: 1px solid var(--sideBar-border) !important;
+  border-radius: 6px;
+  box-shadow: var(--shadow-lg);
+}
+
+.settings-dropdown.el-select-dropdown .el-select-dropdown__list {
+  background-color: var(--editor-background);
+  padding: 4px 0;
+}
+
+.settings-dropdown.el-select-dropdown .el-select-dropdown__item {
+  color: var(--editor-foreground);
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.settings-dropdown.el-select-dropdown .el-select-dropdown__item:hover {
+  background-color: var(--list-activeSelectionBackground) !important;
+  color: var(--list-activeSelectionForeground) !important;
+}
+
+.settings-dropdown.el-select-dropdown .el-select-dropdown__item.selected {
+  background-color: var(--list-activeSelectionBackground) !important;
+  color: var(--list-activeSelectionForeground) !important;
+  font-weight: 500;
+}
+
+/* 通用下拉列表样式 */
 .el-select-dropdown {
-  background-color: var(--sideBar-background);
+  background-color: var(--editor-background) !important;
   border: 1px solid var(--sideBar-border);
   border-radius: 6px;
   box-shadow: var(--shadow-lg);
+}
+
+.el-select-dropdown__list {
+  background-color: var(--editor-background);
+  padding: 4px 0;
 }
 
 .el-select-dropdown__item {
   color: var(--editor-foreground);
   padding: 8px 16px;
   transition: all 0.2s ease;
+  background-color: transparent;
 }
 
 .el-select-dropdown__item:hover {
-  background-color: var(--sideBar-background);
+  background-color: var(--list-activeSelectionBackground) !important;
+  color: var(--list-activeSelectionForeground) !important;
 }
 
 .el-select-dropdown__item.selected {
-  background-color: var(--list-activeSelectionBackground);
-  color: var(--button-background);
+  background-color: var(--list-activeSelectionBackground) !important;
+  color: var(--list-activeSelectionForeground) !important;
   font-weight: 500;
 }
 
@@ -108,8 +147,12 @@
 }
 
 /* Dialog 对话框样式 */
+.el-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
 .el-dialog {
-  background-color: var(--sideBar-background);
+  background-color: var(--sideBar-background) !important;
   border: 1px solid var(--sideBar-border);
   border-radius: 8px;
   box-shadow: var(--shadow-xl);
@@ -120,21 +163,25 @@
   border-bottom: 1px solid var(--sideBar-border);
   padding: 16px 24px;
   color: var(--editor-foreground);
+  background-color: transparent;
 }
 
 .el-dialog__title {
   font-size: 16px;
   font-weight: 600;
+  color: var(--editor-foreground);
 }
 
 .el-dialog__body {
   color: var(--editor-foreground);
   padding: 24px;
+  background-color: transparent;
 }
 
 .el-dialog__footer {
   border-top: 1px solid var(--sideBar-border);
   padding: 16px 24px;
+  background-color: transparent;
 }
 
 /* Drawer 抽屉样式 */

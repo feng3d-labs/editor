@@ -17,9 +17,9 @@ const themeStore = useThemeStore();
 
 const isDark = computed(() => themeStore.currentTheme === 'dark');
 
-function toggleTheme() {
+async function toggleTheme() {
   const newTheme: ThemeType = isDark.value ? 'light' : 'dark';
-  themeStore.setTheme(newTheme);
+  await themeStore.setTheme(newTheme);
 }
 </script>
 
