@@ -123,8 +123,13 @@ function copyStaticAssets()
 export default defineConfig(({ mode }) =>
 {
     const isProduction = mode === 'production';
+    // GitHub Pages 部署在 /editor/ 子路径下
+    const base = isProduction ? '/editor/' : '/';
 
     return {
+        // 基础路径
+        base,
+
         // 开发服务器配置
         server: {
             port: 3000,
