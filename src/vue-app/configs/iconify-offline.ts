@@ -39,7 +39,8 @@ export async function loadIconSets() {
   for (const iconSet of iconSets) {
     try {
       // 从 public 目录加载 JSON 文件
-      const response = await fetch(`/iconify/${iconSet}.json`);
+      // 使用 import.meta.env.BASE_URL 支持 GitHub Pages 等子路径部署
+      const response = await fetch(`${import.meta.env.BASE_URL}iconify/${iconSet}.json`);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }

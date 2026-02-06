@@ -19,7 +19,8 @@
         //
         "src/**/*.ts",
         "src/**/*.vue",
-        "src/vue-shims.d.ts"
+        "src/vue-shims.d.ts",
+        "src/vite-env.d.ts"
     ],
     "exclude": [
         "node_modules",
