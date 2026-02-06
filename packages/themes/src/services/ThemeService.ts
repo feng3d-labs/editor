@@ -37,7 +37,7 @@ export class ThemeService {
   private async initThemes() {
     try {
       // 从配置文件加载主题列表
-      const response = await fetch('/resource/themes/themes.json');
+      const response = await fetch('./resource/themes/themes.json');
       if (response.ok) {
         const config = await response.json();
         this.themes = config.themes.map((theme: any) => ({
@@ -136,8 +136,8 @@ export class ThemeService {
       return this.loadedThemes.get(fileName)!;
     }
 
-    // 主题文件基础路径
-    const basePath = '/resource/themes/';
+    // 主题文件基础路径 - 使用相对路径
+    const basePath = './resource/themes/';
 
     // 构建主题文件URL
     const themeUrl = basePath + fileName;
