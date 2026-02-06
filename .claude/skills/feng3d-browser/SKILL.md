@@ -31,19 +31,24 @@ npx playwright install chromium
 
 ## 工作流程
 
-1. 创建临时脚本到 `.temp/` 目录（使用时间戳命名）
-2. 运行脚本生成截图或测试数据
-3. 分析结果，检测运行时错误
-4. 临时文件可保留，但 `.temp/` 文件夹超过 100MB 时提醒用户清理
+1. 临时文件保存到 `.temp/feng3d-browser/` 目录（按技能名称组织）
+2. 使用时间戳命名文件，便于排序和识别
+3. 运行脚本生成截图或测试数据
+4. 自动清理：当 `.temp/` 文件夹超过 100MB 时自动删除最早的文件
 
 ### 文件命名规范
 
-使用时间戳命名，便于排序和识别：
+使用 `getTempFilePath` 辅助函数生成文件路径：
 
 ```javascript
-const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-const screenshotPath = `.temp/${timestamp}-description.png`;
-// 示例: 2026-02-06T17-53-51-dropdown-open.png
+const { getTempFilePath, cleanTempFiles } = require('./.temp/temp-cleaner.js');
+
+// 自动清理
+cleanTempFiles();
+
+// 生成文件路径（自动添加技能目录和时间戳）
+const screenshotPath = getTempFilePath('feng3d-browser', 'dropdown-open', 'png');
+// 结果: .temp/feng3d-browser/2026-02-06T17-53-51-dropdown-open.png
 ```
 
 ## Quick Start
@@ -112,10 +117,14 @@ const styles = await page.locator('.settings-select-full').evaluate((el) => {
 
 ## 通用脚本模板
 
-### 基础截图
+### 基础截图（带自动清理）
 
 ```javascript
 const { chromium } = require('playwright');
+const { getTempFilePath, cleanTempFiles } = require('./.temp/temp-cleaner.js');
+
+// 自动清理
+cleanTempFiles();
 
 (async () => {
   const headed = process.env.HEADED === '1';
@@ -123,7 +132,11 @@ const { chromium } = require('playwright');
   const page = await browser.newPage();
 
   await page.goto('http://localhost:3000/', { waitUntil: 'networkidle' });
-  await page.screenshot({ path: '.temp/screenshot.png' });
+
+  // 使用辅助函数生成文件路径
+  const screenshotPath = getTempFilePath('feng3d-browser', 'screenshot', 'png');
+  await page.screenshot({ path: screenshotPath });
+  console.log(`✓ 截图保存: ${screenshotPath}`);
 
   await browser.close();
 })();
@@ -327,9 +340,30 @@ const { chromium } = require('playwright');
 
 ## 清理临时文件
 
+### 自动清理（推荐）
+
+在每个脚本开头添加自动清理：
+
+```javascript
+const { chromium } = require('playwright');
+
+// 自动清理：超过100MB时删除最早的文件
+const { cleanTempFiles } = require('./.temp/temp-cleaner.js');
+cleanTempFiles();
+
+(async () => {
+  // ... 脚本内容
+})();
+```
+
+### 手动清理
+
 ```bash
 # 查看 .temp 文件夹大小
 du -sh .temp/
+
+# 运行清理脚本（自动删除最早文件）
+node .temp/temp-cleaner.js
 
 # 清理所有临时文件
 rm -rf .temp/*

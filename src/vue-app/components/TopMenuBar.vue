@@ -220,7 +220,7 @@ function onQRCodeClick() {
   position: relative;
   width: 100%;
   height: 32px;
-  background-color: var(--sideBar-background, #252526);
+  background-color: var(--titleBar-activeBackground, #181818);
   display: flex;
   align-items: center;
   z-index: 1000;

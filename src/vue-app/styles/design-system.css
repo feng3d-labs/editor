@@ -1,101 +1,20 @@
 /**
  * Feng3D Editor Design System
  * 使用 VSCode 主题语义化颜色变量
- * 变量名直接对应 VSCode 的原始颜色 key（如 --button-background）
+ *
+ * 说明：
+ * 1. VSCode 主题颜色由 ThemeService 从主题文件动态加载到 document.documentElement
+ * 2. 变量名直接对应 VSCode 的原始颜色 key（如 button.background → --button-background）
+ * 3. 以下只定义设计系统使用的阴影变量
  */
 
 :root {
-  /* VSCode 语义化颜色变量将由主题系统动态注入 */
-  /* 这些变量会根据当前主题自动更新 */
-  /* 例如: --button-background, --editor-background, --sideBar-foreground 等 */
+  /* === VSCode 主题颜色 === */
+  /* 由 ThemeService 从主题文件动态注入，不在此定义默认值 */
 
-  /* === VSCode 默认值（作为回退） === */
-  --sideBar-background: #181818;
-  --sideBar-foreground: #cccccc;
-  --sideSectionHeader-background: transparent;
-  --sideBarSectionHeader-foreground: #bbbbbb;
-  --sideBar-border: #2b2b2b;
-
-  --editor-background: #1F1F1F;
-  --editor-foreground: #cccccc;
-
-  --panel-background: #181818;
-  --panel-foreground: #cccccc;
-  --panel-border: transparent;
-
-  --button-background: #0078D4;
-  --button-foreground: #ffffff;
-  --button-hoverBackground: #026EC1;
-
-  --button-secondaryBackground: #3c3c3c;
-  --button-secondaryForeground: #cccccc;
-
-  --activityBar-background: #181818;
-  --activityBar-foreground: #d7d7d7;
-  --activityBar-inactiveForeground: #858585;
-
-  --titleBar-activeBackground: #3c3c3c;
-  --titleBar-activeForeground: #cccccc;
-
-  --tab-activeBackground: #1F1F1F;
-  --tab-activeForeground: #ffffff;
-  --tab-inactiveBackground: #2d2d2d;
-  --tab-inactiveForeground: #969696;
-
-  --input-background: #313131;
-  --input-foreground: #cccccc;
-  --input-border: transparent;
-  --input-placeholderForeground: #858585;
-
-  --dropdown-background: #313131;
-  --dropdown-border: #3C3C3C;
-  --dropdown-foreground: #CCCCCC;
-  --dropdown-listBackground: #1F1F1F;
-
-  --menu-background: #1F1F1F;
-  --menu-selectionBackground: #0078d4;
-
-  --list-background: #252526;
-  --list-foreground: #cccccc;
-  --list-activeSelectionBackground: #0078d4;
-  --list-activeSelectionForeground: #ffffff;
-  --list-hoverBackground: #0078d4;
-  --list-focusOutline: #0078D4;
-
-  --foreground: #cccccc;
-  --descriptionForeground: #9d9d9d;
-
-  --scrollbarSlider-background: rgba(121, 121, 121, 0.4);
-  --scrollbarSlider-hoverBackground: rgba(100, 100, 100, 0.7);
-  --scrollbarSlider-activeBackground: rgba(191, 191, 191, 0.4);
-
-  /* 状态颜色 */
-  --errorForeground: #f14c4c;
-  --warningForeground: #cca700;
-  --infoForeground: #3794ff;
-  --textLink-foreground: #3794ff;
-
-  /* Git 颜色 */
-  --editorGutter-addedBackground: #2EA043;
-  --editorGutter-modifiedBackground: #026EC1;
-  --editorGutter-deletedBackground: #f14c4c;
-
-  /* Diff 颜色 */
-  --diffEditor-insertedTextBackground: rgba(46, 160, 67, 0.2);
-  --diffEditor-removedTextBackground: rgba(241, 76, 76, 0.2);
-
-  /* === 3D编辑器特殊颜色 === */
-  --color-axis-x: #F85149;      /* X轴 - 红色 */
-  --color-axis-y: #2EA043;      /* Y轴 - 绿色 */
-  --color-axis-z: #0078D4;      /* Z轴 - 蓝色 */
-  --color-grid: rgba(204, 204, 204, 0.1);
-  --color-selection: rgba(0, 120, 212, 0.2);
-  --color-highlight: #dcb100;
-
-  /* === 阴影 === */
+  /* === 设计系统阴影 === */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
-  --shadow-inner: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
