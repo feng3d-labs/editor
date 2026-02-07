@@ -9,3 +9,4 @@ lib
 dist-vite
 /.temp
 /.playwright-mcp
+.claude/settings.local.json
