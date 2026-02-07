@@ -10,3 +10,4 @@ dist-vite
 /.temp
 /.playwright-mcp
 .claude/settings.local.json
+# 测试权限确认禁用
