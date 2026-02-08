@@ -84,9 +84,6 @@ export class SceneRotateTool extends Component
 
         ticker.onframe(() =>
         {
-            const rect = this.view.canvas.getBoundingClientRect();
-            canvas.style.top = `${rect.top}px`;
-            canvas.style.left = `${rect.left + rect.width - canvas.width}px`;
 
             const rotation = this.view.camera.transform.localToWorldMatrix.clone().invert().toTRS()[1];
             rotationToolModel.transform.rotation = rotation;
