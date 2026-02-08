@@ -310,6 +310,28 @@ git push origin --delete fix/issue-45  # 删除远程分支（可选）
 - 所有测试截图、调试文件统一存放在 `.temp` 目录
 - 文件命名使用时间戳便于排序
 
+### 交互规范
+
+- ❌❌❌ 让用户打字回复问题
+- ✅ 使用 `AskUserQuestion` 工具提供选项让用户选择
+
+**示例**：
+```typescript
+// ❌ 错误：等待用户打字
+"是否开始修复？请回复'是'或'否'"
+
+// ✅ 正确：使用选项
+AskUserQuestion({
+  questions: [{
+    question: "Issue #45: 旋转工具被遮住，是否开始修复？",
+    options: [
+      { label: "开始修复", description: "创建分支并按流程修复" },
+      { label: "先查看现状", description: "使用浏览器截图查看当前状态" }
+    ]
+  }]
+})
+```
+
 ### 修改原则
 
 - 一次只修改一个问题点
