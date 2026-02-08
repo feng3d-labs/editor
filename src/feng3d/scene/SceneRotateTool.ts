@@ -1,4 +1,4 @@
-import { RegisterComponent, Component, GameObject, loader, serialization, ticker, mathUtil, Vector3, Rectangle, windowEventProxy, shortcut, View, IEvent, Matrix4x4, globalEmitter, Quaternion } from 'feng3d';
+import { RegisterComponent, Component, GameObject, loader, serialization, ticker, mathUtil, Vector3, Rectangle, windowEventProxy, shortcut, View, IEvent, Matrix4x4, globalEmitter, Quaternion, Camera } from 'feng3d';
 import * as TWEEN from '@tweenjs/tween.js';
 import { EditorData } from '../../global/EditorData';
 import { sceneControlConfig } from '../../shortcut/Editorshortcut';
@@ -70,10 +70,10 @@ export class SceneRotateTool extends Component
         const { toolView, canvas } = this.newView();
 
         toolView.root.addChild(rotationToolModel);
-        rotationToolModel.transform.sx = 0.01;
-        rotationToolModel.transform.sy = 0.01;
-        rotationToolModel.transform.sz = 0.01;
-        rotationToolModel.transform.z = 0.80;
+        rotationToolModel.transform.sx = 1.2;
+        rotationToolModel.transform.sy = 1.2;
+        rotationToolModel.transform.sz = 1.2;
+        rotationToolModel.transform.z = 0;
 
         const arr = [arrowsX, arrowsY, arrowsZ, arrowsNX, arrowsNY, arrowsNZ, planeX, planeY, planeZ, planeNX, planeNY, planeNZ];
         arr.forEach((element) =>
@@ -84,9 +84,6 @@ export class SceneRotateTool extends Component
 
         ticker.onframe(() =>
         {
-            const rect = this.view.canvas.getBoundingClientRect();
-            canvas.style.top = `${rect.top}px`;
-            canvas.style.left = `${rect.left + rect.width - canvas.width}px`;
 
             const rotation = this.view.camera.transform.localToWorldMatrix.clone().invert().toTRS()[1];
             rotationToolModel.transform.rotation = rotation;
@@ -189,6 +186,16 @@ export class SceneRotateTool extends Component
         toolView.scene.background.a = 0.0;
         toolView.scene.ambientColor.setTo(0.2, 0.2, 0.2);
         toolView.root.addChild(GameObject.createPrimitive('Point Light'));
+
+        // 创建专用相机，缩短距离
+        const cameraGameObject = new GameObject();
+        cameraGameObject.name = 'rotateToolCamera';
+        const camera = cameraGameObject.addComponent(Camera);
+        camera.transform.z = -5;
+        camera.lens.far = 1000;
+        camera.lens.near = 0.1;
+        toolView.camera = camera;
+        toolView.scene.gameObject.addChild(cameraGameObject);
 
         return { toolView, canvas };
     }

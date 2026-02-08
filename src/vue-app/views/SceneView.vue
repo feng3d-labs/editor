@@ -817,11 +817,11 @@ onUnmounted(() => {
 .scene-rotate-tool-layer {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 10;
-  pointer-events: none;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  z-index: 20;
+  pointer-events: auto;
   background: transparent;
   overflow: visible;
 }
