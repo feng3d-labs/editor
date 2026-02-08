@@ -941,71 +941,49 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
 /* Element Plus Tree 样式覆盖 */
 :deep(.el-tree) {
   background-color: transparent;
-  color: var(--editor-foreground);
+  color: #9ea992;
 }
 
+/* 树节点内容 */
 :deep(.el-tree-node__content) {
-  color: var(--editor-foreground);
+  color: #9ea992;
   height: 24px;
+  border-radius: 3px;
+  margin: 2px 0;
 }
 
+/* 鼠标悬浮状态 */
 :deep(.el-tree-node__content:hover) {
-  background-color: var(--list-hoverBackground);
+  background-color: #2a2d2e;
 }
 
+/* 选中状态 */
 :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: var(--list-activeSelectionBackground);
-  color: var(--editor-foreground);
+  background-color: #04395e !important;
+  color: #b1e1e2 !important;
+  border: 1px solid #0077d2;
 }
 
-/* 右键菜单容器 */
-.context-menu-wrapper {
-  position: fixed;
-  z-index: 2000;
+/* 展开图标样式 */
+:deep(.el-tree-node__expand-icon) {
+  color: #9ea992;
+  font-size: 12px;
 }
 
-.context-menu {
-  background-color: #3a3a3a;
-  border: 1px solid #5a5a5a;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  min-width: 150px;
-  padding: 4px 0;
-  overflow: hidden;
-}
-
-.context-menu-item {
-  padding: 8px 16px;
-  cursor: pointer;
+/* 鼠标悬浮时的展开图标 */
+:deep(.el-tree-node__content:hover .el-tree-node__expand-icon) {
   color: #ffffff;
-  font-size: 14px;
-  user-select: none;
-  transition: background-color 0.2s;
 }
 
-.context-menu-item:hover:not(.context-menu-item-disabled) {
-  background-color: rgba(255, 255, 255, 0.1);
+/* 选中状态下的展开图标 */
+:deep(.el-tree-node.is-current > .el-tree-node__content .el-tree-node__expand-icon) {
+  color: #ffffff;
 }
 
-.context-menu-item-disabled {
-  color: #999999;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.context-menu-item-divided {
-  border-top: 1px solid #5a5a5a;
-  margin-top: 4px;
-  padding-top: 8px;
-}
-
-:deep(.el-tree-node__content:hover) {
-  background-color: var(--el-fill-color, #2d2d2d);
-}
-
-:deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: var(--el-fill-color-dark, #3d3d3d);
-  color: var(--el-color-primary, #007acc);
+/* 树节点标签文字 */
+:deep(.el-tree-node__label) {
+  color: inherit;
+  font-size: 13px;
 }
 
 /* 右键菜单容器 */
