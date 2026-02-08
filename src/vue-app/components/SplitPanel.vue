@@ -168,6 +168,12 @@ watch(() => props.split, (newValue) => {
   opacity: 1 !important;
 }
 
+/* 隐藏 Element Plus 默认的白色伪元素 */
+:deep(.el-splitter-bar__dragger::before),
+:deep(.el-splitter-bar__dragger::after) {
+  display: none !important;
+}
+
 :deep(.el-splitter-bar__dragger-horizontal) {
   width: 1px !important;
   cursor: ew-resize !important;

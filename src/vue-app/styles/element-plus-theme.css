@@ -455,6 +455,12 @@
   opacity: 1 !important;
 }
 
+/* 隐藏 Element Plus 默认的白色伪元素 */
+.el-splitter-bar__dragger::before,
+.el-splitter-bar__dragger::after {
+  display: none !important;
+}
+
 .el-splitter-bar__dragger-horizontal {
   width: 1px !important;
   cursor: ew-resize !important;
