@@ -98,9 +98,9 @@ watch(() => props.split, (newValue) => {
 .split-panel {
   width: 100%;
   height: 100%;
-  border-radius: 6px;
+  border-radius: 0;
   overflow: hidden;
-  border: 1px solid var(--sideBar-border);
+  border: none;
 }
 
 .split-panel-content {
@@ -114,31 +114,79 @@ watch(() => props.split, (newValue) => {
 
 /* Element Plus Splitter 优化样式 */
 :deep(.el-splitter) {
-  border: none;
-  background-color: transparent;
+  border: none !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
 }
 
 :deep(.el-splitter__pane) {
-  background-color: transparent;
-  border: none;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+:deep(.el-splitter__pane .el-splitter__pane-wrapper) {
+  border-radius: 0 !important;
 }
 
 :deep(.el-splitter__divider) {
-  background-color: var(--sideBar-border);
-  transition: all 0.2s ease;
+  background-color: var(--sideBar-border, #2b2b2b) !important;
+  border-radius: 0 !important;
+  transition: background-color 0.2s ease;
 }
 
 :deep(.el-splitter__divider:hover) {
-  background-color: var(--button-background);
-  transform: scale(1.1);
+  background-color: var(--button-background) !important;
 }
 
 :deep(.el-splitter__divider.is-horizontal) {
-  height: 1px;
+  height: 1px !important;
 }
 
 :deep(.el-splitter__divider.is-vertical) {
-  width: 1px;
+  width: 1px !important;
+}
+
+/* Element Plus Splitter 分割线样式 */
+:deep(.el-splitter-bar) {
+  background-color: transparent !important;
+}
+
+:deep(.el-splitter-bar.is-horizontal) {
+  width: 1px !important;
+}
+
+:deep(.el-splitter-bar.is-vertical) {
+  height: 1px !important;
+}
+
+/* dragger 作为分割线显示，同时保持拖拽功能 */
+:deep(.el-splitter-bar__dragger) {
+  background-color: var(--sideBar-border, #2b2b2b) !important;
+  border: none !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+:deep(.el-splitter-bar__dragger-horizontal) {
+  width: 1px !important;
+  cursor: ew-resize !important;
+}
+
+:deep(.el-splitter-bar__dragger-vertical) {
+  height: 1px !important;
+  cursor: ns-resize !important;
+}
+
+/* hover 时放大拖拽区域方便操作 */
+:deep(.el-splitter-bar__dragger-horizontal:hover) {
+  width: 4px !important;
+  background-color: var(--button-background) !important;
+}
+
+:deep(.el-splitter-bar__dragger-vertical:hover) {
+  height: 4px !important;
+  background-color: var(--button-background) !important;
 }
 </style>
 

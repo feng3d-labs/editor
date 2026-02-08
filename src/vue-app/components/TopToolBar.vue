@@ -255,7 +255,8 @@ onUnmounted(() => {
 .tool-section-center {
   flex: 1;
   justify-content: center;
-  gap: 12px;
+  gap: 4px;
+  padding: 0 16px;
 }
 
 /* Element Plus Divider 样式覆盖 */

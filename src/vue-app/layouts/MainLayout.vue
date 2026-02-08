@@ -263,8 +263,8 @@ function onBottomTabClose(index: number) {
   pointer-events: auto;
   display: flex;
   flex-direction: column;
-  background-color: var(--el-bg-color, #2a2a2a);
-  color: var(--el-text-color-primary, #ffffff);
+  background-color: var(--editor-background, #1f1f1f);
+  color: var(--editor-foreground, #ffffff);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -272,8 +272,8 @@ function onBottomTabClose(index: number) {
   flex: 1;
   min-height: 0;
   position: relative;
-  padding: 8px;
-  padding-top: 0;
+  padding: 0;
+  background-color: var(--editor-background, #1f1f1f);
 }
 
 .panel-placeholder {

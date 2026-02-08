@@ -214,6 +214,8 @@ git checkout -b fix/issue-45
 
 ### 3. 修复 Bug
 
+> **重要**: 只有在修复 Issues 中的问题时才创建 PR。补充修改应在同一分支上进行， amend 后 force push。
+
 **严格遵循 [Bug 修复流程](#bug-修复流程)**
 
 GitHub Issues 的"修复 Bug"阶段对应 Bug 修复流程的五个阶段：
@@ -302,7 +304,8 @@ AskUserQuestion({
 
 **响应 Review 反馈**：
 - 根据 review 评论修改代码
-- 修改后再次推送，PR 自动更新
+- 修改后使用 `git commit --amend --no-edit` 和 `git push -f` 更新 PR
+- 不要创建新的 PR
 
 ### 8. 合并 PR
 

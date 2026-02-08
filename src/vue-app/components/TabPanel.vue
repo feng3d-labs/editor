@@ -387,8 +387,8 @@ defineExpose({
   width: 100%;
   height: 100%;
   background-color: var(--sideBar-background, #3a3a3a);
-  border: 1px solid var(--sideBar-border, #4a4a4a);
-  border-radius: 6px;
+  border: none;
+  border-radius: 0;
   overflow: hidden;
 }
 
@@ -403,12 +403,12 @@ defineExpose({
 
 /* Element Plus Tabs 标签头样式 */
 .tab-panel-tabs :deep(.el-tabs__header) {
-  margin: 0;
+  margin: 0 !important;
   flex-shrink: 0;
   background-color: var(--titleBar-activeBackground);
   border-bottom: 1px solid var(--sideBar-border);
   padding: 0 8px;
-  border-radius: 6px 6px 0 0;
+  border-radius: 0 !important;
 }
 
 .tab-panel-tabs :deep(.el-tabs__nav-wrap) {
@@ -505,7 +505,7 @@ defineExpose({
   position: relative;
   min-height: 0;
   background-color: var(--editor-background);
-  border-radius: 0 0 6px 6px;
+  border-radius: 0 !important;
 }
 
 .tab-panel-tabs :deep(.el-tab-pane) {
@@ -513,6 +513,7 @@ defineExpose({
   height: 100%;
   overflow: auto;
   padding: 12px;
+  border-radius: 0 !important;
 }
 
 /* 标签样式 */

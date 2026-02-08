@@ -22,18 +22,20 @@
 			padding: 0;
 			border: 0;
 			margin: 0;
+			width: 100%;
 			height: 100%;
+			overflow: hidden;
 			color: var(--color-text-secondary); /* 使用设计系统颜色 */
 			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 			transition: background-color 0.2s ease, color 0.2s ease;
 		}
-		
+
 		/* 暗色主题样式 */
 		html[data-theme="dark"] body {
 			background: var(--color-editor-bg);
 			color: var(--color-text-primary);
 		}
-		
+
 		/* 亮色主题样式 */
 		html[data-theme="light"] body {
 			background: var(--color-gray-50);

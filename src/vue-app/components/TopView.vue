@@ -17,8 +17,6 @@ import TopMenuBar from './TopMenuBar.vue';
   flex-shrink: 0;
   z-index: 1000;
   background-color: var(--editor-background);
-  border-bottom: 1px solid var(--sideBar-border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
 }

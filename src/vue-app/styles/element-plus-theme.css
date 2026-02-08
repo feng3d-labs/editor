@@ -428,3 +428,65 @@
   border: 2px solid var(--button-background);
   background-color: var(--sideBar-background);
 }
+
+/* Splitter 分割面板样式 - 移除默认的缝隙和边框 */
+.el-splitter {
+  --el-splitter-pane-border: none !important;
+  border-radius: 0 !important;
+}
+
+.el-splitter__pane,
+.el-splitter__pane-wrapper {
+  border: none !important;
+  background-color: transparent !important;
+  border-radius: 0 !important;
+}
+
+.el-splitter__divider {
+  background-color: var(--sideBar-border, #2b2b2b) !important;
+  border-radius: 0 !important;
+}
+
+/* 分割线拖拽区域样式 */
+.el-splitter-bar__dragger {
+  background-color: var(--sideBar-border, #2b2b2b) !important;
+  border: none !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+.el-splitter-bar__dragger-horizontal {
+  width: 1px !important;
+  cursor: ew-resize !important;
+}
+
+.el-splitter-bar__dragger-vertical {
+  height: 1px !important;
+  cursor: ns-resize !important;
+}
+
+/* hover 时放大拖拽区域 */
+.el-splitter-bar__dragger-horizontal:hover {
+  width: 4px !important;
+  background-color: var(--button-background) !important;
+}
+
+.el-splitter-bar__dragger-vertical:hover {
+  height: 4px !important;
+  background-color: var(--button-background) !important;
+}
+
+/* TabPanel 移除圆角和边距 */
+.tab-panel {
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.el-tabs__content {
+  border-radius: 0 !important;
+}
+
+.el-tab-pane {
+  border-radius: 0 !important;
+}
