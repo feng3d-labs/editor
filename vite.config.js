@@ -134,6 +134,10 @@ export default defineConfig(({ mode }) =>
         // 基础路径 - 生产环境使用相对路径
         base: isProduction ? './' : '/',
 
+        // 静态文件目录配置
+        // 开发模式下禁用 public 目录，避免与构建输出冲突
+        publicDir: isProduction ? 'public' : 'static',
+
         // 定义全局常量
         define: {
             __BUILD_TIME__: JSON.stringify(now.toISOString()),
@@ -170,12 +174,22 @@ export default defineConfig(({ mode }) =>
                     // 保持目录结构
                     entryFileNames: 'assets/[name]-[hash].js',
                     chunkFileNames: 'assets/[name]-[hash].js',
-                    assetFileNames: 'assets/[name]-[hash].[ext]'
+                    assetFileNames: 'assets/[name]-[hash].[ext]',
+                    // 外部化模块的路径映射
+                    globals: {
+                        'feng3d': 'feng3d',
+                        '@feng3d-plugins/cannon': 'cannon',
+                        '@feng3d-plugins/cannon-plugin': 'cannonPlugin'
+                    }
                 },
                 // 外部化处理：不打包这些依赖
                 external: (id) =>
+                    // 外部化 feng3d 相关包（通过 CDN 加载）
+                    id === 'feng3d'
+                    || id === '@feng3d-plugins/cannon'
+                    || id === '@feng3d-plugins/cannon-plugin'
                     // 外部化 libs、node_modules、packages、dist 下的文件
-                    id.startsWith('./libs/')
+                    || id.startsWith('./libs/')
                     || id.startsWith('../libs/')
                     || id.startsWith('./node_modules/')
                     || id.startsWith('../node_modules/')
