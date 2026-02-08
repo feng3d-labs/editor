@@ -512,7 +512,7 @@ defineExpose({
   width: 100%;
   height: 100%;
   overflow: auto;
-  padding: 12px;
+  padding: 4px;
   border-radius: 0 !important;
 }
 
