@@ -137,6 +137,7 @@ button:disabled {
 /* ==============================
    全局树形列表样式 (Tree Component)
    用于层级视图、项目视图等
+   使用 VSCode 主题变量
    ============================== */
 
 /* Element Plus Tree 基础样式 */
@@ -144,14 +145,14 @@ button:disabled {
 .hierarchy-view .el-tree,
 .project-view .el-tree {
   background-color: transparent !important;
-  color: #9ea992 !important;
+  color: var(--list-foreground, #9ea992) !important;
 }
 
 /* 树节点内容 */
 .el-tree-node__content,
 .hierarchy-view .el-tree-node__content,
 .project-view .el-tree-node__content {
-  color: #9ea992 !important;
+  color: var(--list-foreground, #9ea992) !important;
   height: 24px;
   border-radius: 3px;
   margin: 2px 0;
@@ -161,23 +162,23 @@ button:disabled {
 .el-tree-node__content:hover,
 .hierarchy-view .el-tree-node__content:hover,
 .project-view .el-tree-node__content:hover {
-  background-color: #2a2d2e !important;
+  background-color: var(--list-hoverBackground, #2a2d2e) !important;
 }
 
 /* 选中状态 */
 .el-tree-node.is-current > .el-tree-node__content,
 .hierarchy-view .el-tree-node.is-current > .el-tree-node__content,
 .project-view .el-tree-node.is-current > .el-tree-node__content {
-  background-color: #04395e !important;
-  color: #b1e1e2 !important;
-  border: 1px solid #0077d2;
+  background-color: var(--list-activeSelectionBackground, #04395e) !important;
+  color: var(--list-activeSelectionForeground, #b1e1e2) !important;
+  border: 1px solid var(--button-background, #0077d2);
 }
 
 /* 展开图标样式 */
 .el-tree-node__expand-icon,
 .hierarchy-view .el-tree-node__expand-icon,
 .project-view .el-tree-node__expand-icon {
-  color: #9ea992 !important;
+  color: var(--descriptionForeground, #9ea992) !important;
   font-size: 12px;
 }
 
@@ -185,14 +186,14 @@ button:disabled {
 .el-tree-node__content:hover .el-tree-node__expand-icon,
 .hierarchy-view .el-tree-node__content:hover .el-tree-node__expand-icon,
 .project-view .el-tree-node__content:hover .el-tree-node__expand-icon {
-  color: #ffffff !important;
+  color: var(--editor-foreground, #ffffff) !important;
 }
 
 /* 选中状态下的展开图标 */
 .el-tree-node.is-current > .el-tree-node__content .el-tree-node__expand-icon,
 .hierarchy-view .el-tree-node.is-current > .el-tree-node__content .el-tree-node__expand-icon,
 .project-view .el-tree-node.is-current > .el-tree-node__content .el-tree-node__expand-icon {
-  color: #ffffff !important;
+  color: var(--editor-foreground, #ffffff) !important;
 }
 
 /* 树节点标签文字 */
