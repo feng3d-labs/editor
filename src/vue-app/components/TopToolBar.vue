@@ -67,21 +67,19 @@
     </div>
 
     <!-- 中间：播放按钮 - 使用 Element Plus Button -->
-    <div class="tool-section tool-section-center">
-      <div class="play-button-container">
-        <el-button
-          type="primary"
-          size="small"
-          @mousedown.stop="handlePlayMouseDown"
-          @mouseup.stop="handlePlayMouseUp"
-          @mouseleave="isPlayPressed = false"
-          :title="t('toolbar.play')"
-          class="play-button"
-        >
-          <Icon icon="mdi:play" :size="16" style="margin-right: 4px;" />
-          <span>{{ t('toolbar.play') }}</span>
-        </el-button>
-      </div>
+    <div class="play-button-wrapper">
+      <el-button
+        type="primary"
+        size="small"
+        @mousedown.stop="handlePlayMouseDown"
+        @mouseup.stop="handlePlayMouseUp"
+        @mouseleave="isPlayPressed = false"
+        :title="t('toolbar.play')"
+        class="play-button"
+      >
+        <Icon icon="mdi:play" :size="16" style="margin-right: 4px;" />
+        <span>{{ t('toolbar.play') }}</span>
+      </el-button>
     </div>
   </div>
 </template>
@@ -230,25 +228,20 @@ onUnmounted(() => {
   min-width: 0;
 }
 
-.tool-section-center {
-  flex: 1;
-  justify-content: center;
-  gap: 4px;
-  padding: 0 16px;
+/* 播放按钮包装器 - 绝对定位实现横向居中 */
+.play-button-wrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  z-index: 10001;
 }
 
 /* Element Plus Divider 样式覆盖 */
 .divider {
   height: 16px;
   margin: 0 8px;
-}
-
-/* 播放按钮容器 */
-.play-button-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
 }
 
 /* Element Plus Button 样式覆盖 */
@@ -273,9 +266,7 @@ onUnmounted(() => {
 }
 
 .play-button {
-  z-index: 10001;
   pointer-events: auto;
-  position: relative;
   height: 22px !important;
   min-height: 22px !important;
   max-height: 22px !important;
