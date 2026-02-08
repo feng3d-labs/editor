@@ -131,7 +131,6 @@ function initScene() {
         statsInstance.value.dom.style.left = '0px';
         statsInstance.value.dom.style.top = '0px';
         statsInstance.value.dom.style.zIndex = '10';
-        statsInstance.value.dom.style.pointerEvents = 'none';
       }
       
     }
@@ -253,7 +252,6 @@ function updateCanvasSize() {
     statsInstance.value.dom.style.left = '0px';
     statsInstance.value.dom.style.top = '0px';
     statsInstance.value.dom.style.zIndex = '10';
-    statsInstance.value.dom.style.pointerEvents = 'none';
   }
 
   console.log('SceneView: canvas size updated', { width: rect.width, height: rect.height });
@@ -764,7 +762,7 @@ onUnmounted(() => {
   top: 4px;
   left: 4px;
   z-index: 10;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 .scene-rotate-tool-layer {
