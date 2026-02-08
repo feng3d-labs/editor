@@ -81,22 +81,6 @@
           <Icon icon="mdi:play" :size="16" style="margin-right: 4px;" />
           <span>{{ t('toolbar.play') }}</span>
         </el-button>
-        <el-button
-          size="small"
-          @click="onPauseClick"
-          :title="t('toolbar.pause')"
-          class="tool-button"
-        >
-          <Icon icon="mdi:pause" :size="16" />
-        </el-button>
-        <el-button
-          size="small"
-          @click="onStepClick"
-          :title="t('toolbar.step')"
-          class="tool-button"
-        >
-          <Icon icon="mdi:step-forward" :size="16" />
-        </el-button>
       </div>
     </div>
   </div>
@@ -207,17 +191,6 @@ async function onPlayClick() {
       await playAction();
     }
   }, 50);
-}
-
-// 暂停和步进按钮（新增）
-function onPauseClick() {
-  // TODO: 实现暂停功能
-  console.log('Pause clicked');
-}
-
-function onStepClick() {
-  // TODO: 实现步进功能
-  console.log('Step clicked');
 }
 
 onUnmounted(() => {
