@@ -1,7 +1,7 @@
 ---
 name: feng3d-dev
 description: Feng3D Editor 开发技能 - 包含浏览器自动化测试、Bug修复流程、代码规范等。Triggers: "测试", "bug", "修复", "不显示", "错误", "失败", "问题", "screenshot", "验证"
-allowed-tools: Bash(node, npx), Read, Write, Edit, mcp__playwright__browser_*, mcp__zai-mcp-server__*
+allowed-tools: Bash(*), Read, Write, Edit, Glob, Grep, AskUserQuestion, TodoWrite, Task, TaskOutput, TaskStop, Skill, ExitPlanMode, NotebookEdit, EnterPlanMode, WebSearch, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_evaluate, mcp__playwright__browser_close, mcp__zai-mcp-server__diagnose_error_screenshot, mcp__zai-mcp-server__extract_text_from_screenshot, mcp__zai-mcp-server__ui_to_artifact, mcp__web_reader__webReader, mcp__4_5v_mcp__analyze_image, mcp__zread__get_repo_structure, mcp__zread__read_file, mcp__zread__search_doc, mcp__web-search-prime__webSearchPrime
 ---
 
 # Feng3D Editor 开发技能
@@ -28,7 +28,8 @@ allowed-tools: Bash(node, npx), Read, Write, Edit, mcp__playwright__browser_*, m
 
 1. [浏览器自动化测试](#浏览器自动化测试)
 2. [Bug 修复流程](#bug-修复流程)
-3. [开发规范](#开发规范)
+3. [GitHub Issues 修复流程](#github-issues-修复流程)
+4. [开发规范](#开发规范)
 
 ---
 
@@ -145,6 +146,122 @@ const { chromium } = require('playwright');
 
 1. **完成后停止** - 问题解决后不要再触碰代码
 2. **等待确认** - 等待用户确认或下一步指示
+
+---
+
+## GitHub Issues 修复流程
+
+### 完整流程
+
+```
+获取 Issue → 创建分支 → 修复 Bug → 提交代码 → 推送分支 → 创建 PR → 评论交互 → 合并 → 清理
+```
+
+### 1. 获取 Issue 内容
+
+使用 `mcp__web_reader__webReader` 访问 GitHub issue URL：
+
+```javascript
+// 读取 issue 内容，理解问题描述
+webReader('https://github.com/feng3d-labs/editor/issues/45');
+```
+
+### 2. 创建分支
+
+分支命名规范：`fix/issue-{编号}` 或 `feature/issue-{编号}`
+
+```bash
+git checkout -b fix/issue-45
+```
+
+### 3. 修复 Bug
+
+按照 [Bug 修复流程](#bug-修复流程) 进行：
+- **理解 → 还原 → 最小改 → 一次验 → 精简 → 停手**
+
+### 4. 提交代码
+
+```bash
+git add .
+git commit -m "fix: #45 旋转工具显示位置不正确"
+```
+
+提交信息格式：
+- `fix: #编号 简短描述`
+- `feat: #编号 简短描述`
+- `docs: #编号 简短描述`
+
+### 5. 推送分支
+
+```bash
+git push -u origin fix/issue-45
+```
+
+### 6. 创建 Pull Request
+
+使用 `gh pr create` 命令：
+
+```bash
+gh pr create \
+  --title "fix: #45 旋转工具显示位置不正确" \
+  --body "## 问题描述
+旋转工具被遮住，位置需要向下移动，上边对齐工具栏底部
+
+## 修复方案
+调整 CSS 定位，使旋转工具向下移动到正确位置
+
+## 测试
+- [ ] 本地验证通过
+- [ ] 工具不被遮住
+- [ ] 上边对齐工具栏底部"
+```
+
+### 7. 评论与交互
+
+**回复 Issue**（告知已提交 PR）：
+```bash
+gh issue comment 45 --body "已提交 PR #xxx，请查阅"
+```
+
+**响应 Review 反馈**：
+- 根据 review 评论修改代码
+- 修改后再次推送，PR 自动更新
+
+### 8. 合并 PR
+
+- 等待 review 通过
+- 使用 `gh pr merge` 或在 GitHub 网页上合并
+- 合并方式选择：`merge`、`squash` 或 `rebase`
+
+```bash
+# 通过命令行合并
+gh pr merge --squash
+```
+
+### 9. 清理
+
+```bash
+git checkout master
+git pull
+git branch -d fix/issue-45  # 删除本地分支
+git push origin --delete fix/issue-45  # 删除远程分支（可选）
+```
+
+### 注意事项
+
+1. **创建 PR 前确保**：
+   - 代码已通过本地测试
+   - 提交信息清晰规范
+   - PR 描述包含问题、方案、测试清单
+
+2. **等待合并**：
+   - 不要催促合并
+   - 及时响应 review 意见
+   - 修改后推送即可，无需新建 PR
+
+3. **紧急停止条件**同样适用于此流程
+   - 用户说"提交代码"时立即提交当前修改
+   - 用户说"够了/先这样"时停止操作
 
 ---
 
