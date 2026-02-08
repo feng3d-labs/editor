@@ -816,7 +816,7 @@ onUnmounted(() => {
 
 .scene-rotate-tool-layer {
   position: absolute;
-  top: 0;
+  top: 22px;
   right: 0;
   width: 80px;
   height: 80px;
