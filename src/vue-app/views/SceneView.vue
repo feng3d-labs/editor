@@ -758,6 +758,10 @@ onUnmounted(() => {
   /* 使用 VSCode 主题变量 */
   background-color: var(--editor-background);
   overflow: hidden;
+  /* 定义工具栏高度，统一管理布局间距 */
+  --toolbar-height: 22px;
+  /* 工具栏下方内容与工具栏的间距 */
+  --toolbar-spacing: 4px;
 }
 
 .scene-toolbar {
@@ -765,7 +769,7 @@ onUnmounted(() => {
   top: 0;
   left: 0;
   right: 0;
-  height: 22px;
+  height: var(--toolbar-height);
   z-index: 1000;
   pointer-events: auto;
 }
@@ -805,7 +809,7 @@ onUnmounted(() => {
 
 .scene-stats-container {
   position: absolute;
-  top: 0;
+  top: calc(var(--toolbar-height) + var(--toolbar-spacing));
   left: 0;
   width: 100%;
   height: 100%;
@@ -816,7 +820,7 @@ onUnmounted(() => {
 
 .scene-rotate-tool-layer {
   position: absolute;
-  top: 22px;
+  top: calc(var(--toolbar-height) + var(--toolbar-spacing));
   right: 0;
   width: 80px;
   height: 80px;

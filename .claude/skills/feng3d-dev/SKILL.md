@@ -2,6 +2,34 @@
 name: feng3d-dev
 description: Feng3D Editor 开发技能 - 包含浏览器自动化测试、Bug修复流程、代码规范等。Triggers: "测试", "bug", "修复", "不显示", "错误", "失败", "问题", "screenshot", "验证"
 allowed-tools: Bash(*), Read, Write, Edit, Glob, Grep, AskUserQuestion, TodoWrite, Task, TaskOutput, TaskStop, Skill, ExitPlanMode, NotebookEdit, EnterPlanMode, WebSearch, mcp__playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__playwright__browser_take_screenshot, mcp__playwright__browser_click, mcp__playwright__browser_type, mcp__playwright__browser_evaluate, mcp__playwright__browser_close, mcp__zai-mcp-server__diagnose_error_screenshot, mcp__zai-mcp-server__extract_text_from_screenshot, mcp__zai-mcp-server__ui_to_artifact, mcp__web_reader__webReader, mcp__4_5v_mcp__analyze_image, mcp__zread__get_repo_structure, mcp__zread__read_file, mcp__zread__search_doc, mcp__web-search-prime__webSearchPrime
+allowed-prompts:
+  - tool: Bash
+    prompt: |-
+      Run tests, install dependencies, start dev server, build project, git operations
+  - tool: Bash
+    prompt: |-
+      Launch browser, navigate, take screenshot, click elements, evaluate JavaScript
+  - tool: Bash
+    prompt: |-
+      Read, write, edit files for bug fixes and feature implementation
+  - tool: mcp__playwright__browser_navigate
+    prompt: Navigate to localhost or GitHub Pages for testing
+  - tool: mcp__playwright__browser_snapshot
+    prompt: Capture page structure for debugging
+  - tool: mcp__playwright__browser_take_screenshot
+    prompt: Take screenshot for verification
+  - tool: mcp__playwright__browser_click
+    prompt: Click UI elements during testing
+  - tool: mcp__playwright__browser_type
+    prompt: Input text into form fields
+  - tool: mcp__playwright__browser_evaluate
+    prompt: Execute JavaScript to inspect page state
+  - tool: mcp__web_reader__webReader
+    prompt: Read GitHub issues and documentation
+  - tool: mcp__zread__read_file
+    prompt: Read source code from GitHub repository
+  - tool: mcp__zread__search_doc
+    prompt: Search documentation and issues
 ---
 
 # Feng3D Editor 开发技能
@@ -240,9 +268,36 @@ gh pr create \
 
 ### 7. 评论与交互
 
-**回复 Issue**（告知已提交 PR）：
+**回复 Issue**（告知已提交 PR，包含可点击链接）：
 ```bash
-gh issue comment 45 --body "已提交 PR #xxx，请查阅"
+gh issue comment 45 --body "已提交 PR #46，请查阅 https://github.com/feng3d-labs/editor/pull/46"
+```
+
+**回复 Issue 后提供选项**：
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Issue 评论完成，接下来？",
+    options: [
+      { label: "合并 PR", description: "合并 PR 到主分支" },
+      { label: "完成", description: "停止操作，等待用户确认" }
+    ]
+  }]
+})
+```
+
+**完成后提供选项**（修复 Bug 阶段）：
+```typescript
+AskUserQuestion({
+  questions: [{
+    question: "Bug 修复完成，接下来？",
+    options: [
+      { label: "验证修改", description: "使用浏览器验证修改是否生效" },
+      { label: "提交代码", description: "提交当前修改" },
+      { label: "完成", description: "停止操作，等待用户确认" }
+    ]
+  }]
+})
 ```
 
 **响应 Review 反馈**：
