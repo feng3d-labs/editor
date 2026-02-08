@@ -5,27 +5,27 @@
       <TopToolBar />
     </div>
 
-    <!-- Canvas 将通过 ref 动态管理 -->
-    <!-- 背景区域用于鼠标事件检测 -->
-    <div ref="backRectRef" class="scene-back-rect"></div>
-    <!-- 工具视图容器 -->
-    <div ref="toolViewContainerRef" class="scene-tool-view-container"></div>
-    <!-- 性能统计工具容器 -->
-    <div ref="statsContainerRef" class="scene-stats-container"></div>
-    <!-- 场景旋转工具图层 -->
-    <div ref="sceneRotateToolLayerRef" class="scene-rotate-tool-layer"></div>
-    <!-- 粒子效果控制器 -->
-    <ParticleEffectController />
-    <!-- 相机预览组件（显示在场景界面右下角） -->
-    <CameraPreview :parent-container="containerRef as any" />
-    <!-- 区域选择矩形 -->
-    <AreaSelectRect ref="areaSelectRectRef" />
+    <!-- 画布区域 -->
+    <div ref="canvasAreaRef" class="scene-canvas-area">
+      <!-- 背景区域用于鼠标事件检测 -->
+      <div ref="backRectRef" class="scene-back-rect"></div>
+      <!-- 性能统计工具容器 -->
+      <div ref="statsContainerRef" class="scene-stats-container"></div>
+      <!-- 场景旋转工具图层 -->
+      <div ref="sceneRotateToolLayerRef" class="scene-rotate-tool-layer"></div>
+      <!-- 粒子效果控制器 -->
+      <ParticleEffectController />
+      <!-- 相机预览组件（显示在场景界面右下角） -->
+      <CameraPreview :parent-container="containerRef as any" />
+      <!-- 区域选择矩形 -->
+      <AreaSelectRect ref="areaSelectRectRef" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, markRaw } from 'vue';
-import { Vector2, Camera, GameObject, Vector3, Matrix4x4, Stats, serialization, FPSController, Scene, RunEnvironment, loader, shortcut, globalEmitter, windowEventProxy, raycaster, ticker, PerspectiveLens, IEvent, watcher } from 'feng3d';
+import { Vector2, Camera, GameObject, Vector3, Matrix4x4, Stats, serialization, FPSController, Scene, RunEnvironment, loader, shortcut, windowEventProxy, raycaster, ticker, PerspectiveLens, watcher } from 'feng3d';
 import * as TWEEN from '@tweenjs/tween.js';
 import { EditorComponent } from '../../feng3d/EditorComponent';
 import { EditorView } from '../../feng3d/EditorView';
@@ -47,8 +47,8 @@ const editorStore = useEditorStore();
 
 // DOM 引用
 const containerRef = ref<HTMLElement>();
+const canvasAreaRef = ref<HTMLElement>();
 const backRectRef = ref<HTMLElement>();
-const toolViewContainerRef = ref<HTMLElement>();
 const statsContainerRef = ref<HTMLElement>();
 const sceneRotateToolLayerRef = ref<HTMLElement>();
 
@@ -228,16 +228,16 @@ function tryInitScene() {
 
 // 更新 Canvas 位置和大小
 function updateCanvasSize() {
-  if (!canvas.value || !containerRef.value) return;
-  
-  const rect = containerRef.value.getBoundingClientRect();
-  
+  if (!canvas.value || !canvasAreaRef.value) return;
+
+  const rect = canvasAreaRef.value.getBoundingClientRect();
+
   // 确保 canvas 有有效的尺寸
   if (rect.width <= 0 || rect.height <= 0) {
-    console.warn('SceneView: container has invalid size', rect);
+    console.warn('SceneView: canvas area has invalid size', rect);
     return;
   }
-  
+
   // 设置 canvas 大小（相对于容器）
   if (view.value && typeof (view.value as any).setSize === 'function') {
     (view.value as any).setSize(rect.width, rect.height);
@@ -246,7 +246,7 @@ function updateCanvasSize() {
     canvas.value.width = rect.width;
     canvas.value.height = rect.height;
   }
-  
+
   // 更新 Stats 位置（相对于容器）
   if (statsInstance.value && statsInstance.value.dom) {
     statsInstance.value.dom.style.position = 'absolute';
@@ -255,7 +255,7 @@ function updateCanvasSize() {
     statsInstance.value.dom.style.zIndex = '10';
     statsInstance.value.dom.style.pointerEvents = 'none';
   }
-  
+
   console.log('SceneView: canvas size updated', { width: rect.width, height: rect.height });
 }
 
@@ -525,30 +525,6 @@ function onMouseWheelMoveSceneCamera() {
   sceneControlConfig.lookDistance -= distance;
 }
 
-// 添加场景工具视图
-function onAddSceneToolView(event: IEvent<any>) {
-  // 获取原始对象（避免 Vue Proxy 干扰）
-  const component = getRawObject(event.data);
-  if (!component || !toolViewContainerRef.value) return;
-}
-
-// 获取原始对象的辅助函数（避免 Vue Proxy 干扰 feng3d 事件系统）
-function getRawObject<T>(obj: T): T {
-  if (!obj) return obj;
-  const proxy = obj as any;
-  if (proxy && typeof proxy === 'object' && '__v_raw' in proxy) {
-    return proxy.__v_raw;
-  }
-  if (typeof (window as any).toRaw === 'function') {
-    try {
-      return (window as any).toRaw(obj);
-    } catch (e) {
-      // 忽略错误
-    }
-  }
-  return obj;
-}
-
 // 监听 gameScene 变化的回调函数
 function onGameSceneChanged(newScene: any) {
   if (newScene && newScene.gameObject && view.value) {
@@ -564,35 +540,34 @@ function onGameSceneChanged(newScene: any) {
 onMounted(async () => {
   // 等待容器准备好
   await nextTick();
-  
-  if (!containerRef.value) {
-    console.error('SceneView: containerRef is not available');
+
+  if (!containerRef.value || !canvasAreaRef.value) {
+    console.error('SceneView: containerRef or canvasAreaRef is not available');
     return;
   }
-  
+
   // 创建 canvas
   canvas.value = document.createElement('canvas');
   canvas.value.id = 'scene-canvas';
   canvas.value.style.position = 'absolute';
-  canvas.value.style.left = '0px';
-  canvas.value.style.top = '0px';
+  canvas.value.style.inset = '0';
   canvas.value.style.width = '100%';
   canvas.value.style.height = '100%';
   canvas.value.style.pointerEvents = 'auto';
   canvas.value.style.zIndex = '0';
-  // 先添加到 DOM，确保 View 可以正确初始化
-  containerRef.value.appendChild(canvas.value);
+  // 添加到画布区域 DOM
+  canvasAreaRef.value.appendChild(canvas.value);
   
   // 等待 DOM 更新
   await nextTick();
   
-  // 使用 ResizeObserver 监听容器尺寸变化
+  // 使用 ResizeObserver 监听画布区域尺寸变化
   const resizeObserver = new ResizeObserver((entries) => {
     if (!entries.length) return;
-    
+
     const entry = entries[0];
     const { width, height } = entry.contentRect;
-    
+
     // 如果容器有有效尺寸，尝试初始化场景
     if (width > 0 && height > 0) {
       if (!view.value) {
@@ -607,15 +582,15 @@ onMounted(async () => {
       }
     }
   });
-  
-  // 开始观察容器尺寸
-  if (containerRef.value) {
-    resizeObserver.observe(containerRef.value);
+
+  // 开始观察画布区域尺寸
+  if (canvasAreaRef.value) {
+    resizeObserver.observe(canvasAreaRef.value);
     // 保存 observer 引用以便清理
-    (containerRef.value as any)._resizeObserver = resizeObserver;
-    
+    (canvasAreaRef.value as any)._resizeObserver = resizeObserver;
+
     // 立即检查一次尺寸（可能容器已经有尺寸了）
-    const rect = containerRef.value.getBoundingClientRect();
+    const rect = canvasAreaRef.value.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
       tryInitScene();
     }
@@ -645,10 +620,7 @@ onMounted(async () => {
   shortcut.on('fpsViewStart', onFpsViewStart);
   shortcut.on('fpsViewStop', onFpsViewStop);
   shortcut.on('mouseWheelMoveSceneCamera', onMouseWheelMoveSceneCamera);
-  
-  // 全局事件
-  globalEmitter.on('editor.addSceneToolView', onAddSceneToolView);
-  
+
   // 监听 gameScene 变化，确保 hierarchy.rootGameObject 被设置
   watcher.watch(EditorData.editorData, 'gameScene', onGameSceneChanged);
   
@@ -700,10 +672,7 @@ onUnmounted(() => {
   shortcut.off('fpsViewStart', onFpsViewStart);
   shortcut.off('fpsViewStop', onFpsViewStop);
   shortcut.off('mouseWheelMoveSceneCamera', onMouseWheelMoveSceneCamera);
-  
-  // 移除全局事件
-  globalEmitter.off('editor.addSceneToolView', onAddSceneToolView);
-  
+
   // 移除 gameScene 监听
   watcher.unwatch(EditorData.editorData, 'gameScene', onGameSceneChanged);
   
@@ -714,8 +683,8 @@ onUnmounted(() => {
   }
   
   // 清理 ResizeObserver
-  if ((containerRef.value as any)?._resizeObserver) {
-    (containerRef.value as any)._resizeObserver.disconnect();
+  if ((canvasAreaRef.value as any)?._resizeObserver) {
+    (canvasAreaRef.value as any)._resizeObserver.disconnect();
   }
   
   // 停止渲染循环
@@ -755,77 +724,57 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  /* 使用 VSCode 主题变量 */
   background-color: var(--editor-background);
   overflow: hidden;
-  /* 定义工具栏高度，统一管理布局间距 */
-  --toolbar-height: 22px;
-  /* 工具栏下方内容与工具栏的间距 */
-  --toolbar-spacing: 4px;
+  display: flex;
+  flex-direction: column;
 }
 
 .scene-toolbar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: var(--toolbar-height);
+  flex-shrink: 0;
+  height: 22px;
   z-index: 1000;
   pointer-events: auto;
 }
 
-.scene-view canvas {
+.scene-canvas-area {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+.scene-canvas-area canvas {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   display: block;
-  pointer-events: auto; /* 确保 canvas 可以接收鼠标事件 */
-  z-index: 0; /* Canvas 在最底层，但要在容器内 */
-  /* Canvas 需要接收所有鼠标事件以支持点选、框选、旋转等操作 */
+  pointer-events: auto;
+  z-index: 0;
 }
 
-.scene-back-rect {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
-  pointer-events: none; /* 不拦截鼠标事件，让 canvas 接收 */
-  /* 注意：此元素仅用于布局，不接收鼠标事件 */
-}
-
+.scene-back-rect,
 .scene-tool-view-container {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
+  inset: 0;
   pointer-events: none;
+  z-index: 1;
 }
 
 .scene-stats-container {
   position: absolute;
-  top: calc(var(--toolbar-height) + var(--toolbar-spacing));
-  left: 0;
+  top: 4px;
+  left: 4px;
   z-index: 10;
   pointer-events: none;
-  overflow: visible;
 }
 
 .scene-rotate-tool-layer {
   position: absolute;
-  top: calc(var(--toolbar-height) + var(--toolbar-spacing));
-  right: 0;
+  top: 4px;
+  right: 4px;
   width: 80px;
   height: 80px;
   z-index: 20;
   pointer-events: auto;
-  background: transparent;
-  overflow: visible;
 }
 </style>
 
