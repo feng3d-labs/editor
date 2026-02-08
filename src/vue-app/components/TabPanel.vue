@@ -468,16 +468,16 @@ defineExpose({
   justify-content: center;
   border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease;
   color: var(--descriptionForeground);
-  border: 1px solid transparent;
+  border: none !important;
   margin-left: 4px;
+  outline: none !important;
 }
 
-.tab-panel-tabs :deep(.el-tabs__new-tab):hover {
-  background-color: var(--list-hoverBackground);
-  color: var(--editor-foreground);
-  border-color: var(--sideBar-border);
+.tab-panel-tabs :deep(.el-tabs__new-tab:hover) {
+  background-color: var(--list-hoverBackground) !important;
+  color: var(--editor-foreground) !important;
 }
 
 /* 关闭按钮样式 */

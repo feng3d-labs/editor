@@ -4,13 +4,17 @@
  * Element Plus 变量别名在 design-system.css 中定义
  */
 
-/* Element Plus 组件样式 */
+/* Element Plus 组件样式 - 统一按钮高度为 22px */
 .el-button {
   background-color: var(--sideBar-background);
   border-color: var(--sideBar-border);
   color: var(--editor-foreground);
   border-radius: 4px;
   transition: all 0.2s ease;
+  height: 22px;
+  padding: 0 12px;
+  font-size: 13px;
+  line-height: 1;
 }
 
 .el-button:hover {
@@ -32,6 +36,59 @@
 .el-button--primary:hover {
   background-color: var(--button-hoverBackground);
   border-color: var(--button-hoverBackground);
+}
+
+/* 按钮尺寸统一 */
+.el-button--small {
+  height: 22px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.el-button--large {
+  height: 28px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+/* 按钮组内按钮统一样式 */
+.el-button-group .el-button {
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 0 10px;
+  font-size: 13px;
+}
+
+/* 按钮内图标间距 */
+.el-button .el-icon {
+  margin-right: 4px;
+}
+
+.el-button .el-icon:last-child {
+  margin-right: 0;
+}
+
+/* Text 类型按钮统一样式 */
+.el-button.is-text {
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 0 8px;
+  border: none;
+  background-color: transparent;
+  color: var(--editor-foreground);
+  display: inline-flex;
+  align-items: center;
+}
+
+.el-button.is-text:hover {
+  background-color: var(--list-hoverBackground);
+}
+
+.el-button.is-text.el-button--small {
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 0 8px;
+  font-size: 12px;
 }
 
 .el-input__wrapper {

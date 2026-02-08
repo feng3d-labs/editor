@@ -1,9 +1,7 @@
 <template>
   <div ref="containerRef" class="scene-view">
     <!-- 顶部工具栏 -->
-    <div class="scene-toolbar">
-      <TopToolBar />
-    </div>
+    <TopToolBar />
 
     <!-- 画布区域 -->
     <div ref="canvasAreaRef" class="scene-canvas-area">
@@ -726,13 +724,6 @@ onUnmounted(() => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-}
-
-.scene-toolbar {
-  flex-shrink: 0;
-  height: 22px;
-  z-index: 1000;
-  pointer-events: auto;
 }
 
 .scene-canvas-area {

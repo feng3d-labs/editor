@@ -229,16 +229,18 @@ onUnmounted(() => {
 .top-tool-bar {
   position: relative;
   width: 100%;
-  height: 22px;
-  min-height: 22px;
+  height: 26px;
+  min-height: 26px;
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: var(--editor-background, #1e1e1e);
   z-index: 1001;
   pointer-events: auto;
-  padding: 0 8px;
+  padding: 2px 8px;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .tool-section {
@@ -246,10 +248,13 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tool-section-left {
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .tool-section-center {
@@ -276,11 +281,18 @@ onUnmounted(() => {
 /* Element Plus Button 样式覆盖 */
 .tool-button {
   min-width: 28px;
-  min-height: 28px;
-  padding: 4px 8px;
+  max-width: 120px;
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
+  padding: 0 8px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tool-button :deep(.el-icon) {
@@ -291,16 +303,24 @@ onUnmounted(() => {
   z-index: 10001;
   pointer-events: auto;
   position: relative;
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
 }
 
 /* Element Plus ButtonGroup 样式 */
 .tool-section :deep(.el-button-group) {
   display: inline-flex;
   gap: 0;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 .tool-section :deep(.el-button-group .el-button) {
   border-radius: 0;
+  height: 22px !important;
+  min-height: 22px !important;
+  max-height: 22px !important;
 }
 
 .tool-section :deep(.el-button-group .el-button:first-child) {
