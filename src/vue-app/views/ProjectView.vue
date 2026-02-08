@@ -1102,24 +1102,7 @@ onUnmounted(() => {
   padding: 2px 4px;
 }
 
-/* Element Plus Tree 样式覆盖 */
-:deep(.el-tree) {
-  background-color: transparent;
-  color: var(--editor-foreground, #cccccc);
-}
-
-:deep(.el-tree-node__content) {
-  color: var(--editor-foreground, #cccccc);
-}
-
-:deep(.el-tree-node__content:hover) {
-  background-color: var(--list-hoverBackground, #2d2d2d);
-}
-
-:deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: var(--list-activeSelectionBackground, #3d3d3d);
-  color: var(--button-background, #007acc);
-}
+/* 树形组件样式已移至全局主题 global-theme.css */
 
 /* Element Plus Breadcrumb 样式覆盖 */
 :deep(.el-breadcrumb) {

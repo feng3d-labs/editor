@@ -938,53 +938,7 @@ function onNodeDrop(draggingNode: any, dropNode: any, dropType: 'prev' | 'inner'
   flex: 1;
 }
 
-/* Element Plus Tree 样式覆盖 */
-:deep(.el-tree) {
-  background-color: transparent;
-  color: #9ea992;
-}
-
-/* 树节点内容 */
-:deep(.el-tree-node__content) {
-  color: #9ea992;
-  height: 24px;
-  border-radius: 3px;
-  margin: 2px 0;
-}
-
-/* 鼠标悬浮状态 */
-:deep(.el-tree-node__content:hover) {
-  background-color: #2a2d2e;
-}
-
-/* 选中状态 */
-:deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background-color: #04395e !important;
-  color: #b1e1e2 !important;
-  border: 1px solid #0077d2;
-}
-
-/* 展开图标样式 */
-:deep(.el-tree-node__expand-icon) {
-  color: #9ea992;
-  font-size: 12px;
-}
-
-/* 鼠标悬浮时的展开图标 */
-:deep(.el-tree-node__content:hover .el-tree-node__expand-icon) {
-  color: #ffffff;
-}
-
-/* 选中状态下的展开图标 */
-:deep(.el-tree-node.is-current > .el-tree-node__content .el-tree-node__expand-icon) {
-  color: #ffffff;
-}
-
-/* 树节点标签文字 */
-:deep(.el-tree-node__label) {
-  color: inherit;
-  font-size: 13px;
-}
+/* 树形组件样式已移至全局主题 global-theme.css */
 
 /* 右键菜单容器 */
 .context-menu-wrapper {
