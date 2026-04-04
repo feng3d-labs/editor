@@ -29,10 +29,10 @@ const { isExpanded, toggleExpanded, showTitle } = useOBVDefault(props);
 
 <style scoped>
 .obv-default {
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
     margin-bottom: 4px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #252526);
 }
 
 .obv-header {
@@ -41,18 +41,18 @@ const { isExpanded, toggleExpanded, showTitle } = useOBVDefault(props);
     padding: 6px 8px;
     cursor: pointer;
     user-select: none;
-    background-color: var(--el-fill-color, #2d2d2d);
+    background-color: var(--list-inactiveSelectionBackground, #2d2d2d);
 }
 
 .obv-header:hover {
-    background-color: var(--el-fill-color-dark, #3d3d3d);
+    background-color: var(--list-hoverBackground, #2a2d2e);
 }
 
 .obv-icon {
     margin-right: 4px;
     transition: transform 0.2s;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
 }
 
 .obv-icon-expanded {
@@ -62,7 +62,7 @@ const { isExpanded, toggleExpanded, showTitle } = useOBVDefault(props);
 .obv-title {
     font-size: 12px;
     font-weight: 500;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
 }
 
 .obv-content {

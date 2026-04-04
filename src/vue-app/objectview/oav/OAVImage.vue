@@ -31,7 +31,7 @@ const imageSrc = computed(() => {
     max-width: 100%;
     max-height: 200px;
     display: block;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
 }
 
@@ -40,7 +40,7 @@ const imageSrc = computed(() => {
     text-align: center;
     color: var(--sideBarSectionHeader-foreground, #666666);
     font-size: 12px;
-    border: 1px dashed var(--el-border-color, #3d3d3d);
+    border: 1px dashed var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
 }
 </style>

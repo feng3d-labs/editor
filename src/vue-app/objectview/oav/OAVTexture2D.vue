@@ -38,7 +38,7 @@ const editorStore = useEditorStore();
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -60,9 +60,9 @@ const editorStore = useEditorStore();
     width: 64px;
     height: 64px;
     object-fit: contain;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #252526);
 }
 
 .oav-texture2d-placeholder {
@@ -72,8 +72,8 @@ const editorStore = useEditorStore();
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    color: var(--el-text-color-secondary, #666666);
-    border: 1px dashed var(--el-border-color, #3d3d3d);
+    color: var(--descriptionForeground, #666666);
+    border: 1px dashed var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
 }
 </style>

@@ -45,7 +45,7 @@ const displayValue = computed<DisplayValue>(() => {
 
 .ov-text {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     white-space: pre-wrap;
     word-break: break-word;
 }

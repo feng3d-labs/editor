@@ -25,7 +25,7 @@ const { label, value } = useOAVMultiText(props);
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -40,7 +40,7 @@ const { label, value } = useOAVMultiText(props);
 
 .oav-multitext-content {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     white-space: pre-wrap;
     word-break: break-word;
     line-height: 1.5;

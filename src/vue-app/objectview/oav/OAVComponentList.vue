@@ -178,6 +178,6 @@ export default {
 
 .oav-component-list-actions {
     padding: 8px;
-    border-top: 1px solid var(--el-border-color, #3d3d3d);
+    border-top: 1px solid var(--sideBar-border, #3d3d3d);
 }
 </style>

@@ -116,10 +116,10 @@ onUnmounted(() => {
 
 <style scoped>
 .oav-accordion-object-view {
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
     margin-bottom: 4px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #252526);
 }
 
 .oav-accordion-header {
@@ -127,13 +127,13 @@ onUnmounted(() => {
     align-items: center;
     padding: 6px 8px;
     gap: 8px;
-    background-color: var(--el-fill-color, #2d2d2d);
+    background-color: var(--list-inactiveSelectionBackground, #2d2d2d);
 }
 
 .oav-accordion-title {
     font-size: 12px;
     font-weight: 500;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
 }
 
 .oav-accordion-content {

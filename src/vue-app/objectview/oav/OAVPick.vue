@@ -193,7 +193,7 @@ function onDoubleClick() {
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -214,7 +214,7 @@ function onDoubleClick() {
 .oav-pick-text {
     flex: 1;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -49,10 +49,10 @@ const label = computed(() => {
 
 <style scoped>
 .oav-array {
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     border-radius: 2px;
     margin-bottom: 4px;
-    background-color: var(--el-bg-color-overlay, #2d2d2d);
+    background-color: var(--sideBar-background, #252526);
 }
 
 .oav-array-header {
@@ -61,17 +61,17 @@ const label = computed(() => {
     padding: 6px 8px;
     cursor: pointer;
     user-select: none;
-    background-color: var(--el-fill-color, #2d2d2d);
+    background-color: var(--list-inactiveSelectionBackground, #2d2d2d);
 }
 
 .oav-array-header:hover {
-    background-color: var(--input-background, #3d3d3d);
+    background-color: var(--list-hoverBackground, #2a2d2e);
 }
 
 .oav-array-icon {
     margin-right: 4px;
     transition: transform 0.2s;
-    color: var(--editor-foreground, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
 }
 
 .oav-array-icon-expanded {
@@ -81,7 +81,7 @@ const label = computed(() => {
 .oav-label {
     flex: 1;
     font-size: 12px;
-    color: var(--editor-foreground, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

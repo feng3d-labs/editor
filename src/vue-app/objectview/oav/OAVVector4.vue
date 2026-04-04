@@ -76,7 +76,7 @@ const { label, x, y, z, w, onChangeX, onChangeY, onChangeZ, onChangeW, step, min
 .oav-label {
     flex: 0 0 120px;
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
     user-select: none;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -105,7 +105,7 @@ const { label, x, y, z, w, onChangeX, onChangeY, onChangeZ, onChangeW, step, min
     font-weight: 500;
     min-width: 16px;
     text-align: center;
-    color: var(--el-text-color-secondary, #999999);
+    color: var(--descriptionForeground, #999999);
 }
 
 .axis-label.x {

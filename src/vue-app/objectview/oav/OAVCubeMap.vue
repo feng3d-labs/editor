@@ -351,7 +351,7 @@ watch(() => textureCube.value, () => {
 
 .oav-cubemap-face {
     position: absolute;
-    border: 1px solid var(--el-border-color, #3d3d3d);
+    border: 1px solid var(--sideBar-border, #3d3d3d);
     background-color: var(--input-background, #1d1d1d);
     display: flex;
     align-items: center;

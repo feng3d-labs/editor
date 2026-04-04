@@ -45,6 +45,6 @@ function onOpenClick() {
 
 .ov-folder-name {
     font-size: 12px;
-    color: var(--el-text-color-primary, #cccccc);
+    color: var(--sideBar-foreground, #cccccc);
 }
 </style>
