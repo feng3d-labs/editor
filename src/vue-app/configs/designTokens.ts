@@ -1,9 +1,9 @@
 /**
  * 设计令牌配置
- * 使用 @feng3d/themes 包中的 VSCode 主题颜色变量
+ * 使用 src/themes 中的 VSCode 主题颜色变量
  */
 
-import { colorVariables } from '@feng3d/themes';
+import { colorVariables } from '../../themes';
 
 /**
  * 颜色设计令牌 - 使用 VSCode 语义化颜色变量

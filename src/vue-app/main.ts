@@ -45,7 +45,7 @@ app.mount('#vue-app');
 // 1. 首先尝试加载保存的 VSCode 主题（editor-vscode-theme）
 // 2. 如果没有，则使用经典主题设置（editor-theme）
 import { useThemeStore } from './stores/themeStore';
-import { ThemeService } from '@feng3d/themes';
+import { ThemeService } from '../themes';
 
 setTimeout(async () => {
   try {

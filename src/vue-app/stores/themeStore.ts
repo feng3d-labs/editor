@@ -4,7 +4,7 @@
  */
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import { ThemeService } from '@feng3d/themes';
+import { ThemeService } from '../../themes';
 
 /**
  * 主题类型

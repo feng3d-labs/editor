@@ -46,7 +46,6 @@
     "@feng3d-plugins/cannon": "^0.6.0",
     "@feng3d-plugins/cannon-plugin": "^0.6.0",
     "@feng3d/filesaver": "^0.0.1",
-    "@feng3d/themes": "^0.6.0",
     "@iconify/iconify": "^3.1.1",
     "@iconify/vue": "^5.0.0",
     "@tweenjs/tween.js": "^25.0.0",
@@ -80,7 +79,6 @@
   },
   "workspaces": [
     "packages/cannon",
-    "packages/cannon-plugin",
-    "packages/themes"
+    "packages/cannon-plugin"
   ]
 }
