@@ -12,3 +12,4 @@ dist-vite
 .claude/settings.local.json
 # 测试权限确认禁用
 .claude/skills/feng3d-dev/.temp
+package-lock.json

@@ -1,9 +1,0 @@
-[submodule "packages/cannon"]
-	path = packages/cannon
-	url = https://gitee.com/feng3d/cannon.git
-[submodule "packages/cannon-plugin"]
-	path = packages/cannon-plugin
-	url = https://gitee.com/feng3d/cannon-plugin.git
-[submodule "packages/objectview"]
-	path = packages/objectview
-	url = https://gitee.com/feng3d/objectview.git
